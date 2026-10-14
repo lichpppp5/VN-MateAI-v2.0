@@ -1,0 +1,81 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 Dương Thanh Lịch — VN-MateAI. See LICENSE and NOTICE.
+#
+# VN-MateAI — bộ chạy hoàn chỉnh trên Docker (bản chuyển giao). Đặt cạnh thư mục app/ và tệp .env (xem README-CAI-DAT.md).
+#   Cài:      ./install.sh  (Linux)   ·   .\install.ps1  (Windows, Docker Desktop)
+#   Chạy:     docker compose up -d       Dừng: docker compose down       Nhật ký: docker compose logs -f app
+# PostgreSQL / Redis KHÔNG mở cổng ra ngoài — chỉ ứng dụng nói chuyện được với chúng (mạng nội bộ của compose).
+name: vnmateai
+
+services:
+  app:
+    image: vnmateai/app:${VNMATE_VERSION:-1.0.0}
+    build:
+      context: ./app
+      dockerfile: deploy/docker/Dockerfile
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    environment:
+      TZ: ${TZ:-Asia/Ho_Chi_Minh}
+      VNMATEAI_DATABASE_URL: postgresql://vnmate:${VNMATE_PG_PASSWORD:?thiếu VNMATE_PG_PASSWORD trong .env}@postgres:5432/vnmate
+      VNMATEAI_REDIS_URL: redis://:${VNMATE_REDIS_PASSWORD:?thiếu VNMATE_REDIS_PASSWORD trong .env}@redis:6379/0
+      VNMATEAI_DEFAULT_ADMIN_PASSWORD: ${VNMATE_ADMIN_PASSWORD:?thiếu VNMATE_ADMIN_PASSWORD trong .env}
+      VNMATEAI_DEFAULT_MANAGER_PASSWORD: ${VNMATE_MANAGER_PASSWORD:-}
+      VNMATEAI_DEFAULT_VIEWER_PASSWORD: ${VNMATE_VIEWER_PASSWORD:-}
+      VNMATEAI_DB_PATH: /data/data/vnmateai.db
+      VNMATEAI_HR_DB_PATH: /data/data/hr_kpi.db
+      VNMATEAI_OTEL_EXPORTER: none
+      # Địa chỉ LAN của máy chủ ghi vào gói "Tải Agent" khi Portal được mở bằng localhost (IP container không dùng được)
+      VNMATEAI_PUBLIC_HOST: ${VNMATE_PUBLIC_HOST:-}
+      VNMATEAI_LLM_API_KEY: ${VNMATE_LLM_API_KEY:-}
+      # Chỉ dùng ở lần chạy đầu để tạo config.json (sau đó sửa trên Portal)
+      VNMATE_LLM_BASE_URL: ${VNMATE_LLM_BASE_URL:-}
+      VNMATE_LLM_API_KEY: ${VNMATE_LLM_API_KEY:-}
+      VNMATE_LLM_MODEL: ${VNMATE_LLM_MODEL:-}
+      VNMATE_LLM_FALLBACK_MODELS: ${VNMATE_LLM_FALLBACK_MODELS:-}
+      VNMATE_ASSISTANT_NAME: ${VNMATE_ASSISTANT_NAME:-Ly Ly}
+    ports:
+      - "${VNMATE_HTTPS_PORT:-443}:8443"      # Portal / HUD / API (HTTPS)
+      - "${VNMATE_IOT_PORT:-8000}:8000"       # robot / IoT
+    volumes:
+      - appdata:/data
+      - ./app/web:/app/web
+      - ./app/src:/app/src
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      TZ: ${TZ:-Asia/Ho_Chi_Minh}
+      POSTGRES_USER: vnmate
+      POSTGRES_DB: vnmate
+      POSTGRES_PASSWORD: ${VNMATE_PG_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vnmate -d vnmate"]
+      interval: 10s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    # Chỉ số đếm ngắn hạn (giới hạn tần suất, khoá đăng nhập) — không phải nguồn dữ liệu chính.
+    # ARM64-COW-BUG: lỗi kernel chỉ hại khi Redis ghi đĩa nền — ở đây không ghi đĩa, nên bỏ qua để chạy được trên máy ARM.
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--ignore-warnings", "ARM64-COW-BUG",
+              "--requirepass", "${VNMATE_REDIS_PASSWORD}"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${VNMATE_REDIS_PASSWORD}", "--no-auth-warning", "ping"]
+      interval: 10s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  appdata:    # config.json, khoá, kho tri thức, nhật ký, sao lưu, kỹ năng AI tự tạo
+  pgdata:     # cơ sở dữ liệu

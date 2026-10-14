@@ -1,0 +1,3024 @@
+{
+  "measured_at": "2026-10-03T12:42:35+0700",
+  "platform": "Windows 10 / Python 3.11.9",
+  "clock": "time.perf_counter",
+  "fast_path": {
+    "overall": {
+      "n": 1000,
+      "p50_ms": 0.011,
+      "p95_ms": 51.156,
+      "max_ms": 51.735,
+      "mean_ms": 10.477
+    },
+    "per_command": {
+      "mấy giờ rồi": {
+        "n": 200,
+        "p50_ms": 0.006,
+        "p95_ms": 0.007,
+        "max_ms": 0.013,
+        "mean_ms": 0.006,
+        "matched": true
+      },
+      "kiểm tra cpu": {
+        "n": 200,
+        "p50_ms": 50.859,
+        "p95_ms": 51.425,
+        "max_ms": 51.735,
+        "mean_ms": 50.881,
+        "matched": true
+      },
+      "xem ram": {
+        "n": 200,
+        "p50_ms": 1.374,
+        "p95_ms": 1.795,
+        "max_ms": 5.91,
+        "mean_ms": 1.476,
+        "matched": true
+      },
+      "xin chào": {
+        "n": 200,
+        "p50_ms": 0.011,
+        "p95_ms": 0.011,
+        "max_ms": 0.013,
+        "mean_ms": 0.011,
+        "matched": true
+      },
+      "ping": {
+        "n": 200,
+        "p50_ms": 0.009,
+        "p95_ms": 0.009,
+        "max_ms": 0.01,
+        "mean_ms": 0.009,
+        "matched": true
+      }
+    }
+  },
+  "sentence_buffer": {
+    "per_stream": {
+      "n": 200,
+      "p50_ms": 0.88,
+      "p95_ms": 0.893,
+      "max_ms": 2.955,
+      "mean_ms": 0.854
+    },
+    "tokens": 58,
+    "sentences": 5
+  },
+  "tts_first_chunk": {
+    "ttfa_engine": {
+      "n": 10,
+      "p50_ms": 1135.663,
+      "p95_ms": 1825.726,
+      "max_ms": 1925.89,
+      "mean_ms": 1249.705
+    },
+    "errors": []
+  },
+  "websocket": {
+    "fast_path": {
+      "first_event": {
+        "n": 20,
+        "p50_ms": 2.56,
+        "p95_ms": 2.865,
+        "max_ms": 2.95,
+        "mean_ms": 2.493
+      },
+      "first_text": {
+        "n": 20,
+        "p50_ms": 56.44,
+        "p95_ms": 75.326,
+        "max_ms": 250.8,
+        "mean_ms": 47.343
+      },
+      "first_audio": {
+        "n": 20,
+        "p50_ms": 64.275,
+        "p95_ms": 1465.989,
+        "max_ms": 1506.25,
+        "mean_ms": 464.857
+      },
+      "total": {
+        "n": 20,
+        "p50_ms": 64.585,
+        "p95_ms": 1466.099,
+        "max_ms": 1506.36,
+        "mean_ms": 465.095
+      },
+      "server": {
+        "llm_first_token_ms": {
+          "n": 0
+        },
+        "ttft_ms": {
+          "n": 20,
+          "p50_ms": 29.5,
+          "p95_ms": 53.0,
+          "max_ms": 53,
+          "mean_ms": 27.65
+        },
+        "ack_audio_ms": {
+          "n": 0
+        },
+        "ttfa_answer_ms": {
+          "n": 20,
+          "p50_ms": 53.0,
+          "p95_ms": 1462.1,
+          "max_ms": 1502,
+          "mean_ms": 457.4
+        },
+        "agent_ms": {
+          "n": 0
+        },
+        "tts_first_latency_ms": {
+          "n": 0
+        },
+        "ttl_ms": {
+          "n": 20,
+          "p50_ms": 57.0,
+          "p95_ms": 1462.15,
+          "max_ms": 1503,
+          "mean_ms": 459.55
+        }
+      },
+      "errors": [],
+      "turns": [
+        {
+          "query": "mấy giờ rồi",
+          "connect_ms": 2081.99,
+          "total_ms": 1374.79,
+          "first_event_ms": 2.95,
+          "first_text_ms": 250.8,
+          "first_audio_ms": 1374.7,
+          "audio_bytes": 13680,
+          "server_metrics": {
+            "request_id": "5ea1c19bfd",
+            "session_id": "admin",
+            "trace_id": "trace_52f66727b7d7",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 7,
+            "router_ms": 7,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 7,
+            "ttfa_ms": 1368,
+            "ttfa_answer_ms": 1368,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 1371,
+            "sentences": 1,
+            "fast_command": "get_current_time",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@7ms",
+              "done@1370ms"
+            ],
+            "fast_path": {
+              "command": "get_current_time"
+            }
+          }
+        },
+        {
+          "query": "kiểm tra cpu",
+          "connect_ms": 2045.27,
+          "total_ms": 1005.28,
+          "first_event_ms": 2.71,
+          "first_text_ms": 56.92,
+          "first_audio_ms": 1005.15,
+          "audio_bytes": 18864,
+          "server_metrics": {
+            "request_id": "3bb330faa2",
+            "session_id": "admin",
+            "trace_id": "trace_5880bd3d2b04",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 53,
+            "router_ms": 53,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 53,
+            "ttfa_ms": 1001,
+            "ttfa_answer_ms": 1001,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 1002,
+            "sentences": 1,
+            "fast_command": "get_cpu_status",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@53ms",
+              "done@1001ms"
+            ],
+            "fast_path": {
+              "command": "get_cpu_status"
+            }
+          }
+        },
+        {
+          "query": "mấy giờ rồi",
+          "connect_ms": 2058.89,
+          "total_ms": 8.05,
+          "first_event_ms": 2.69,
+          "first_text_ms": 7.89,
+          "first_audio_ms": 7.97,
+          "audio_bytes": 13680,
+          "server_metrics": {
+            "request_id": "5a6e2f8978",
+            "session_id": "admin",
+            "trace_id": "trace_cca69fd08aa2",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 1,
+            "router_ms": 1,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 2,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 2,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 4,
+            "sentences": 1,
+            "fast_command": "get_current_time",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@1ms",
+              "done@4ms"
+            ],
+            "fast_path": {
+              "command": "get_current_time"
+            }
+          }
+        },
+        {
+          "query": "kiểm tra cpu",
+          "connect_ms": 2055.92,
+          "total_ms": 1135.45,
+          "first_event_ms": 2.69,
+          "first_text_ms": 58.1,
+          "first_audio_ms": 1135.33,
+          "audio_bytes": 18720,
+          "server_metrics": {
+            "request_id": "29b013e4ac",
+            "session_id": "admin",
+            "trace_id": "trace_1a7af144cd8d",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 52,
+            "router_ms": 52,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 53,
+            "ttfa_ms": 1131,
+            "ttfa_answer_ms": 1131,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 1132,
+            "sentences": 1,
+            "fast_command": "get_cpu_status",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@52ms",
+              "done@1132ms"
+            ],
+            "fast_path": {
+              "command": "get_cpu_status"
+            }
+          }
+        },
+        {
+          "query": "mấy giờ rồi",
+          "connect_ms": 2037.24,
+          "total_ms": 15.86,
+          "first_event_ms": 2.86,
+          "first_text_ms": 14.67,
+          "first_audio_ms": 15.28,
+          "audio_bytes": 13680,
+          "server_metrics": {
+            "request_id": "aa0781de64",
+            "session_id": "admin",
+            "trace_id": "trace_1ca0ea4d65bd",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 1,
+            "router_ms": 1,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 2,
+            "ttfa_ms": 3,
+            "ttfa_answer_ms": 3,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 6,
+            "sentences": 1,
+            "fast_command": "get_current_time",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@1ms",
+              "done@5ms"
+            ],
+            "fast_path": {
+              "command": "get_current_time"
+            }
+          }
+        },
+        {
+          "query": "kiểm tra cpu",
+          "connect_ms": 2049.92,
+          "total_ms": 63.25,
+          "first_event_ms": 0.64,
+          "first_text_ms": 63.08,
+          "first_audio_ms": 63.16,
+          "audio_bytes": 18864,
+          "server_metrics": {
+            "request_id": "89b30e8c7e",
+            "session_id": "admin",
+            "trace_id": "trace_9b0d64b51bb5",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 51,
+            "router_ms": 51,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 52,
+            "ttfa_ms": 60,
+            "ttfa_answer_ms": 60,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 61,
+            "sentences": 1,
+            "fast_command": "get_cpu_status",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@51ms",
+              "done@61ms"
+            ],
+            "fast_path": {
+              "command": "get_cpu_status"
+            }
+          }
+        },
+        {
+          "query": "mấy giờ rồi",
+          "connect_ms": 2043.32,
+          "total_ms": 8.14,
+          "first_event_ms": 2.53,
+          "first_text_ms": 7.92,
+          "first_audio_ms": 8.03,
+          "audio_bytes": 13680,
+          "server_metrics": {
+            "request_id": "67161287dc",
+            "session_id": "admin",
+            "trace_id": "trace_ef6d566b7d70",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 1,
+            "router_ms": 1,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 2,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 2,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 5,
+            "sentences": 1,
+            "fast_command": "get_current_time",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@1ms",
+              "done@4ms"
+            ],
+            "fast_path": {
+              "command": "get_current_time"
+            }
+          }
+        },
+        {
+          "query": "kiểm tra cpu",
+          "connect_ms": 2049.09,
+          "total_ms": 66.42,
+          "first_event_ms": 2.57,
+          "first_text_ms": 65.48,
+          "first_audio_ms": 65.92,
+          "audio_bytes": 18864,
+          "server_metrics": {
+            "request_id": "923bae7360",
+            "session_id": "admin",
+            "trace_id": "trace_8990091f453b",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 52,
+            "router_ms": 52,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 53,
+            "ttfa_ms": 53,
+            "ttfa_answer_ms": 53,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 57,
+            "sentences": 1,
+            "fast_command": "get_cpu_status",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@52ms",
+              "done@56ms"
+            ],
+            "fast_path": {
+              "command": "get_cpu_status"
+            }
+          }
+        },
+        {
+          "query": "mấy giờ rồi",
+          "connect_ms": 2045.89,
+          "total_ms": 14.17,
+          "first_event_ms": 2.55,
+          "first_text_ms": 13.36,
+          "first_audio_ms": 13.79,
+          "audio_bytes": 13680,
+          "server_metrics": {
+            "request_id": "1f21796dcf",
+            "session_id": "admin",
+            "trace_id": "trace_a6b2a64ade80",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 1,
+            "router_ms": 1,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 2,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 2,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 5,
+            "sentences": 1,
+            "fast_command": "get_current_time",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@1ms",
+              "done@4ms"
+            ],
+            "fast_path": {
+              "command": "get_current_time"
+            }
+          }
+        },
+        {
+          "query": "kiểm tra cpu",
+          "connect_ms": 2056.41,
+          "total_ms": 65.92,
+          "first_event_ms": 2.51,
+          "first_text_ms": 64.96,
+          "first_audio_ms": 65.39,
+          "audio_bytes": 18864,
+          "server_metrics": {
+            "request_id": "d058ff0daa",
+            "session_id": "admin",
+            "trace_id": "trace_c990d40efc4b",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 52,
+            "router_ms": 52,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 53,
+            "ttfa_ms": 53,
+            "ttfa_answer_ms": 53,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 57,
+            "sentences": 1,
+            "fast_command": "get_cpu_status",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@52ms",
+              "done@56ms"
+            ],
+            "fast_path": {
+              "command": "get_cpu_status"
+            }
+          }
+        },
+        {
+          "query": "mấy giờ rồi",
+          "connect_ms": 2046.89,
+          "total_ms": 7.72,
+          "first_event_ms": 2.65,
+          "first_text_ms": 7.57,
+          "first_audio_ms": 7.65,
+          "audio_bytes": 13680,
+          "server_metrics": {
+            "request_id": "5ebe89a834",
+            "session_id": "admin",
+            "trace_id": "trace_313b9343e25b",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 1,
+            "router_ms": 1,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 2,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 2,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 4,
+            "sentences": 1,
+            "fast_command": "get_current_time",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@1ms",
+              "done@4ms"
+            ],
+            "fast_path": {
+              "command": "get_current_time"
+            }
+          }
+        },
+        {
+          "query": "kiểm tra cpu",
+          "connect_ms": 2061.86,
+          "total_ms": 1506.36,
+          "first_event_ms": 2.6,
+          "first_text_ms": 55.96,
+          "first_audio_ms": 1506.25,
+          "audio_bytes": 19008,
+          "server_metrics": {
+            "request_id": "f8eff56997",
+            "session_id": "admin",
+            "trace_id": "trace_a23a58857b1f",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 52,
+            "router_ms": 52,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 53,
+            "ttfa_ms": 1502,
+            "ttfa_answer_ms": 1502,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 1503,
+            "sentences": 1,
+            "fast_command": "get_cpu_status",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@52ms",
+              "done@1503ms"
+            ],
+            "fast_path": {
+              "command": "get_cpu_status"
+            }
+          }
+        },
+        {
+          "query": "mấy giờ rồi",
+          "connect_ms": 2034.63,
+          "total_ms": 7.47,
+          "first_event_ms": 2.5,
+          "first_text_ms": 7.31,
+          "first_audio_ms": 7.39,
+          "audio_bytes": 13680,
+          "server_metrics": {
+            "request_id": "d450dd696f",
+            "session_id": "admin",
+            "trace_id": "trace_494276b2b0fb",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 1,
+            "router_ms": 1,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 2,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 2,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 4,
+            "sentences": 1,
+            "fast_command": "get_current_time",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@1ms",
+              "done@4ms"
+            ],
+            "fast_path": {
+              "command": "get_current_time"
+            }
+          }
+        },
+        {
+          "query": "kiểm tra cpu",
+          "connect_ms": 2031.95,
+          "total_ms": 1306.57,
+          "first_event_ms": 2.3,
+          "first_text_ms": 57.07,
+          "first_audio_ms": 1306.45,
+          "audio_bytes": 18864,
+          "server_metrics": {
+            "request_id": "6fd884b604",
+            "session_id": "admin",
+            "trace_id": "trace_a55eda776415",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 52,
+            "router_ms": 52,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 52,
+            "ttfa_ms": 1303,
+            "ttfa_answer_ms": 1303,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 1303,
+            "sentences": 1,
+            "fast_command": "get_cpu_status",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@52ms",
+              "done@1303ms"
+            ],
+            "fast_path": {
+              "command": "get_cpu_status"
+            }
+          }
+        },
+        {
+          "query": "mấy giờ rồi",
+          "connect_ms": 2060.05,
+          "total_ms": 14.18,
+          "first_event_ms": 2.65,
+          "first_text_ms": 13.36,
+          "first_audio_ms": 13.8,
+          "audio_bytes": 13680,
+          "server_metrics": {
+            "request_id": "042e487533",
+            "session_id": "admin",
+            "trace_id": "trace_cf871807c677",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 1,
+            "router_ms": 1,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 2,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 2,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 5,
+            "sentences": 1,
+            "fast_command": "get_current_time",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@1ms",
+              "done@4ms"
+            ],
+            "fast_path": {
+              "command": "get_current_time"
+            }
+          }
+        },
+        {
+          "query": "kiểm tra cpu",
+          "connect_ms": 2058.24,
+          "total_ms": 1463.98,
+          "first_event_ms": 2.7,
+          "first_text_ms": 57.95,
+          "first_audio_ms": 1463.87,
+          "audio_bytes": 18864,
+          "server_metrics": {
+            "request_id": "d9cff36170",
+            "session_id": "admin",
+            "trace_id": "trace_298df1df5c7f",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 52,
+            "router_ms": 52,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 53,
+            "ttfa_ms": 1460,
+            "ttfa_answer_ms": 1460,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 1460,
+            "sentences": 1,
+            "fast_command": "get_cpu_status",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@52ms",
+              "done@1460ms"
+            ],
+            "fast_path": {
+              "command": "get_cpu_status"
+            }
+          }
+        },
+        {
+          "query": "mấy giờ rồi",
+          "connect_ms": 2057.73,
+          "total_ms": 14.35,
+          "first_event_ms": 2.52,
+          "first_text_ms": 13.14,
+          "first_audio_ms": 13.79,
+          "audio_bytes": 13680,
+          "server_metrics": {
+            "request_id": "1802e14f76",
+            "session_id": "admin",
+            "trace_id": "trace_f034f71412a7",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 1,
+            "router_ms": 1,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 2,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 2,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 5,
+            "sentences": 1,
+            "fast_command": "get_current_time",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@1ms",
+              "done@4ms"
+            ],
+            "fast_path": {
+              "command": "get_current_time"
+            }
+          }
+        },
+        {
+          "query": "kiểm tra cpu",
+          "connect_ms": 2055.11,
+          "total_ms": 1149.34,
+          "first_event_ms": 2.2,
+          "first_text_ms": 57.82,
+          "first_audio_ms": 1149.22,
+          "audio_bytes": 18720,
+          "server_metrics": {
+            "request_id": "27ef04b2ba",
+            "session_id": "admin",
+            "trace_id": "trace_b0cbd9c33fd6",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 53,
+            "router_ms": 52,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 53,
+            "ttfa_ms": 1145,
+            "ttfa_answer_ms": 1145,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 1146,
+            "sentences": 1,
+            "fast_command": "get_cpu_status",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@53ms",
+              "done@1146ms"
+            ],
+            "fast_path": {
+              "command": "get_cpu_status"
+            }
+          }
+        },
+        {
+          "query": "mấy giờ rồi",
+          "connect_ms": 2060.2,
+          "total_ms": 7.57,
+          "first_event_ms": 2.55,
+          "first_text_ms": 7.41,
+          "first_audio_ms": 7.49,
+          "audio_bytes": 13680,
+          "server_metrics": {
+            "request_id": "0233775147",
+            "session_id": "admin",
+            "trace_id": "trace_596f49403b44",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 1,
+            "router_ms": 1,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 2,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 2,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 4,
+            "sentences": 1,
+            "fast_command": "get_current_time",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@1ms",
+              "done@4ms"
+            ],
+            "fast_path": {
+              "command": "get_current_time"
+            }
+          }
+        },
+        {
+          "query": "kiểm tra cpu",
+          "connect_ms": 2061.87,
+          "total_ms": 67.03,
+          "first_event_ms": 2.49,
+          "first_text_ms": 66.09,
+          "first_audio_ms": 66.52,
+          "audio_bytes": 18864,
+          "server_metrics": {
+            "request_id": "7782ccf870",
+            "session_id": "admin",
+            "trace_id": "trace_396a5635be0b",
+            "channel": "portal",
+            "outcome": "fast_path",
+            "stt_ms": null,
+            "ttfd_ms": 52,
+            "router_ms": 52,
+            "ack_audio_ms": null,
+            "llm_first_token_ms": null,
+            "ttft_ms": 53,
+            "ttfa_ms": 53,
+            "ttfa_answer_ms": 53,
+            "agent_ms": null,
+            "tts_first_latency_ms": null,
+            "ttl_ms": 57,
+            "sentences": 1,
+            "fast_command": "get_cpu_status",
+            "used_agent": false,
+            "prompt_chars": null,
+            "tools_offered": null,
+            "status_steps": [
+              "fast_path@52ms",
+              "done@56ms"
+            ],
+            "fast_path": {
+              "command": "get_cpu_status"
+            }
+          }
+        }
+      ]
+    },
+    "llm": {
+      "first_event": {
+        "n": 20,
+        "p50_ms": 2.525,
+        "p95_ms": 3.393,
+        "max_ms": 13.32,
+        "mean_ms": 2.416
+      },
+      "first_text": {
+        "n": 20,
+        "p50_ms": 2949.23,
+        "p95_ms": 8243.372,
+        "max_ms": 19248.01,
+        "mean_ms": 4091.443
+      },
+      "first_audio": {
+        "n": 20,
+        "p50_ms": 6.055,
+        "p95_ms": 11.716,
+        "max_ms": 15.05,
+        "mean_ms": 5.518
+      },
+      "total": {
+        "n": 20,
+        "p50_ms": 5553.795,
+        "p95_ms": 10455.527,
+        "max_ms": 22514.76,
+        "mean_ms": 6565.978
+      },
+      "server": {
+        "llm_first_token_ms": {
+          "n": 20,
+          "p50_ms": 2503.0,
+          "p95_ms": 8133.95,
+          "max_ms": 19210,
+          "mean_ms": 3833.4
+        },
+        "ttft_ms": {
+          "n": 20,
+          "p50_ms": 2947.5,
+          "p95_ms": 8238.3,
+          "max_ms": 19245,
+          "mean_ms": 4087.55
+        },
+        "ack_audio_ms": {
+          "n": 20,
+          "p50_ms": 1.5,
+          "p95_ms": 3.2,
+          "max_ms": 7,
+          "mean_ms": 1.75
+        },
+        "ttfa_answer_ms": {
+          "n": 20,
+          "p50_ms": 4530.5,
+          "p95_ms": 10450.6,
+          "max_ms": 22508,
+          "mean_ms": 5749.3
+        },
+        "agent_ms": {
+          "n": 0
+        },
+        "tts_first_latency_ms": {
+          "n": 20,
+          "p50_ms": 1874.0,
+          "p95_ms": 3041.0,
+          "max_ms": 3250,
+          "mean_ms": 1661.4
+        },
+        "ttl_ms": {
+          "n": 20,
+          "p50_ms": 5551.0,
+          "p95_ms": 10453.6,
+          "max_ms": 22511,
+          "mean_ms": 6562.6
+        }
+      },
+      "errors": [],
+      "turns": [
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2049.58,
+          "total_ms": 6215.67,
+          "first_event_ms": 2.61,
+          "first_text_ms": 4270.96,
+          "first_audio_ms": 11.54,
+          "audio_bytes": 85248,
+          "server_metrics": {
+            "request_id": "a62d006639",
+            "session_id": "admin",
+            "trace_id": "trace_0da50f59052a",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 7,
+            "llm_first_token_ms": 2534,
+            "ttft_ms": 4266,
+            "ttfa_ms": 7,
+            "ttfa_answer_ms": 6209,
+            "agent_ms": null,
+            "tts_first_latency_ms": 1938,
+            "ttl_ms": 6212,
+            "sentences": 3,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 10583,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@4266ms",
+              "done@6212ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 3,
+              "total_audio_bytes": 72720,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2056.58,
+          "total_ms": 3974.84,
+          "first_event_ms": 2.52,
+          "first_text_ms": 2511.31,
+          "first_audio_ms": 6.15,
+          "audio_bytes": 81360,
+          "server_metrics": {
+            "request_id": "fab66ffd96",
+            "session_id": "admin",
+            "trace_id": "trace_5aa8a9a92f01",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 3,
+            "llm_first_token_ms": 1618,
+            "ttft_ms": 2507,
+            "ttfa_ms": 3,
+            "ttfa_answer_ms": 3894,
+            "agent_ms": null,
+            "tts_first_latency_ms": 1391,
+            "ttl_ms": 3972,
+            "sentences": 3,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 10732,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@2506ms",
+              "done@3971ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 3,
+              "total_audio_bytes": 69840,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2051.31,
+          "total_ms": 22514.76,
+          "first_event_ms": 2.58,
+          "first_text_ms": 19248.01,
+          "first_audio_ms": 8.24,
+          "audio_bytes": 70128,
+          "server_metrics": {
+            "request_id": "e29f1bd787",
+            "session_id": "admin",
+            "trace_id": "trace_2c96a531a0ce",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 2,
+            "llm_first_token_ms": 19210,
+            "ttft_ms": 19245,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 22508,
+            "agent_ms": null,
+            "tts_first_latency_ms": 3250,
+            "ttl_ms": 22511,
+            "sentences": 2,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 10910,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@19245ms",
+              "done@22511ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 2,
+              "total_audio_bytes": 60192,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2055.17,
+          "total_ms": 5898.85,
+          "first_event_ms": 0.69,
+          "first_text_ms": 3526.97,
+          "first_audio_ms": 1.88,
+          "audio_bytes": 70272,
+          "server_metrics": {
+            "request_id": "14e2999ca9",
+            "session_id": "admin",
+            "trace_id": "trace_e6ff97ed61c9",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 2401,
+            "ttft_ms": 3523,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 5893,
+            "agent_ms": null,
+            "tts_first_latency_ms": 2375,
+            "ttl_ms": 5897,
+            "sentences": 2,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11061,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@3522ms",
+              "done@5896ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 2,
+              "total_audio_bytes": 55872,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2051.27,
+          "total_ms": 6570.4,
+          "first_event_ms": 2.53,
+          "first_text_ms": 4196.37,
+          "first_audio_ms": 5.96,
+          "audio_bytes": 70992,
+          "server_metrics": {
+            "request_id": "c7c5416b6e",
+            "session_id": "admin",
+            "trace_id": "trace_da9406a3d901",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 2,
+            "llm_first_token_ms": 4158,
+            "ttft_ms": 4194,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 6565,
+            "agent_ms": null,
+            "tts_first_latency_ms": 2375,
+            "ttl_ms": 6567,
+            "sentences": 2,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11219,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@4193ms",
+              "done@6567ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 2,
+              "total_audio_bytes": 57600,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2058.11,
+          "total_ms": 5879.09,
+          "first_event_ms": 2.66,
+          "first_text_ms": 2978.86,
+          "first_audio_ms": 6.47,
+          "audio_bytes": 81792,
+          "server_metrics": {
+            "request_id": "2f0d78b6a6",
+            "session_id": "admin",
+            "trace_id": "trace_f7204c361f00",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 2,
+            "llm_first_token_ms": 2975,
+            "ttft_ms": 2976,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 5873,
+            "agent_ms": null,
+            "tts_first_latency_ms": 2906,
+            "ttl_ms": 5876,
+            "sentences": 3,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11280,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@2976ms",
+              "done@5875ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 3,
+              "total_audio_bytes": 69264,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2051.72,
+          "total_ms": 4177.55,
+          "first_event_ms": 1.08,
+          "first_text_ms": 2524.28,
+          "first_audio_ms": 3.01,
+          "audio_bytes": 70992,
+          "server_metrics": {
+            "request_id": "4d60b43fed",
+            "session_id": "admin",
+            "trace_id": "trace_3217d50b590d",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 2472,
+            "ttft_ms": 2522,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 4173,
+            "agent_ms": null,
+            "tts_first_latency_ms": 1641,
+            "ttl_ms": 4175,
+            "sentences": 2,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11360,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@2521ms",
+              "done@4175ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 2,
+              "total_audio_bytes": 59472,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2043.57,
+          "total_ms": 4531.54,
+          "first_event_ms": 2.56,
+          "first_text_ms": 1714.0,
+          "first_audio_ms": 7.53,
+          "audio_bytes": 77184,
+          "server_metrics": {
+            "request_id": "639e842f1f",
+            "session_id": "admin",
+            "trace_id": "trace_100ea532a587",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 2,
+            "llm_first_token_ms": 1535,
+            "ttft_ms": 1708,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 3619,
+            "agent_ms": null,
+            "tts_first_latency_ms": 1905,
+            "ttl_ms": 4528,
+            "sentences": 3,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11237,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@1708ms",
+              "done@4528ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 2,
+              "sentences_processed": 3,
+              "total_audio_bytes": 67248,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2043.71,
+          "total_ms": 6448.5,
+          "first_event_ms": 0.96,
+          "first_text_ms": 2501.75,
+          "first_audio_ms": 2.83,
+          "audio_bytes": 92592,
+          "server_metrics": {
+            "request_id": "4858f771da",
+            "session_id": "admin",
+            "trace_id": "trace_aae282d9881c",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 2415,
+            "ttft_ms": 2500,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 4051,
+            "agent_ms": null,
+            "tts_first_latency_ms": 1546,
+            "ttl_ms": 6446,
+            "sentences": 4,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11246,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@2500ms",
+              "done@6446ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 4,
+              "total_audio_bytes": 78192,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2051.92,
+          "total_ms": 4894.33,
+          "first_event_ms": 2.56,
+          "first_text_ms": 2188.9,
+          "first_audio_ms": 6.64,
+          "audio_bytes": 81792,
+          "server_metrics": {
+            "request_id": "96f1c89fb4",
+            "session_id": "admin",
+            "trace_id": "trace_809e33584e38",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 3,
+            "llm_first_token_ms": 2152,
+            "ttft_ms": 2186,
+            "ttfa_ms": 3,
+            "ttfa_answer_ms": 4888,
+            "agent_ms": null,
+            "tts_first_latency_ms": 2703,
+            "ttl_ms": 4891,
+            "sentences": 3,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11227,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@2186ms",
+              "done@4891ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 3,
+              "total_audio_bytes": 68400,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2035.6,
+          "total_ms": 7557.6,
+          "first_event_ms": 0.71,
+          "first_text_ms": 1426.12,
+          "first_audio_ms": 1.8,
+          "audio_bytes": 71712,
+          "server_metrics": {
+            "request_id": "bf8fcab59a",
+            "session_id": "admin",
+            "trace_id": "trace_019d3fbb6103",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 0,
+            "llm_first_token_ms": 1259,
+            "ttft_ms": 1424,
+            "ttfa_ms": 0,
+            "ttfa_answer_ms": 3127,
+            "agent_ms": null,
+            "tts_first_latency_ms": 1702,
+            "ttl_ms": 7556,
+            "sentences": 2,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11205,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@1424ms",
+              "done@7555ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 2,
+              "total_audio_bytes": 59184,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2051.83,
+          "total_ms": 5354.39,
+          "first_event_ms": 13.32,
+          "first_text_ms": 2312.79,
+          "first_audio_ms": 15.05,
+          "audio_bytes": 80064,
+          "server_metrics": {
+            "request_id": "126efb120b",
+            "session_id": "admin",
+            "trace_id": "trace_b50177e5583c",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 2259,
+            "ttft_ms": 2299,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 5337,
+            "agent_ms": null,
+            "tts_first_latency_ms": 3030,
+            "ttl_ms": 5340,
+            "sentences": 3,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11331,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@2299ms",
+              "done@5340ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 3,
+              "total_audio_bytes": 68544,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2058.35,
+          "total_ms": 5403.03,
+          "first_event_ms": 1.08,
+          "first_text_ms": 2966.65,
+          "first_audio_ms": 2.96,
+          "audio_bytes": 68976,
+          "server_metrics": {
+            "request_id": "7154498d53",
+            "session_id": "admin",
+            "trace_id": "trace_66824aa80127",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 2928,
+            "ttft_ms": 2965,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 5398,
+            "agent_ms": null,
+            "tts_first_latency_ms": 2437,
+            "ttl_ms": 5401,
+            "sentences": 2,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11315,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@2965ms",
+              "done@5401ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 2,
+              "total_audio_bytes": 59040,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2051.55,
+          "total_ms": 5219.02,
+          "first_event_ms": 1.35,
+          "first_text_ms": 3478.16,
+          "first_audio_ms": 2.46,
+          "audio_bytes": 82944,
+          "server_metrics": {
+            "request_id": "39f5149b60",
+            "session_id": "admin",
+            "trace_id": "trace_83ea91ace07b",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 0,
+            "llm_first_token_ms": 3475,
+            "ttft_ms": 3476,
+            "ttfa_ms": 0,
+            "ttfa_answer_ms": 3479,
+            "agent_ms": null,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 5217,
+            "sentences": 3,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11335,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@3476ms",
+              "done@5216ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 3,
+              "total_audio_bytes": 68544,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2042.75,
+          "total_ms": 3939.99,
+          "first_event_ms": 2.8,
+          "first_text_ms": 2194.86,
+          "first_audio_ms": 6.77,
+          "audio_bytes": 90000,
+          "server_metrics": {
+            "request_id": "ed04d4cc68",
+            "session_id": "admin",
+            "trace_id": "trace_82ba0110b10b",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 3,
+            "llm_first_token_ms": 2175,
+            "ttft_ms": 2192,
+            "ttfa_ms": 3,
+            "ttfa_answer_ms": 2194,
+            "agent_ms": null,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 3937,
+            "sentences": 4,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11351,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@2192ms",
+              "done@3936ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 4,
+              "total_audio_bytes": 76608,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2062.84,
+          "total_ms": 3447.55,
+          "first_event_ms": 1.23,
+          "first_text_ms": 1611.54,
+          "first_audio_ms": 3.72,
+          "audio_bytes": 70416,
+          "server_metrics": {
+            "request_id": "010e93fad9",
+            "session_id": "admin",
+            "trace_id": "trace_8baa58028e2a",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 1441,
+            "ttft_ms": 1607,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 3443,
+            "agent_ms": null,
+            "tts_first_latency_ms": 1843,
+            "ttl_ms": 3445,
+            "sentences": 2,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11319,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@1606ms",
+              "done@3445ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 2,
+              "total_audio_bytes": 57888,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2062.97,
+          "total_ms": 9820.83,
+          "first_event_ms": 0.89,
+          "first_text_ms": 7664.18,
+          "first_audio_ms": 2.4,
+          "audio_bytes": 70272,
+          "server_metrics": {
+            "request_id": "8a7c638b07",
+            "session_id": "admin",
+            "trace_id": "trace_2088a43342cd",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 7551,
+            "ttft_ms": 7659,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 9816,
+            "agent_ms": null,
+            "tts_first_latency_ms": 2156,
+            "ttl_ms": 9819,
+            "sentences": 2,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11357,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@7659ms",
+              "done@9819ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 2,
+              "total_audio_bytes": 58752,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2045.26,
+          "total_ms": 5704.56,
+          "first_event_ms": 2.62,
+          "first_text_ms": 4136.05,
+          "first_audio_ms": 6.42,
+          "audio_bytes": 85392,
+          "server_metrics": {
+            "request_id": "ee86e3b875",
+            "session_id": "admin",
+            "trace_id": "trace_2da945aa3012",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 2,
+            "llm_first_token_ms": 4005,
+            "ttft_ms": 4133,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 4137,
+            "agent_ms": null,
+            "tts_first_latency_ms": 14,
+            "ttl_ms": 5701,
+            "sentences": 4,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11350,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@4133ms",
+              "done@5701ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 4,
+              "total_audio_bytes": 75456,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2041.29,
+          "total_ms": 4545.42,
+          "first_event_ms": 0.69,
+          "first_text_ms": 2931.81,
+          "first_audio_ms": 1.92,
+          "audio_bytes": 90000,
+          "server_metrics": {
+            "request_id": "a88da55d58",
+            "session_id": "admin",
+            "trace_id": "trace_394541c47c14",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 0,
+            "llm_first_token_ms": 2849,
+            "ttft_ms": 2930,
+            "ttfa_ms": 0,
+            "ttfa_answer_ms": 2934,
+            "agent_ms": null,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 4543,
+            "sentences": 4,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11359,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@2930ms",
+              "done@4543ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 4,
+              "total_audio_bytes": 75600,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+          "connect_ms": 2054.03,
+          "total_ms": 9221.64,
+          "first_event_ms": 2.87,
+          "first_text_ms": 7445.28,
+          "first_audio_ms": 6.6,
+          "audio_bytes": 70560,
+          "server_metrics": {
+            "request_id": "be1ded9763",
+            "session_id": "admin",
+            "trace_id": "trace_f15b6740f073",
+            "channel": "portal",
+            "outcome": "llm",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 2,
+            "llm_first_token_ms": 7256,
+            "ttft_ms": 7439,
+            "ttfa_ms": 2,
+            "ttfa_answer_ms": 7448,
+            "agent_ms": null,
+            "tts_first_latency_ms": 16,
+            "ttl_ms": 9218,
+            "sentences": 2,
+            "fast_command": null,
+            "used_agent": false,
+            "prompt_chars": 11359,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@7438ms",
+              "done@9218ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 1,
+              "sentences_processed": 2,
+              "total_audio_bytes": 57168,
+              "num_workers": 2
+            }
+          }
+        }
+      ]
+    },
+    "ops": {
+      "first_event": {
+        "n": 20,
+        "p50_ms": 2.585,
+        "p95_ms": 2.821,
+        "max_ms": 2.83,
+        "mean_ms": 2.009
+      },
+      "first_text": {
+        "n": 20,
+        "p50_ms": 14015.74,
+        "p95_ms": 48972.775,
+        "max_ms": 48985.03,
+        "mean_ms": 18139.703
+      },
+      "first_audio": {
+        "n": 20,
+        "p50_ms": 5.495,
+        "p95_ms": 6.271,
+        "max_ms": 6.47,
+        "mean_ms": 4.428
+      },
+      "total": {
+        "n": 20,
+        "p50_ms": 15022.16,
+        "p95_ms": 48975.925,
+        "max_ms": 48988.18,
+        "mean_ms": 18637.081
+      },
+      "server": {
+        "llm_first_token_ms": {
+          "n": 20,
+          "p50_ms": 4402.5,
+          "p95_ms": 39769.35,
+          "max_ms": 39928,
+          "mean_ms": 9924.6
+        },
+        "ttft_ms": {
+          "n": 20,
+          "p50_ms": 14014.0,
+          "p95_ms": 48970.65,
+          "max_ms": 48983,
+          "mean_ms": 18137.75
+        },
+        "ack_audio_ms": {
+          "n": 20,
+          "p50_ms": 1.0,
+          "p95_ms": 1.0,
+          "max_ms": 1,
+          "mean_ms": 0.65
+        },
+        "ttfa_answer_ms": {
+          "n": 20,
+          "p50_ms": 15017.5,
+          "p95_ms": 48971.65,
+          "max_ms": 48984,
+          "mean_ms": 18632.8
+        },
+        "agent_ms": {
+          "n": 20,
+          "p50_ms": 8248.0,
+          "p95_ms": 12081.1,
+          "max_ms": 16377,
+          "mean_ms": 8211.7
+        },
+        "tts_first_latency_ms": {
+          "n": 20,
+          "p50_ms": 0.0,
+          "p95_ms": 2817.1,
+          "max_ms": 3218,
+          "mean_ms": 493.65
+        },
+        "ttl_ms": {
+          "n": 20,
+          "p50_ms": 15020.0,
+          "p95_ms": 48972.65,
+          "max_ms": 48985,
+          "mean_ms": 18634.2
+        }
+      },
+      "errors": [],
+      "turns": [
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2062.99,
+          "total_ms": 14547.46,
+          "first_event_ms": 0.73,
+          "first_text_ms": 11736.06,
+          "first_audio_ms": 1.29,
+          "audio_bytes": 33202,
+          "server_metrics": {
+            "request_id": "b89e0cb56b",
+            "session_id": "admin",
+            "trace_id": "trace_814d4ce3e6a1",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 0,
+            "llm_first_token_ms": 3407,
+            "ttft_ms": 11735,
+            "ttfa_ms": 0,
+            "ttfa_answer_ms": 14544,
+            "agent_ms": 8328,
+            "tts_first_latency_ms": 2796,
+            "ttl_ms": 14546,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11381,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@11735ms",
+              "done@14545ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2056.82,
+          "total_ms": 8742.35,
+          "first_event_ms": 0.68,
+          "first_text_ms": 8738.36,
+          "first_audio_ms": 1.5,
+          "audio_bytes": 45936,
+          "server_metrics": {
+            "request_id": "e09ac7faba",
+            "session_id": "admin",
+            "trace_id": "trace_ecbd4144e42a",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 0,
+            "llm_first_token_ms": 3127,
+            "ttft_ms": 8737,
+            "ttfa_ms": 0,
+            "ttfa_answer_ms": 8739,
+            "agent_ms": 5609,
+            "tts_first_latency_ms": 16,
+            "ttl_ms": 8740,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11308,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@8737ms",
+              "done@8740ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2064.21,
+          "total_ms": 12958.6,
+          "first_event_ms": 2.59,
+          "first_text_ms": 12955.3,
+          "first_audio_ms": 5.94,
+          "audio_bytes": 46224,
+          "server_metrics": {
+            "request_id": "de743451e2",
+            "session_id": "admin",
+            "trace_id": "trace_5e89bb8abdb1",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 4231,
+            "ttft_ms": 12953,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 12954,
+            "agent_ms": 8722,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 12955,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11384,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@12953ms",
+              "done@12955ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2054.66,
+          "total_ms": 6774.68,
+          "first_event_ms": 2.67,
+          "first_text_ms": 6771.21,
+          "first_audio_ms": 6.26,
+          "audio_bytes": 48672,
+          "server_metrics": {
+            "request_id": "bc5807491f",
+            "session_id": "admin",
+            "trace_id": "trace_be43565f45da",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 2287,
+            "ttft_ms": 6769,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 6770,
+            "agent_ms": 4480,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 6771,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11351,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@6769ms",
+              "done@6771ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2039.37,
+          "total_ms": 11508.2,
+          "first_event_ms": 2.83,
+          "first_text_ms": 9804.06,
+          "first_audio_ms": 5.47,
+          "audio_bytes": 19378,
+          "server_metrics": {
+            "request_id": "e5846a4255",
+            "session_id": "admin",
+            "trace_id": "trace_0e3b5afe7643",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 1633,
+            "ttft_ms": 9801,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 11504,
+            "agent_ms": 8168,
+            "tts_first_latency_ms": 1702,
+            "ttl_ms": 11505,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11351,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@9801ms",
+              "done@11505ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 19008,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2037.56,
+          "total_ms": 10367.69,
+          "first_event_ms": 2.71,
+          "first_text_ms": 10364.36,
+          "first_audio_ms": 6.0,
+          "audio_bytes": 45936,
+          "server_metrics": {
+            "request_id": "34b64dce8d",
+            "session_id": "admin",
+            "trace_id": "trace_6a2183644d9f",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 4379,
+            "ttft_ms": 10362,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 10363,
+            "agent_ms": 5983,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 10364,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11349,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@10362ms",
+              "done@10364ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2042.41,
+          "total_ms": 9091.21,
+          "first_event_ms": 2.82,
+          "first_text_ms": 9087.57,
+          "first_audio_ms": 5.72,
+          "audio_bytes": 46224,
+          "server_metrics": {
+            "request_id": "3f78966228",
+            "session_id": "admin",
+            "trace_id": "trace_cc95f00e0b6d",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 4117,
+            "ttft_ms": 9085,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 9086,
+            "agent_ms": 4966,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 9088,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11347,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@9085ms",
+              "done@9087ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2052.94,
+          "total_ms": 20810.07,
+          "first_event_ms": 2.58,
+          "first_text_ms": 20806.69,
+          "first_audio_ms": 5.52,
+          "audio_bytes": 48672,
+          "server_metrics": {
+            "request_id": "c89ef928ab",
+            "session_id": "admin",
+            "trace_id": "trace_a5d8aee67ba8",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 4426,
+            "ttft_ms": 20804,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 20805,
+            "agent_ms": 16377,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 20807,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11344,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@20804ms",
+              "done@20807ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2039.74,
+          "total_ms": 48975.28,
+          "first_event_ms": 2.62,
+          "first_text_ms": 48972.13,
+          "first_audio_ms": 5.3,
+          "audio_bytes": 33202,
+          "server_metrics": {
+            "request_id": "cfb8749719",
+            "session_id": "admin",
+            "trace_id": "trace_6ec0ec35f1b8",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 39761,
+            "ttft_ms": 48970,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 48971,
+            "agent_ms": 9207,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 48972,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11344,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@48970ms",
+              "done@48972ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2072.57,
+          "total_ms": 13546.72,
+          "first_event_ms": 1.25,
+          "first_text_ms": 13543.36,
+          "first_audio_ms": 2.99,
+          "audio_bytes": 45936,
+          "server_metrics": {
+            "request_id": "723b14f22e",
+            "session_id": "admin",
+            "trace_id": "trace_c977dd259bec",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 0,
+            "llm_first_token_ms": 4876,
+            "ttft_ms": 13542,
+            "ttfa_ms": 0,
+            "ttfa_answer_ms": 13543,
+            "agent_ms": 8664,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 13545,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11344,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@13542ms",
+              "done@13544ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2039.89,
+          "total_ms": 18180.5,
+          "first_event_ms": 2.62,
+          "first_text_ms": 16031.35,
+          "first_audio_ms": 6.13,
+          "audio_bytes": 47808,
+          "server_metrics": {
+            "request_id": "ad4d4c65ae",
+            "session_id": "admin",
+            "trace_id": "trace_511e1402a061",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 10102,
+            "ttft_ms": 16029,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 18176,
+            "agent_ms": 5927,
+            "tts_first_latency_ms": 2141,
+            "ttl_ms": 18177,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11344,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@16029ms",
+              "done@18177ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 34416,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2039.57,
+          "total_ms": 14491.53,
+          "first_event_ms": 2.58,
+          "first_text_ms": 14488.12,
+          "first_audio_ms": 6.13,
+          "audio_bytes": 48672,
+          "server_metrics": {
+            "request_id": "e3d7e6d20a",
+            "session_id": "admin",
+            "trace_id": "trace_0d56c82e2915",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 4546,
+            "ttft_ms": 14486,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 14487,
+            "agent_ms": 9939,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 14488,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11344,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@14486ms",
+              "done@14488ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2416.86,
+          "total_ms": 16506.69,
+          "first_event_ms": 2.57,
+          "first_text_ms": 13280.51,
+          "first_audio_ms": 5.31,
+          "audio_bytes": 66178,
+          "server_metrics": {
+            "request_id": "a7aeba843a",
+            "session_id": "admin",
+            "trace_id": "trace_f298a945ac6b",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 3581,
+            "ttft_ms": 13278,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 16501,
+            "agent_ms": 9695,
+            "tts_first_latency_ms": 3218,
+            "ttl_ms": 16503,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11344,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@13278ms",
+              "done@16503ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 65808,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2048.71,
+          "total_ms": 15496.86,
+          "first_event_ms": 2.64,
+          "first_text_ms": 15492.42,
+          "first_audio_ms": 5.98,
+          "audio_bytes": 78912,
+          "server_metrics": {
+            "request_id": "e611ccadce",
+            "session_id": "admin",
+            "trace_id": "trace_5934b855505f",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 10299,
+            "ttft_ms": 15490,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 15491,
+            "agent_ms": 5189,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 15494,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11344,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@15490ms",
+              "done@15493ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 65808,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2055.66,
+          "total_ms": 32335.06,
+          "first_event_ms": 0.68,
+          "first_text_ms": 32331.42,
+          "first_audio_ms": 1.51,
+          "audio_bytes": 46224,
+          "server_metrics": {
+            "request_id": "63d56f8207",
+            "session_id": "admin",
+            "trace_id": "trace_b8ddc1811e4d",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 0,
+            "llm_first_token_ms": 24999,
+            "ttft_ms": 32330,
+            "ttfa_ms": 0,
+            "ttfa_answer_ms": 32332,
+            "agent_ms": 7329,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 32333,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11344,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@32330ms",
+              "done@32333ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2058.9,
+          "total_ms": 15859.09,
+          "first_event_ms": 0.68,
+          "first_text_ms": 15855.75,
+          "first_audio_ms": 1.6,
+          "audio_bytes": 50256,
+          "server_metrics": {
+            "request_id": "dde4c8caa3",
+            "session_id": "admin",
+            "trace_id": "trace_6b5dba274300",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 0,
+            "llm_first_token_ms": 4054,
+            "ttft_ms": 15855,
+            "ttfa_ms": 0,
+            "ttfa_answer_ms": 15856,
+            "agent_ms": 11799,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 15857,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11344,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@15855ms",
+              "done@15857ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 34416,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2061.19,
+          "total_ms": 48988.18,
+          "first_event_ms": 2.6,
+          "first_text_ms": 48985.03,
+          "first_audio_ms": 5.76,
+          "audio_bytes": 33202,
+          "server_metrics": {
+            "request_id": "bb3e94104f",
+            "session_id": "admin",
+            "trace_id": "trace_c4b45df18040",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 39928,
+            "ttft_ms": 48983,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 48984,
+            "agent_ms": 9052,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 48985,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11344,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@48982ms",
+              "done@48985ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2061.27,
+          "total_ms": 16002.9,
+          "first_event_ms": 0.8,
+          "first_text_ms": 15999.59,
+          "first_audio_ms": 1.81,
+          "audio_bytes": 45936,
+          "server_metrics": {
+            "request_id": "9e4e0e9a5d",
+            "session_id": "admin",
+            "trace_id": "trace_1b00db7bba2a",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 0,
+            "llm_first_token_ms": 4142,
+            "ttft_ms": 15999,
+            "ttfa_ms": 0,
+            "ttfa_answer_ms": 16000,
+            "agent_ms": 11855,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 16001,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11344,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@15998ms",
+              "done@16001ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2059.54,
+          "total_ms": 25437.66,
+          "first_event_ms": 2.74,
+          "first_text_ms": 25433.16,
+          "first_audio_ms": 6.47,
+          "audio_bytes": 46224,
+          "server_metrics": {
+            "request_id": "da6d5fe706",
+            "session_id": "admin",
+            "trace_id": "trace_f8c5163e2252",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 1,
+            "llm_first_token_ms": 19630,
+            "ttft_ms": 25430,
+            "ttfa_ms": 1,
+            "ttfa_answer_ms": 25432,
+            "agent_ms": 5799,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 25434,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11344,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@25430ms",
+              "done@25434ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        },
+        {
+          "query": "Báo cáo thông tin hệ thống máy chủ: tên máy, hệ điều hành và thời gian hoạt động.",
+          "connect_ms": 2050.39,
+          "total_ms": 12120.89,
+          "first_event_ms": 0.79,
+          "first_text_ms": 12117.61,
+          "first_audio_ms": 1.86,
+          "audio_bytes": 48672,
+          "server_metrics": {
+            "request_id": "1499da170a",
+            "session_id": "admin",
+            "trace_id": "trace_d14c0e67c025",
+            "channel": "portal",
+            "outcome": "agent",
+            "stt_ms": null,
+            "ttfd_ms": 0,
+            "router_ms": 0,
+            "ack_audio_ms": 0,
+            "llm_first_token_ms": 4967,
+            "ttft_ms": 12117,
+            "ttfa_ms": 0,
+            "ttfa_answer_ms": 12118,
+            "agent_ms": 7146,
+            "tts_first_latency_ms": 0,
+            "ttl_ms": 12119,
+            "sentences": 1,
+            "fast_command": null,
+            "used_agent": true,
+            "prompt_chars": 11344,
+            "tools_offered": 5,
+            "status_steps": [
+              "thinking@0ms",
+              "speaking@12116ms",
+              "done@12119ms"
+            ],
+            "pipeline": {
+              "queue_depth_peak": 0,
+              "sentences_processed": 1,
+              "total_audio_bytes": 32832,
+              "num_workers": 2
+            }
+          }
+        }
+      ]
+    }
+  },
+  "concurrency": {
+    "query": "Giải thích ngắn gọn RAID 1 là gì trong hai câu.",
+    "c1": {
+      "wall_ms": 7843.7,
+      "ok": 1,
+      "errors": [],
+      "llm_first_token_ms": {
+        "n": 1,
+        "p50_ms": 3866.0,
+        "p95_ms": 3866.0,
+        "max_ms": 3866,
+        "mean_ms": 3866.0
+      },
+      "ttft_ms": {
+        "n": 1,
+        "p50_ms": 3979.0,
+        "p95_ms": 3979.0,
+        "max_ms": 3979,
+        "mean_ms": 3979.0
+      },
+      "ack_audio_ms": {
+        "n": 1,
+        "p50_ms": 1436.0,
+        "p95_ms": 1436.0,
+        "max_ms": 1436,
+        "mean_ms": 1436.0
+      },
+      "ttfa_answer_ms": {
+        "n": 1,
+        "p50_ms": 5879.0,
+        "p95_ms": 5879.0,
+        "max_ms": 5879,
+        "mean_ms": 5879.0
+      },
+      "agent_ms": {
+        "n": 0
+      },
+      "tts_first_latency_ms": {
+        "n": 1,
+        "p50_ms": 1907.0,
+        "p95_ms": 1907.0,
+        "max_ms": 1907,
+        "mean_ms": 1907.0
+      },
+      "ttl_ms": {
+        "n": 1,
+        "p50_ms": 7844.0,
+        "p95_ms": 7844.0,
+        "max_ms": 7844,
+        "mean_ms": 7844.0
+      }
+    },
+    "c5": {
+      "wall_ms": 10949.8,
+      "ok": 5,
+      "errors": [],
+      "llm_first_token_ms": {
+        "n": 5,
+        "p50_ms": 2986.0,
+        "p95_ms": 6661.8,
+        "max_ms": 7576,
+        "mean_ms": 3695.6
+      },
+      "ttft_ms": {
+        "n": 5,
+        "p50_ms": 3112.0,
+        "p95_ms": 6784.4,
+        "max_ms": 7687,
+        "mean_ms": 3777.0
+      },
+      "ack_audio_ms": {
+        "n": 5,
+        "p50_ms": 1.0,
+        "p95_ms": 1.0,
+        "max_ms": 1,
+        "mean_ms": 0.8
+      },
+      "ttfa_answer_ms": {
+        "n": 5,
+        "p50_ms": 4813.0,
+        "p95_ms": 8383.2,
+        "max_ms": 9184,
+        "mean_ms": 5712.4
+      },
+      "agent_ms": {
+        "n": 0
+      },
+      "tts_first_latency_ms": {
+        "n": 5,
+        "p50_ms": 2000.0,
+        "p95_ms": 2275.2,
+        "max_ms": 2297,
+        "mean_ms": 1937.4
+      },
+      "ttl_ms": {
+        "n": 5,
+        "p50_ms": 6165.0,
+        "p95_ms": 10209.6,
+        "max_ms": 10946,
+        "mean_ms": 7306.0
+      }
+    },
+    "c10": {
+      "wall_ms": 8561.6,
+      "ok": 10,
+      "errors": [],
+      "llm_first_token_ms": {
+        "n": 10,
+        "p50_ms": 2756.0,
+        "p95_ms": 4273.9,
+        "max_ms": 4939,
+        "mean_ms": 2964.2
+      },
+      "ttft_ms": {
+        "n": 10,
+        "p50_ms": 2936.0,
+        "p95_ms": 4428.4,
+        "max_ms": 5089,
+        "mean_ms": 3083.8
+      },
+      "ack_audio_ms": {
+        "n": 10,
+        "p50_ms": 0.0,
+        "p95_ms": 1.0,
+        "max_ms": 1,
+        "mean_ms": 0.2
+      },
+      "ttfa_answer_ms": {
+        "n": 10,
+        "p50_ms": 5352.5,
+        "p95_ms": 6578.95,
+        "max_ms": 6790,
+        "mean_ms": 5487.9
+      },
+      "agent_ms": {
+        "n": 0
+      },
+      "tts_first_latency_ms": {
+        "n": 10,
+        "p50_ms": 2484.0,
+        "p95_ms": 3299.25,
+        "max_ms": 3468,
+        "mean_ms": 2402.7
+      },
+      "ttl_ms": {
+        "n": 10,
+        "p50_ms": 6762.5,
+        "p95_ms": 8426.35,
+        "max_ms": 8560,
+        "mean_ms": 7054.1
+      }
+    }
+  },
+  "memory": {
+    "turns": 100,
+    "rss_start_mb": 133.7,
+    "rss_end_mb": 132.3,
+    "tasks_start": 1,
+    "tasks_end": 1,
+    "samples": [
+      {
+        "turn": 10,
+        "rss_mb": 132.3,
+        "tasks": 1
+      },
+      {
+        "turn": 20,
+        "rss_mb": 132.3,
+        "tasks": 1
+      },
+      {
+        "turn": 30,
+        "rss_mb": 132.3,
+        "tasks": 1
+      },
+      {
+        "turn": 40,
+        "rss_mb": 132.3,
+        "tasks": 1
+      },
+      {
+        "turn": 50,
+        "rss_mb": 132.3,
+        "tasks": 1
+      },
+      {
+        "turn": 60,
+        "rss_mb": 132.3,
+        "tasks": 1
+      },
+      {
+        "turn": 70,
+        "rss_mb": 132.3,
+        "tasks": 1
+      },
+      {
+        "turn": 80,
+        "rss_mb": 132.3,
+        "tasks": 1
+      },
+      {
+        "turn": 90,
+        "rss_mb": 132.3,
+        "tasks": 1
+      },
+      {
+        "turn": 100,
+        "rss_mb": 132.3,
+        "tasks": 1
+      }
+    ],
+    "errors": []
+  }
+}

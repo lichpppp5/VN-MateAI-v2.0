@@ -1,0 +1,41 @@
+{
+  "created_at": "2026-10-06T21:36:56",
+  "base": "https://127.0.0.1",
+  "sessions": 100,
+  "duration_s": 60,
+  "baseline_readyz_ms": {
+    "n": 280,
+    "p50": 10.2,
+    "p95": 15.2,
+    "p99": 16.6,
+    "max": 46.5
+  },
+  "baseline_errors": 0,
+  "load_readyz_ms": {
+    "n": 1080,
+    "p50": 10.4,
+    "p95": 22.8,
+    "p99": 105.0,
+    "max": 1259.5
+  },
+  "load_errors": 0,
+  "ws_connect_ms": {
+    "n": 100,
+    "p50": 486.4,
+    "p95": 972.6,
+    "p99": 972.8,
+    "max": 972.8
+  },
+  "ws_connected": 100,
+  "ws_failed": 0,
+  "ws_fail_reasons": [],
+  "ws_completed": 100,
+  "telemetry_messages": 16612,
+  "telemetry_gap_ms": {
+    "n": 2900,
+    "p50": 2015.9,
+    "p95": 2036.8,
+    "p99": 2040.0,
+    "max": 2040.4
+  }
+}

@@ -1,0 +1,307 @@
+/* SPDX-License-Identifier: Apache-2.0
+   Copyright (c) 2026 Dương Thanh Lịch — VN-MateAI. See LICENSE and NOTICE. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* VN-MateAI Cyber Neon Color Palette */
+    --vnmate-dark: #020813;
+    --vnmate-darker: #01060e;
+    --vnmate-cyan: #00f2fe;
+    --vnmate-neon: #00ffff;
+    --vnmate-blue: #0284c7;
+    --vnmate-cobalt: #2563eb;
+    --vnmate-amber: #f59e0b;
+    --vnmate-emerald: #10b981;
+    --vnmate-purple: #a855f7;
+    --vnmate-pink: #ec4899;
+    
+    /* Slate variations */
+    --vnmate-slate-50: #f8fafc;
+    --vnmate-slate-100: #f1f5f9;
+    --vnmate-slate-200: #e2e8f0;
+    --vnmate-slate-300: #cbd5e1;
+    --vnmate-slate-400: #94a3b8;
+    --vnmate-slate-500: #64748b;
+    --vnmate-slate-600: #475569;
+    --vnmate-slate-700: #334155;
+    --vnmate-slate-800: #1e293b;
+    --vnmate-slate-850: #111827;
+    --vnmate-slate-900: #0f172a;
+    --vnmate-slate-950: #020617;
+
+    /* Semantic colors using CSS variables */
+    --background: var(--vnmate-dark);
+    --foreground: #f0fdff;
+    --card: var(--vnmate-slate-900);
+    --card-foreground: #f0fdff;
+    --popover: var(--vnmate-slate-900);
+    --popover-foreground: #f0fdff;
+    --primary: var(--vnmate-cyan);
+    --primary-foreground: var(--vnmate-dark);
+    --secondary: var(--vnmate-slate-800);
+    --secondary-foreground: #f0fdff;
+    --muted: var(--vnmate-slate-800);
+    --muted-foreground: var(--vnmate-slate-400);
+    --accent: var(--vnmate-slate-800);
+    --accent-foreground: #f0fdff;
+    --destructive: var(--vnmate-pink);
+    --destructive-foreground: #f0fdff;
+    --border: var(--vnmate-slate-700);
+    --input: var(--vnmate-slate-700);
+    --ring: var(--vnmate-cyan);
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: var(--vnmate-dark);
+    --foreground: #f0fdff;
+    --card: var(--vnmate-slate-900);
+    --card-foreground: #f0fdff;
+    --popover: var(--vnmate-slate-900);
+    --popover-foreground: #f0fdff;
+    --primary: var(--vnmate-cyan);
+    --primary-foreground: var(--vnmate-dark);
+    --secondary: var(--vnmate-slate-800);
+    --secondary-foreground: #f0fdff;
+    --muted: var(--vnmate-slate-800);
+    --muted-foreground: var(--vnmate-slate-400);
+    --accent: var(--vnmate-slate-800);
+    --accent-foreground: #f0fdff;
+    --destructive: var(--vnmate-pink);
+    --destructive-foreground: #f0fdff;
+    --border: var(--vnmate-slate-700);
+    --input: var(--vnmate-slate-700);
+    --ring: var(--vnmate-cyan);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    background: linear-gradient(180deg, var(--vnmate-dark) 0%, var(--vnmate-darker) 100%);
+    background-attachment: fixed;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: var(--vnmate-darker);
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--vnmate-slate-800);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in srgb, var(--vnmate-cyan) 50%, transparent);
+  }
+}
+
+@layer components {
+  .glass-card {
+    background-color: color-mix(in srgb, var(--vnmate-slate-900) 50%, transparent);
+    backdrop-filter: blur(24px);
+    border: 1px solid color-mix(in srgb, var(--vnmate-slate-800) 50%, transparent);
+  }
+  
+  .neon-border {
+    border: 1px solid color-mix(in srgb, var(--vnmate-cyan) 30%, transparent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--vnmate-cyan) 30%, transparent);
+  }
+  
+  .neon-border-emerald {
+    border: 1px solid color-mix(in srgb, var(--vnmate-emerald) 30%, transparent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--vnmate-emerald) 30%, transparent);
+  }
+  
+  .neon-border-amber {
+    border: 1px solid color-mix(in srgb, var(--vnmate-amber) 30%, transparent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--vnmate-amber) 30%, transparent);
+  }
+  
+  .cyber-grid {
+    background-image: 
+      linear-gradient(rgba(0, 242, 254, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 242, 254, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  
+  .text-glow-cyan {
+    color: var(--vnmate-cyan);
+    text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+  }
+  
+  .text-glow-emerald {
+    color: var(--vnmate-emerald);
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  }
+  
+  .btn-cyber {
+    position: relative;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: all 0.3s;
+    border: 1px solid color-mix(in srgb, var(--vnmate-cyan) 50%, transparent);
+    background-color: color-mix(in srgb, var(--vnmate-slate-900) 50%, transparent);
+  }
+  .btn-cyber:hover {
+    border-color: var(--vnmate-cyan);
+    background-color: color-mix(in srgb, var(--vnmate-cyan) 10%, transparent);
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+  }
+  .btn-cyber:active {
+    transform: scale(0.98);
+  }
+  
+  .btn-cyber-emerald {
+    position: relative;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: all 0.3s;
+    border: 1px solid color-mix(in srgb, var(--vnmate-emerald) 50%, transparent);
+    background-color: color-mix(in srgb, var(--vnmate-slate-900) 50%, transparent);
+  }
+  .btn-cyber-emerald:hover {
+    border-color: var(--vnmate-emerald);
+    background-color: color-mix(in srgb, var(--vnmate-emerald) 10%, transparent);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+  .btn-cyber-emerald:active {
+    transform: scale(0.98);
+  }
+  
+  .btn-cyber-destructive {
+    position: relative;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: all 0.3s;
+    border: 1px solid color-mix(in srgb, var(--vnmate-pink) 50%, transparent);
+    background-color: color-mix(in srgb, var(--vnmate-slate-900) 50%, transparent);
+  }
+  .btn-cyber-destructive:hover {
+    border-color: var(--vnmate-pink);
+    background-color: color-mix(in srgb, var(--vnmate-pink) 10%, transparent);
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+  }
+  .btn-cyber-destructive:active {
+    transform: scale(0.98);
+  }
+  
+  .input-cyber {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: color-mix(in srgb, var(--vnmate-slate-900) 50%, transparent);
+    border: 1px solid var(--vnmate-slate-700);
+    border-radius: 0.5rem;
+    color: var(--vnmate-neon);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+  }
+  .input-cyber::placeholder {
+    color: var(--vnmate-slate-500);
+  }
+  .input-cyber:focus {
+    border-color: var(--vnmate-cyan);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--vnmate-cyan) 20%, transparent);
+    outline: none;
+  }
+  
+  .select-cyber {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: color-mix(in srgb, var(--vnmate-slate-900) 50%, transparent);
+    border: 1px solid var(--vnmate-slate-700);
+    border-radius: 0.5rem;
+    color: var(--vnmate-neon);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+  }
+  .select-cyber:focus {
+    border-color: var(--vnmate-cyan);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--vnmate-cyan) 20%, transparent);
+    outline: none;
+  }
+  
+  .card-hover {
+    transition: all 0.3s;
+  }
+  .card-hover:hover {
+    border-color: color-mix(in srgb, var(--vnmate-cyan) 50%, transparent);
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+    transform: scale(1.02);
+  }
+  
+  .status-dot {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 9999px;
+  }
+  
+  .status-online {
+    background-color: var(--vnmate-emerald);
+    box-shadow: 0 0 8px var(--vnmate-emerald);
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .status-offline {
+    background-color: var(--vnmate-slate-600);
+  }
+  
+  .status-warning {
+    background-color: var(--vnmate-amber);
+    box-shadow: 0 0 8px var(--vnmate-amber);
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .animate-in {
+    animation: animate-in 0.3s ease-out forwards;
+  }
+  
+  @keyframes animate-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .skeleton {
+    background-color: var(--vnmate-slate-800);
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    border-radius: 0.25rem;
+  }
+}

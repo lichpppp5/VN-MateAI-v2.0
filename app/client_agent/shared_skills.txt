@@ -1,0 +1,7 @@
+# Kỹ năng của máy chủ (thư mục skills/) chạy NGUYÊN BẢN trên máy trạm: đóng vào gói Agent thành skills/<tệp>
+# khi máy chủ phát gói (src/mateai/interfaces/http/agent_packages.py) và khi build .exe / bản macOS (scripts/build_agent.py).
+# Một tính năng một bản mã: không chép tay sang client_agent/skills/. Tệp chỉ được import thư viện chuẩn và
+# `from core.plugin_manager import export_skill`. Mỗi dòng một tên tệp; dòng bắt đầu bằng # là chú thích.
+auto_play_music.py
+auto_open_youtube.py
+auto_open_notepad_file.py

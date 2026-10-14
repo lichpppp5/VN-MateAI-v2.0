@@ -1,0 +1,113 @@
+# ==============================================================================
+# VN-MateAI: Git Ignore Rules
+# ==============================================================================
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+
+# PlatformIO & Embedded Firmware Build Artifacts
+.pio/
+*/.pio/
+*.bin
+esp32_firmware/.pio/
+esp32_firmware/binaries/
+
+# Firmware secrets (WiFi credentials) — chỉ commit bản .example
+esp32_firmware/src/secrets.h
+esp32_firmware/secrets.h
+**/secrets.h
+!**/secrets.example.h
+
+# Production Configuration & User Credentials
+config.json
+users.json
+
+# Security Certificates & Private Keys
+certs/*.key
+certs/*.crt
+certs/*.pem
+*.pem
+*.key
+*.crt
+
+# AI Models, Weights & Cache
+models/
+.cache/
+hf_cache/
+faster-whisper-*
+silero_vad*
+
+# Storage, Databases & Audio Cache
+storage/
+data/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Logs & Temporary Files
+logs/
+*.log
+scratch/
+tmp/
+temp/
+
+# Operating System & IDE Artifacts
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+.gemini/
+config/data_sources.json
+config/mcp_servers.json
+
+# Phase 73: sao lưu DB trước khi dọn dữ liệu mẫu
+*.db.bak-*
+
+# Master Cleanup Archive
+_archive/
+
+# Sinh ra khi cài editable (pip install -e .)
+*.egg-info/
+
+# Bản build Agent máy trạm (scripts/build_agent.py) — không commit file chạy
+dist/agent/
+build/agent/
+
+# Sao lưu config.json trước khi mã hoá khoá (chứa khoá dạng chữ thường)
+certs/*.bak
+
+# Bản sao lưu chứa bí mật (scripts/backup.py) — không bao giờ commit
+backups/
+
+# Server chạy thử cục bộ (Redis / SeaweedFS S3) — tải bằng scripts/dev_infra.py, không commit
+.infra/
+
+# Mật khẩu hạ tầng Docker (deploy/docker-compose.infra.yml) — không commit
+deploy/.env
+deploy/s3.json

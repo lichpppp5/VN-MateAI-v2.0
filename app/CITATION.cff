@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "Nếu bạn dùng VN-MateAI trong công việc hoặc nghiên cứu, hãy ghi nguồn như dưới đây. If you use VN-MateAI, please cite it as below."
+title: "VN-MateAI"
+type: software
+authors:
+  - family-names: "Dương"
+    given-names: "Thanh Lịch"
+    email: "thanhlich.duong@gmail.com"
+repository-code: "https://github.com/lichpppp/VNMateAI-v1.0"
+license: Apache-2.0
+date-released: "2026-10-07"
+abstract: "Trợ lý AI giọng nói và điều phối vận hành doanh nghiệp: kết nối hạ tầng có sẵn, AI Supervisor, giám sát, robot đồng hành."
+keywords:
+  - AI assistant
+  - enterprise operations
+  - voice
+  - Vietnamese

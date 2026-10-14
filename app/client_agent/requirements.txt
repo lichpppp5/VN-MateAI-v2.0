@@ -1,0 +1,35 @@
+# ============================================================
+# VN-MateAI Client Agent — Dependencies
+# Platform: Windows 10/11 x64 | Python 3.10+
+# ============================================================
+
+# --- WebSocket Communication with Master Server ---
+websockets>=12.0
+
+# --- System Monitoring & Process Control ---
+psutil>=5.9.8
+
+# --- Windows Automation (optional, Windows only) ---
+pywinauto>=0.6.8; sys_platform == 'win32'
+
+# --- Screen Capture ---
+mss>=9.0.1
+
+# --- Windows Registry & COM Interface (optional, Windows only) ---
+pywin32>=306; sys_platform == 'win32'
+wmi>=1.5.1; sys_platform == 'win32'
+
+# --- Clipboard Support ---
+pyperclip>=1.9.0
+
+# --- HTTP requests (for LLM fallback queries) ---
+httpx>=0.27.0
+
+# --- Notifications & System Tray ---
+pystray>=0.19.5
+Pillow>=10.3.0
+
+# --- VN-MateAI Visual Overlay Engine (Phase 32) ---
+customtkinter>=5.2.0
+matplotlib>=3.8.0
+networkx>=3.2.0

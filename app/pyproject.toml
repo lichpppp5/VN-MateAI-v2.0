@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mateai"
+version = "1.0.0"
+description = "VN-MateAI — gói kiến trúc đích (src/mateai). Code chạy thật được chuyển dần từ core/."
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Dương Thanh Lịch", email = "thanhlich.duong@gmail.com" }]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["mateai*"]

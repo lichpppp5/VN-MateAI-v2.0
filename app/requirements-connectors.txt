@@ -1,0 +1,7 @@
+# Thư viện tuỳ chọn cho nguồn dữ liệu SQL và connector cloud — chỉ cài loại bạn dùng.
+# PostgreSQL (psycopg) và SQLite đã nằm trong requirements.txt / thư viện chuẩn.
+pymysql>=1.1        # MySQL / MariaDB
+pymssql>=2.3        # SQL Server (hoặc dùng pyodbc + ODBC Driver 18)
+oracledb>=2.0       # Oracle (chế độ thin, không cần Oracle Client)
+boto3>=1.34         # connector AWS
+oci>=2.120          # connector Oracle Cloud

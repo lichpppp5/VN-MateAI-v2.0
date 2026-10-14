@@ -1,0 +1,113 @@
+# ==============================================================================
+# VN-MateAI: Root Git Ignore Rules
+# ==============================================================================
+
+# Environment Variables & Sensitive Credentials (CRITICAL)
+.env
+.env.*
+!.env.example
+*.env
+deploy/.env
+deploy/s3.json
+config/data_sources.json
+config/mcp_servers.json
+
+# Large Offline Image Archives (Exceeds GitHub 100MB file limit)
+images/*.tar
+images/*.tar.gz
+images/*.tgz
+
+# Windows Agent Client Build Artifacts (Built via scripts/build_agent.py or distributed via Releases)
+app/dist/
+app/build/
+dist/
+build/
+*.egg-info/
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# PlatformIO & Embedded Firmware Build Artifacts
+.pio/
+*/.pio/
+*.bin
+esp32_firmware/.pio/
+esp32_firmware/binaries/
+
+# Firmware secrets (WiFi credentials) — chỉ commit bản .example
+esp32_firmware/src/secrets.h
+esp32_firmware/secrets.h
+**/secrets.h
+!**/secrets.example.h
+
+# Production Configuration & User Credentials
+config.json
+users.json
+
+# Security Certificates & Private Keys
+certs/*.key
+certs/*.crt
+certs/*.pem
+certs/*.bak
+*.pem
+*.key
+*.crt
+
+# AI Models, Weights & Cache
+models/
+.cache/
+hf_cache/
+faster-whisper-*
+silero_vad*
+
+# Storage, Databases & Audio Cache
+storage/
+data/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.db.bak-*
+
+# Logs & Temporary Files
+logs/
+*.log
+scratch/
+tmp/
+temp/
+
+# Operating System & IDE Artifacts
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+.gemini/
+
+# Master Cleanup Archive & Backups
+_archive/
+backups/
+*.sql.gz
+*.tgz
+
+# Local Dev Infrastructure
+.infra/

@@ -1,0 +1,5 @@
+VN-MateAI 1.0.0
+commit a53a8a9
+build 2026-10-13 11:29
+images: vnmateai/app:1.0.0, postgres:16-alpine, redis:7-alpine, vnmateai/app:1.0.0-arm64 (arm64)
+Bản sạch: không kèm dữ liệu, tài khoản, token, khoá của máy build.

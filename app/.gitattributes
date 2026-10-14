@@ -1,0 +1,2 @@
+# Script chạy trên macOS / Linux: luôn LF (CRLF làm bash báo lỗi "\r: command not found")
+*.sh text eol=lf

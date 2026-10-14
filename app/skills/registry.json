@@ -1,0 +1,3767 @@
+{
+  "delegate_to_multi_agent": {
+    "module": "skills.agent_orchestrator",
+    "attr": "delegate_to_multi_agent",
+    "meta": {
+      "name": "delegate_to_multi_agent",
+      "description": "Ủy quyền yêu cầu cho Hệ thống Đa tác nhân (Multi-Agent Enterprise OS). Tự động phân loại tới CFO Agent (Tài chính), HR Agent (Nhân sự/Chính sách) hoặc CTO Agent (Hạ tầng kỹ thuật).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Nội dung chỉ đạo của CEO hoặc người dùng (ví dụ: 'Tháng này chi phí server tăng không?', 'Ai đang làm việc năng suất nhất?')."
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_enterprise_executive_summary": {
+    "module": "skills.agent_orchestrator",
+    "attr": "get_enterprise_executive_summary",
+    "meta": {
+      "name": "get_enterprise_executive_summary",
+      "description": "Bộ não tổng hợp & Báo cáo điều hành tức thì (Executive Intelligence) cho giọng nói, Web và Telegram. Trả về voice_summary (<4 câu, siêu tốc) và rich_details định dạng Markdown.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "target_scope": {
+            "type": "string",
+            "description": "Phạm vi báo cáo ('all', 'fin', 'hr', 'it').",
+            "default": "all"
+          },
+          "time_range": {
+            "type": "string",
+            "description": "Khoảng thời gian ('today', 'this_week', 'this_month').",
+            "default": "today"
+          }
+        }
+      },
+      "contract": {
+        "data_classification": "CONFIDENTIAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_executive_standup_briefing": {
+    "module": "skills.agent_orchestrator",
+    "attr": "get_executive_standup_briefing",
+    "meta": {
+      "name": "get_executive_standup_briefing",
+      "description": "Tạo báo cáo Họp Giao Ban Tự Động (Executive Daily Standup) tóm tắt tình hình toàn diện công ty trong 24h qua (Dòng tiền CFO, Tiến độ HR, Hạ tầng CTO). Dùng khi CEO yêu cầu báo cáo tình hình bằng giọng nói.",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      },
+      "contract": {
+        "data_classification": "CONFIDENTIAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "delegate_to_specialist": {
+    "module": "skills.ai_delegation",
+    "attr": "delegate_to_specialist",
+    "meta": {
+      "name": "delegate_to_specialist",
+      "description": "Ủy quyền (delegate) bài toán phức tạp cho Chuyên gia Hệ thống cấp cao (Claude) phân tích sâu, viết mã nguồn, chẩn đoán nguyên nhân gốc rễ (Root Cause) hoặc lập kế hoạch kiến trúc.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "task_description": {
+            "type": "string",
+            "description": "Mô tả chi tiết bài toán, lỗi hoặc yêu cầu kỹ thuật cần chuyên gia Claude xử lý."
+          },
+          "context_data": {
+            "type": "string",
+            "description": "Ngữ cảnh chi tiết, file log, đoạn mã nguồn, cấu hình hoặc dữ liệu điều tra liên quan."
+          },
+          "target_client": {
+            "type": "string",
+            "description": "ID hoặc tên máy trạm liên quan nếu có (mặc định: 'master')."
+          }
+        },
+        "required": [
+          "task_description"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "check_cashflow_predictive_health": {
+    "module": "skills.analytics_engine",
+    "attr": "check_cashflow_predictive_health",
+    "meta": {
+      "name": "check_cashflow_predictive_health",
+      "description": "Chạy thuật toán dự báo dòng tiền và tốc độ đốt tiền (Burn Rate & Runway). Nếu phát hiện quỹ công ty cạn kiệt trong vòng dưới 15 ngày, tự động kích hoạt CẢNH BÁO ĐỎ.",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      },
+      "contract": {
+        "data_classification": "CONFIDENTIAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "generate_dynamic_sql_chart": {
+    "module": "skills.analytics_engine",
+    "attr": "generate_dynamic_sql_chart",
+    "meta": {
+      "name": "generate_dynamic_sql_chart",
+      "description": "Chuyển đổi yêu cầu phân tích dữ liệu kinh doanh của CEO (ví dụ: 'Vẽ biểu đồ chi phí', 'Thống kê task theo phòng ban', 'Biểu đồ dòng tiền') thành câu lệnh SQL an toàn và sinh cấu hình Chart.js hiển thị ngay trên Web.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "Câu lệnh hoặc yêu cầu phân tích (ví dụ: 'Vẽ biểu đồ chi phí theo danh mục', 'Tỷ lệ trạng thái task')."
+          }
+        },
+        "required": [
+          "prompt"
+        ]
+      },
+      "contract": {
+        "data_classification": "CONFIDENTIAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_cpu_and_ram_usage": {
+    "module": "skills.auto_check_cpu_ram_performance",
+    "attr": "get_cpu_and_ram_usage",
+    "meta": {
+      "name": "get_cpu_and_ram_usage",
+      "description": "Lấy thông tin chi tiết về phần trăm sử dụng CPU và dung lượng RAM hiện tại của hệ thống (tổng dung lượng, đã dùng, còn trống, phần trăm sử dụng). Các cách người dùng thường yêu cầu: 'kiểm tra tình trạng CPU và RAM', 'xem máy tính đang dùng bao nhiêu RAM', 'kiểm tra hiệu năng máy tính', 'CPU đang chạy bao nhiêu phần trăm', 'xem mức sử dụng tài nguyên hệ thống'. Từ khoá: check CPU usage, RAM usage, system performance, memory stats, monitor system. Ví dụ yêu cầu: «Lấy thông tin phần trăm sử dụng CPU và dung lượng RAM hiện tại (tổng dung lượng, đã dùng, còn trống, phần trăm sử dụng) bằng psutil.».",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "interval_seconds": {
+            "type": "number",
+            "description": "Khoảng thời gian (giây) để đo phần trăm CPU. Mặc định là 0.5 giây.",
+            "default": 0.5
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_chrome_tabs_info": {
+    "module": "skills.auto_count_chrome_tabs",
+    "attr": "get_chrome_tabs_info",
+    "meta": {
+      "name": "get_chrome_tabs_info",
+      "description": "Đếm số lượng tab và cửa sổ đang mở trên trình duyệt Google Chrome, đồng thời liệt kê tiêu đề của các tab đang hoạt động. Thường dùng khi người dùng nói: 'đếm số tab chrome đang mở', 'kiểm tra chrome có bao nhiêu tab', 'liệt kê các tab chrome', 'xem danh sách tab đang mở trên chrome', 'how many tabs are open in chrome', 'list chrome tabs'. Ví dụ yêu cầu: «Đếm số lượng tab (tabs) hoặc cửa sổ đang mở trên trình duyệt Google Chrome hoặc liệt kê các tab đang hoạt động.».",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "include_tab_titles": {
+            "type": "boolean",
+            "description": "True nếu muốn lấy chi tiết tên tiêu đề của từng tab, False nếu chỉ cần đếm số lượng.",
+            "default": true
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "auto_get_hanoi_weather": {
+    "module": "skills.auto_get_hanoi_weather",
+    "attr": "auto_get_hanoi_weather",
+    "meta": {
+      "name": "auto_get_hanoi_weather",
+      "description": "Lấy dữ liệu thời tiết thực tế tại Hà Nội (nhiệt độ hiện tại, độ ẩm, tình trạng thời tiết) từ API miễn phí Open-Meteo. Trả về kết quả bằng tiếng Việt.\nCác cách người dùng hay nói:\n- \"Thời tiết Hà Nội hôm nay thế nào?\"\n- \"Nhiệt độ ở Hà Nội bây giờ bao nhiêu?\"\n- \"Cho tôi biết thời tiết hiện tại tại Hà Nội\"\n- \"Hà Nội hôm nay có mưa không?\"\n- \"Xem dự báo thời tiết Hà Nội\"\nKeywords: weather Hanoi, temperature Hanoi, Hanoi forecast, current weather, thời tiết, nhiệt độ, độ ẩm Ví dụ yêu cầu: «Lấy dữ liệu thời tiết thực tế tại Hà Nội từ API miễn phí như Open-Meteo hoặc wttr.in, trả về nhiệt độ hiện tại, độ ẩm và tình trạng thời tiết».",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_system_uptime": {
+    "module": "skills.auto_get_server_uptime",
+    "attr": "get_system_uptime",
+    "meta": {
+      "name": "get_system_uptime",
+      "description": "Kiểm tra thời gian hoạt động (uptime) của hệ thống máy tính/máy chủ Windows, cho biết máy đã mở và chạy liên tục được bao lâu kể từ lần khởi động gần nhất. Các cách người dùng hay yêu cầu: 'kiểm tra uptime máy chủ', 'máy tính đã bật được bao lâu rồi', 'xem thời gian hoạt động của máy', 'máy chạy liên tục mấy ngày rồi', 'hệ thống khởi động lúc nào'. Keywords: system uptime, server uptime, boot time, check running time, system running duration. Ví dụ yêu cầu: «Kiểm tra thời gian hoạt động (uptime) của máy chủ hệ thống (sử dụng thư viện psutil hoặc lệnh hệ thống để lấy thời gian máy chủ đã chạy).».",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "open_youtube": {
+    "module": "skills.auto_open_youtube",
+    "attr": "open_youtube",
+    "meta": {
+      "name": "open_youtube",
+      "description": "Mở trang chủ YouTube, thực hiện tìm kiếm video hoặc mở một đường dẫn video YouTube cụ thể trên trình duyệt web mặc định của Windows. Cách người dùng hay yêu cầu: 'mở youtube', 'bật youtube', 'tìm kiếm youtube nhạc trẻ', 'mở bài hát trên youtube', 'phát nhạc trên YouTube'. English keywords: open youtube, search youtube, play youtube video, browse youtube. Ví dụ yêu cầu: «Mở trình duyệt web truy cập trang YouTube (https://www.youtube.com) hoặc mở video/tìm kiếm trên YouTube trực tiếp trên máy tính.».",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Từ khóa tìm kiếm hoặc tên video/bài hát muốn tìm trên YouTube. Để trống nếu chỉ muốn vào trang chủ."
+          },
+          "url": {
+            "type": "string",
+            "description": "Đường dẫn YouTube cụ thể nếu có (ví dụ: https://www.youtube.com/watch?v=...)."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": true
+      }
+    },
+    "enabled": true
+  },
+  "auto_play_music": {
+    "module": "skills.auto_play_music",
+    "attr": "auto_play_music",
+    "meta": {
+      "name": "auto_play_music",
+      "description": "Automatically search for a song/music video on YouTube by keyword, find the first matching video, and immediately start playback in the default web browser with autoplay enabled. Returns the song title and URL. Ví dụ yêu cầu: «mở bài hát …, bật nhạc …, phát nhạc / nghe nhạc trên YouTube».",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "song_name": {
+            "type": "string",
+            "description": "The name of the song, artist, or search keyword to find and play on YouTube."
+          }
+        },
+        "required": [
+          "song_name"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": true
+      }
+    },
+    "enabled": true
+  },
+  "get_attendance_report": {
+    "module": "skills.business_tools",
+    "attr": "get_attendance_report",
+    "meta": {
+      "name": "get_attendance_report",
+      "description": "Tra cứu danh sách chấm công hôm nay hoặc theo ngày cụ thể.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "date_str": {
+            "type": "string",
+            "description": "Ngày cần tra cứu dạng YYYY-MM-DD (bỏ trống để lấy hôm nay)."
+          }
+        }
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_executive_leaderboard": {
+    "module": "skills.business_tools",
+    "attr": "get_executive_leaderboard",
+    "meta": {
+      "name": "get_executive_leaderboard",
+      "description": "Lấy bảng xếp hạng thi đua công việc (Leaderboard) toàn công ty, vinh danh nhân viên hoàn thành nhiều task nhất.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Số lượng nhân viên top đầu cần lấy (mặc định: 5).",
+            "default": 5
+          }
+        }
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_financial_summary": {
+    "module": "skills.business_tools",
+    "attr": "get_financial_summary",
+    "meta": {
+      "name": "get_financial_summary",
+      "description": "Lấy báo cáo tổng hợp dòng tiền (Cashflow, Thu, Chi, Số dư quỹ, Tốc độ đốt tiền Burn Rate, Runway) của doanh nghiệp.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "days": {
+            "type": "integer",
+            "description": "Số ngày phân tích gần nhất (mặc định: 30 ngày).",
+            "default": 30
+          }
+        }
+      },
+      "contract": {
+        "data_classification": "CONFIDENTIAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "record_attendance_skill": {
+    "module": "skills.business_tools",
+    "attr": "record_attendance_skill",
+    "meta": {
+      "name": "record_attendance_skill",
+      "description": "Ghi nhận lượt chấm công hoặc điểm danh cho nhân viên.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "employee_identifier": {
+            "type": "string",
+            "description": "Tên, email hoặc ID của nhân viên cần điểm danh."
+          },
+          "status": {
+            "type": "string",
+            "description": "Trạng thái: 'present' (Có mặt), 'late' (Đi muộn), 'early_leave' (Về sớm), 'remote' (Làm từ xa).",
+            "default": "present"
+          },
+          "check_out": {
+            "type": "boolean",
+            "description": "Nếu là điểm danh ra về (Check-out) thì đặt true, ngược lại vào ca là false.",
+            "default": false
+          }
+        },
+        "required": [
+          "employee_identifier"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "record_expense": {
+    "module": "skills.business_tools",
+    "attr": "record_expense",
+    "meta": {
+      "name": "record_expense",
+      "description": "Ghi nhận khoản chi tiêu (chi phí) vào Sổ quỹ tài chính doanh nghiệp. Dùng khi CEO hoặc quản lý ra lệnh chi tiền hoặc báo cáo chi phí.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Số tiền chi tiêu tính bằng VND (ví dụ: 15000000, 500000)."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Lý do hoặc mô tả chi tiết khoản chi (ví dụ: 'Mua bàn ghế văn phòng', 'Chi phí server AWS')."
+          },
+          "category": {
+            "type": "string",
+            "description": "Phân loại chi phí: 'Hạ tầng Cloud & Server', 'Lương & Thưởng', 'Văn phòng phẩm & Tiện ích', 'Nghiên cứu & Phát triển', 'Tiếp khách', 'Marketing', hoặc 'Khác'.",
+            "default": "Chi phí hoạt động"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Người hoặc vai trò thực hiện ghi nhận (mặc định: 'CEO').",
+            "default": "CEO"
+          }
+        },
+        "required": [
+          "amount",
+          "reason"
+        ]
+      },
+      "contract": {
+        "data_classification": "CONFIDENTIAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "record_income": {
+    "module": "skills.business_tools",
+    "attr": "record_income",
+    "meta": {
+      "name": "record_income",
+      "description": "Ghi nhận khoản thu (doanh thu, thanh toán hợp đồng) vào Sổ quỹ doanh nghiệp.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Số tiền thu tính bằng VND."
+          },
+          "source": {
+            "type": "string",
+            "description": "Nguồn thu hoặc khách hàng thanh toán (ví dụ: 'Thanh toán đợt 2 Hợp đồng công ty ABC')."
+          },
+          "category": {
+            "type": "string",
+            "description": "Danh mục: 'Doanh thu hợp đồng', 'Dịch vụ bảo trì', 'Tư vấn chuyển đổi số', hoặc 'Khác'.",
+            "default": "Doanh thu hợp đồng"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Người ghi nhận (mặc định: 'CEO').",
+            "default": "CEO"
+          }
+        },
+        "required": [
+          "amount",
+          "source"
+        ]
+      },
+      "contract": {
+        "data_classification": "CONFIDENTIAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "capture_worker_screen": {
+    "module": "skills.computer_use_skills",
+    "attr": "capture_worker_screen",
+    "meta": {
+      "name": "capture_worker_screen",
+      "description": "Chụp ảnh màn hình cửa sổ ứng dụng hoặc toàn màn hình worker Mac Mini đang điều khiển (Base64).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "window_title": {
+            "type": "string",
+            "description": "Tiêu đề cửa sổ ứng dụng cần chụp (để trống nếu chụp toàn màn hình)"
+          }
+        }
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_computer_use_status": {
+    "module": "skills.computer_use_skills",
+    "attr": "get_computer_use_status",
+    "meta": {
+      "name": "get_computer_use_status",
+      "description": "Kiểm tra trạng thái cụm Worker (Mac Mini), danh sách phiên Browser Vault và tỷ lệ tự phục hồi UI.",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "tool_execute_gui_task": {
+    "module": "skills.computer_use_skills",
+    "attr": "tool_execute_gui_task",
+    "meta": {
+      "name": "tool_execute_gui_task",
+      "description": "Thực thi tác vụ điều khiển chuột, bàn phím và giao diện (Computer-Use) tự động hóa trên môi trường Worker cô lập (Mac Mini). Hỗ trợ vượt bảo vệ anti-bot (Apple M-series) và tự phục hồi giao diện 2 tầng (Semantic DOM + Vision OCR). Tự động chuyển cấp độ rủi ro 4 khi phát hiện thao tác chuyển tiền hoặc duyệt lệnh để kích hoạt cổng phê duyệt Telegram HITL.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "task_goal": {
+            "type": "string",
+            "description": "Mô tả chi tiết mục tiêu tác vụ cần worker tự động hoá trên giao diện (VD: 'Đăng nhập vào VCB Digibank và kiểm tra biến động số dư')"
+          },
+          "system_target": {
+            "type": "string",
+            "description": "Tên hệ thống hoặc phần mềm đích (VD: 'VCB Digibank', 'WebSphere ERP', 'Cổng Thuế Điện Tử eTax')",
+            "default": "Web Portal"
+          },
+          "session_id": {
+            "type": "string",
+            "description": "Mã định danh phiên làm việc độc lập của worker (VD: 'vcb_session_01')",
+            "default": "default_session"
+          }
+        },
+        "required": [
+          "task_goal"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "test_ping_host": {
+    "module": "skills.custom_skills",
+    "attr": "test_ping_host",
+    "meta": {
+      "name": "test_ping_host",
+      "description": "Ping một địa chỉ IP hoặc tên miền bất kỳ (vd 8.8.8.8, google.com, máy trạm trong LAN) để kiểm tra kết nối mạng: số gói nhận được, tỉ lệ mất gói, độ trễ min/trung bình/max (ms). Dùng cho mọi yêu cầu 'ping …' hoặc 'kiểm tra mạng tới …'.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "Địa chỉ IP hoặc tên miền cần ping"
+          },
+          "count": {
+            "type": "integer",
+            "description": "Số gói gửi (1–10, mặc định 4)"
+          }
+        },
+        "required": [
+          "host"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "fetch_data_source": {
+    "module": "skills.data_source_tools",
+    "attr": "fetch_data_source",
+    "meta": {
+      "name": "fetch_data_source",
+      "description": "Lấy dữ liệu báo cáo từ một nguồn đã khai báo (ERP, kế toán, CRM...). Dùng để trả lời câu hỏi cần số liệu, ví dụ 'doanh thu tháng này bao nhiêu'.\n\nCÁCH TRẢ LỜI — BẮT BUỘC: khi kết quả có `rows`, hãy trình bày dữ liệu thành BẢNG MARKDOWN (mỗi dòng `| giá trị | giá trị |`, có dòng `| --- | --- |` sau tiêu đề cột) chứ KHÔNG liệt kê dòng dạng văn bản hay dán JSON thô. Đặt tên cột bằng chính tên trong `columns` (tiếng Việt nếu trường có tiếng Việt), và luôn kèm một dòng tóm tắt con số quan trọng ra ngoài bảng. Nếu `truncated` là true, phải nói rõ bảng chỉ hiện một phần và còn bao nhiêu dòng nữa — không được im lặng cho người dùng tưởng đã thấy hết.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "Mã nguồn dữ liệu (ví dụ: 'misa-amh'). Xem qua list_data_sources."
+          },
+          "report": {
+            "type": "string",
+            "description": "Tên báo cáo đã khai báo (ví dụ: 'doanh thu'). Bỏ trống = dùng báo cáo mặc định."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Số dòng tối đa cần xem. Mặc định 200, tối đa 200."
+          },
+          "args": {
+            "type": "object",
+            "description": "Tham số của truy vấn đã khai báo (xem `queries[].params` trong list_data_sources), ví dụ {\"host\": \"srv01\"}."
+          }
+        },
+        "required": [
+          "source_id"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "list_data_sources": {
+    "module": "skills.data_source_tools",
+    "attr": "list_data_sources",
+    "meta": {
+      "name": "list_data_sources",
+      "description": "Liệt kê các nguồn dữ liệu doanh nghiệp đã được khai báo (MISA, Odoo, SAP, ERP nội bộ...) kèm các báo cáo mỗi nguồn cung cấp. Gọi tool này TRƯỚC khi muốn lấy báo cáo, để biết chính xác tên nguồn và tên báo cáo.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Lọc theo nhóm: 'connector', 'reporting', 'analytics'. Bỏ trống = tất cả."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "prepare_data_source_export": {
+    "module": "skills.data_source_tools",
+    "attr": "prepare_data_source_export",
+    "meta": {
+      "name": "prepare_data_source_export",
+      "description": "Dựng file báo cáo để tải xuống (Excel .xlsx hoặc CSV) và đưa vào hàng đợi tải. Dùng khi người dùng nói 'xuất ra Excel', 'gửi tôi file CSV', 'tải báo cáo tồn kho cho tôi'.\n\nCÁCH TRẢ LỜI — BẮT BUỘC: file được dựng ngay và giao diện sẽ TỰ ĐỘNG tải về máy người dùng, họ không cần bấm gì. Vì vậy bạn chỉ cần nói ngắn gọn: đã xuất bao nhiêu dòng, định dạng gì, tên file là gì, và đường dẫn file lưu ở đâu trên máy họ. TUYỆT ĐỐI KHÔNG tự dựng lại bảng dữ liệu trong câu trả lời — file đã đầy đủ hơn phần bạn xem trước đó, in ra lại chỉ làm rối.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "Mã nguồn dữ liệu. Xem qua list_data_sources."
+          },
+          "report": {
+            "type": "string",
+            "description": "Tên báo cáo đã khai báo. Bỏ trống = dùng báo cáo mặc định."
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "xlsx",
+              "csv"
+            ],
+            "description": "Định dạng file. Mặc định 'xlsx'."
+          },
+          "max_rows": {
+            "type": "integer",
+            "description": "Số dòng tối đa. Mặc định 1000, tối đa 10000."
+          }
+        },
+        "required": [
+          "source_id"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "run_data_source_action": {
+    "module": "skills.data_source_tools",
+    "attr": "run_data_source_action",
+    "meta": {
+      "name": "run_data_source_action",
+      "description": "CAN THIỆP vào hệ thống doanh nghiệp qua một thao tác đã khai báo (ví dụ: tạo/đóng ticket, xác nhận cảnh báo, khởi động lại dịch vụ). Chỉ chạy được thao tác có trong `actions` của list_data_sources. LUÔN cần người có thẩm quyền duyệt; nếu kết quả có `awaiting_approval` thì nói với người dùng cần duyệt phiếu `approval_id` — KHÔNG tự coi là đã thực hiện.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "Mã nguồn dữ liệu."
+          },
+          "action": {
+            "type": "string",
+            "description": "Tên thao tác đã khai báo."
+          },
+          "params": {
+            "type": "object",
+            "description": "Tham số của thao tác (theo `actions[].params`)."
+          }
+        },
+        "required": [
+          "source_id",
+          "action"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "cancel_dev_fleet_task": {
+    "module": "skills.dev_fleet_tools",
+    "attr": "cancel_dev_fleet_task",
+    "meta": {
+      "name": "cancel_dev_fleet_task",
+      "description": "Huỷ một tác vụ Dev đang chạy (Master phải xác nhận dừng). Chỉ dùng khi người dùng yêu cầu rõ.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "task_id"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "create_dev_fleet_task": {
+    "module": "skills.dev_fleet_tools",
+    "attr": "create_dev_fleet_task",
+    "meta": {
+      "name": "create_dev_fleet_task",
+      "description": "Giao một tác vụ lập trình cho cụm Dev (qua Ubuntu Master → Mac mini). BẮT BUỘC có mục tiêu cụ thể, tiêu chí chấp nhận và bước kiểm chứng — không nhận 'hãy sửa lỗi này'. Tác vụ rủi ro medium trở lên cần người duyệt: nếu kết quả có `awaiting_approval`, nói người dùng duyệt phiếu `approval_id`, KHÔNG nói là đã giao. Đặt `require_tests`/`require_build`/`require_commit` để tác vụ chỉ được coi là xong khi có bằng chứng.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "objective": {
+            "type": "string",
+            "description": "Mục tiêu cụ thể (≥10 ký tự)"
+          },
+          "acceptance_criteria": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "verification_steps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "risk": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "rollback": {
+            "type": "string",
+            "description": "Cách khôi phục — bắt buộc từ risk medium"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "repository": {
+            "type": "string"
+          },
+          "branch": {
+            "type": "string"
+          },
+          "required_capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "required_platform": {
+            "type": "string"
+          },
+          "worker_id": {
+            "type": "string",
+            "description": "Ép máy cụ thể (tuỳ chọn)"
+          },
+          "require_tests": {
+            "type": "boolean"
+          },
+          "require_build": {
+            "type": "boolean"
+          },
+          "require_commit": {
+            "type": "boolean"
+          },
+          "dry_run": {
+            "type": "boolean",
+            "description": "Chỉ xem máy nào sẽ được chọn, không giao"
+          }
+        },
+        "required": [
+          "title",
+          "objective",
+          "acceptance_criteria",
+          "verification_steps"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_dev_fleet_briefing": {
+    "module": "skills.dev_fleet_tools",
+    "attr": "get_dev_fleet_briefing",
+    "meta": {
+      "name": "get_dev_fleet_briefing",
+      "description": "Báo cáo điều hành cụm Dev: tác vụ treo, máy mất liên lạc, việc chờ duyệt / chưa kiểm chứng, đề xuất. Chỉ đọc.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_dev_fleet_status": {
+    "module": "skills.dev_fleet_tools",
+    "attr": "get_dev_fleet_status",
+    "meta": {
+      "name": "get_dev_fleet_status",
+      "description": "Xem tình trạng cụm Dev (Ubuntu Master, các Mac mini, agent, số tác vụ). Dùng khi hỏi 'cụm dev thế nào', 'Master có khỏe không', 'Mac nào đang rảnh'. Chỉ đọc.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_dev_fleet_task": {
+    "module": "skills.dev_fleet_tools",
+    "attr": "get_dev_fleet_task",
+    "meta": {
+      "name": "get_dev_fleet_task",
+      "description": "Xem một tác vụ Dev: trạng thái, máy đang chạy, các lượt chạy, bằng chứng, đã KIỂM CHỨNG chưa. Nếu `display_status` là COMPLETED_UNVERIFIED thì KHÔNG được nói là đã xong — nói rõ chưa kiểm chứng.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "description": "Mã tác vụ (OP-…)"
+          }
+        },
+        "required": [
+          "task_id"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "list_dev_fleet_workers": {
+    "module": "skills.dev_fleet_tools",
+    "attr": "list_dev_fleet_workers",
+    "meta": {
+      "name": "list_dev_fleet_workers",
+      "description": "Liệt kê các Mac mini / worker do Master báo, kèm trạng thái, độ tươi dữ liệu, capability. Chỉ đọc.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "description": "Lọc theo trạng thái: IDLE, BUSY, OFFLINE… Bỏ trống = tất cả."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "lookup_domain_info": {
+    "module": "skills.domain_alert_skills",
+    "attr": "lookup_domain_info",
+    "meta": {
+      "name": "lookup_domain_info",
+      "description": "Tra cứu thông tin nhân sự và máy tính trong hệ thống nội bộ doanh nghiệp từ database đã đồng bộ AD. Dùng khi cần tìm số điện thoại nhân viên, phòng ban, chức vụ, email, hoặc tìm xem ai đang dùng máy tính nào, hoặc máy tính có địa chỉ IP nào thuộc về ai. Ví dụ: 'Số điện thoại nhân viên Nguyễn Văn A', 'Máy tính PC-KETOAN-01 của ai', 'Danh sách máy Windows 11'.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query_string": {
+            "type": "string",
+            "description": "Chuỗi tìm kiếm — tên nhân viên, tên phòng ban, hostname, địa chỉ IP, hoặc từ khóa liên quan."
+          }
+        },
+        "required": [
+          "query_string"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "send_telegram_message": {
+    "module": "skills.domain_alert_skills",
+    "attr": "send_telegram_message",
+    "meta": {
+      "name": "send_telegram_message",
+      "description": "Gửi tin nhắn cảnh báo sự cố hoặc thông báo chủ động lên Telegram cho quản trị viên. Dùng khi phát hiện sự cố nghiêm trọng (CPU quá cao, dịch vụ down, bảo mật bị xâm phạm), hoặc khi người dùng yêu cầu thông báo cho ai đó qua Telegram. Target 'incident_group' gửi vào nhóm sự cố chung, 'all_admins' gửi cho tất cả admin, hoặc nhập chat_id cụ thể của từng admin.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Đích gửi: 'incident_group' để gửi vào nhóm sự cố, 'all_admins' để gửi cho tất cả admin, hoặc chat_id Telegram cụ thể của admin.",
+            "default": "incident_group"
+          },
+          "message": {
+            "type": "string",
+            "description": "Nội dung tin nhắn cảnh báo, tối đa 4000 ký tự."
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "simulate_incoming_customer_email": {
+    "module": "skills.email_gateway",
+    "attr": "simulate_incoming_customer_email",
+    "meta": {
+      "name": "simulate_incoming_customer_email",
+      "description": "Mô phỏng hoặc tiếp nhận email từ khách hàng/đối tác gửi tới hòm thư doanh nghiệp. Tự động phân tích ngữ nghĩa, xếp loại khẩn cấp (P1-P4), tạo Ticket vào bảng tasks và tạo email phản hồi lịch sự.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "sender_email": {
+            "type": "string",
+            "description": "Địa chỉ email của khách hàng gửi tới (ví dụ: 'nguyenvana@techcorp.vn')."
+          },
+          "subject": {
+            "type": "string",
+            "description": "Tiêu đề email (ví dụ: 'Máy chủ API không phản hồi từ 10h sáng')."
+          },
+          "content": {
+            "type": "string",
+            "description": "Nội dung chi tiết của email báo lỗi hoặc yêu cầu dịch vụ."
+          }
+        },
+        "required": [
+          "sender_email",
+          "subject",
+          "content"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "query_company_policy": {
+    "module": "skills.enterprise_rag",
+    "attr": "query_company_policy",
+    "meta": {
+      "name": "query_company_policy",
+      "description": "Tra cứu nội quy, quy trình chuẩn (SOP), chính sách nhân sự, nghỉ phép, nghỉ ốm, thai sản, tạm ứng công tác phí từ Trung tâm Tri thức Doanh nghiệp (Enterprise RAG). Trả lời chính xác 100% theo văn bản pháp lý của công ty.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "Câu hỏi của nhân viên hoặc CEO (ví dụ: 'Nghỉ ốm cần nộp giấy tờ gì?', 'Quy trình xin nghỉ phép trên 3 ngày như thế nào?')."
+          }
+        },
+        "required": [
+          "question"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "query_organization_data": {
+    "module": "skills.erp_organization",
+    "attr": "query_organization_data",
+    "meta": {
+      "name": "query_organization_data",
+      "description": "Tra cứu cơ sở dữ liệu tổ chức ERP của doanh nghiệp: tìm kiếm thông tin phòng ban, nhân sự (họ tên, email, SĐT, chức vụ), thiết bị/máy tính (hostname, địa chỉ IP, người sử dụng), công việc (task, hạn chót, trạng thái) và sổ sách/hồ sơ.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Từ khóa hoặc câu hỏi cần tra cứu (ví dụ: '192.168.1.10', 'Nguyễn Văn A', 'Phòng Nhân Sự', 'danh sách máy chủ')."
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "append_genealogy_record": {
+    "module": "skills.excel_records_skill",
+    "attr": "append_genealogy_record",
+    "meta": {
+      "name": "append_genealogy_record",
+      "description": "Nhập liệu gia phả / Hán Nôm vào file Excel thông qua COM Interface. Tự động tìm dòng trống tiếp theo và ghi các trường: Họ tên, Đời thứ, Chi phái, Năm sinh, Năm mất, Ghi chú chữ Húy.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "excel_path": {
+            "type": "string",
+            "description": "Đường dẫn tuyệt đối đến file Excel (.xlsx hoặc .xls)."
+          },
+          "ho_ten": {
+            "type": "string",
+            "description": "Họ và tên đầy đủ (có thể bao gồm chữ Hán Nôm)."
+          },
+          "doi_thu": {
+            "type": "integer",
+            "description": "Đời thứ trong gia phả (số nguyên, ví dụ: 5)."
+          },
+          "chi_phai": {
+            "type": "string",
+            "description": "Chi phái / nhánh gia tộc (ví dụ: 'Chi trưởng', 'Chi thứ hai').",
+            "default": ""
+          },
+          "nam_sinh": {
+            "type": "integer",
+            "description": "Năm sinh (dương lịch). Dùng 0 nếu không rõ.",
+            "default": 0
+          },
+          "nam_mat": {
+            "type": "integer",
+            "description": "Năm mất (dương lịch). Dùng 0 nếu còn sống hoặc không rõ.",
+            "default": 0
+          },
+          "ghi_chu": {
+            "type": "string",
+            "description": "Ghi chú bổ sung, bao gồm chữ Húy hoặc hiệu (Hán Nôm).",
+            "default": ""
+          },
+          "sheet_name": {
+            "type": "string",
+            "description": "Tên sheet cần ghi vào. Mặc định là sheet đầu tiên.",
+            "default": ""
+          }
+        },
+        "required": [
+          "excel_path",
+          "ho_ten",
+          "doi_thu"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "delete_item": {
+    "module": "skills.file_system",
+    "attr": "delete_item",
+    "meta": {
+      "name": "delete_item",
+      "description": "Xóa tệp tin đơn lẻ hoặc thư mục trên hệ thống.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Đường dẫn tệp tin hoặc thư mục cần xóa."
+          },
+          "is_folder": {
+            "type": "boolean",
+            "description": "Đặt thành true nếu đối tượng cần xóa là thư mục. Mặc định là false (xóa tệp tin đơn lẻ)."
+          },
+          "target_client": {
+            "type": "string",
+            "description": "ID hoặc tên máy trạm đích cần thực thi (mặc định: 'master')."
+          },
+          "target_client_id": {
+            "type": "string",
+            "description": "Bí danh thay thế cho target_client nếu có."
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "list_directory": {
+    "module": "skills.file_system",
+    "attr": "list_directory",
+    "meta": {
+      "name": "list_directory",
+      "description": "Liệt kê nội dung thư mục bao gồm tên file/thư mục con, dung lượng và thời gian sửa đổi gần nhất.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Đường dẫn thư mục cần liệt kê (ví dụ: '.', './logs', 'C:\\Logs', '/var/log')."
+          },
+          "target_client": {
+            "type": "string",
+            "description": "ID hoặc tên máy trạm đích cần thực thi (mặc định: 'master')."
+          },
+          "target_client_id": {
+            "type": "string",
+            "description": "Bí danh thay thế cho target_client nếu có."
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "read_file": {
+    "module": "skills.file_system",
+    "attr": "read_file",
+    "meta": {
+      "name": "read_file",
+      "description": "Đọc nội dung tệp tin văn bản hoặc file log hệ thống. Tự động đọc N dòng cuối nếu file quá lớn để tránh tràn bộ nhớ.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "Đường dẫn tệp tin cần đọc (ví dụ: 'logs/run.log', 'config.json')."
+          },
+          "lines": {
+            "type": "integer",
+            "description": "Số lượng dòng tối đa cần đọc. Mặc định là 500 dòng cuối nếu file lớn."
+          },
+          "target_client": {
+            "type": "string",
+            "description": "ID hoặc tên máy trạm đích cần thực thi (mặc định: 'master')."
+          },
+          "target_client_id": {
+            "type": "string",
+            "description": "Bí danh thay thế cho target_client nếu có."
+          }
+        },
+        "required": [
+          "file_path"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "write_file": {
+    "module": "skills.file_system",
+    "attr": "write_file",
+    "meta": {
+      "name": "write_file",
+      "description": "Tạo file mới hoặc ghi đè (mode='w'), hoặc ghi tiếp vào cuối file (mode='a'). Hỗ trợ tự động tạo thư mục cha.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "Đường dẫn tệp tin cần tạo mới hoặc ghi nội dung (ví dụ: 'scripts/clean_cache.py', 'reports/test.txt')."
+          },
+          "content": {
+            "type": "string",
+            "description": "Nội dung văn bản cần ghi vào tệp tin."
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "w",
+              "a"
+            ],
+            "description": "Chế độ ghi: 'w' (tạo mới hoặc ghi đè toàn bộ), 'a' (ghi nối tiếp vào cuối file). Mặc định: 'w'."
+          },
+          "target_client": {
+            "type": "string",
+            "description": "ID hoặc tên máy trạm đích cần thực thi (mặc định: 'master')."
+          },
+          "target_client_id": {
+            "type": "string",
+            "description": "Bí danh thay thế cho target_client nếu có."
+          }
+        },
+        "required": [
+          "file_path",
+          "content"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "query_enterprise_graph_rag": {
+    "module": "skills.graph_rag",
+    "attr": "query_enterprise_graph_rag",
+    "meta": {
+      "name": "query_enterprise_graph_rag",
+      "description": "Tra cứu đồ thị tri thức doanh nghiệp GraphRAG (Kết hợp quan hệ Entities Triplet và Vector Semantic Search). Tuyệt đối loại bỏ hiện tượng AI ảo giác đối với quy trình phê duyệt, thủ tục xin nghỉ, thanh toán chi phí hoặc quy chế công ty.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "Câu hỏi cần tra cứu luồng quy trình (ví dụ: 'Quy trình xin nghỉ phép từ 2 đến 3 ngày', 'Ai là người duyệt chi phí trên 10 triệu?')."
+          }
+        },
+        "required": [
+          "question"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_infra_alerts": {
+    "module": "skills.infra_monitor_tools",
+    "attr": "get_infra_alerts",
+    "meta": {
+      "name": "get_infra_alerts",
+      "description": "Danh sách cảnh báo hạ tầng (Prometheus + Grafana), lọc theo mức nghiêm trọng. Chỉ đọc.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "warning",
+              "info"
+            ],
+            "description": "Chỉ lấy mức này trở lên. Bỏ trống = tất cả."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_infra_status": {
+    "module": "skills.infra_monitor_tools",
+    "attr": "get_infra_status",
+    "meta": {
+      "name": "get_infra_status",
+      "description": "Tình trạng hạ tầng theo Prometheus / Grafana của doanh nghiệp: cảnh báo đang bắn, target down, máy đang quá tải (CPU/RAM/đĩa), nguồn nào mất liên lạc. Dùng khi hỏi 'hạ tầng đang thế nào', 'có cảnh báo gì không', 'máy nào quá tải'.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "list_grafana_dashboards": {
+    "module": "skills.infra_monitor_tools",
+    "attr": "list_grafana_dashboards",
+    "meta": {
+      "name": "list_grafana_dashboards",
+      "description": "Liệt kê dashboard Grafana (tên, thư mục, đường dẫn mở) để chỉ cho người dùng xem biểu đồ chi tiết. Chỉ đọc.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "Lọc theo từ khoá trong tên / thư mục. Bỏ trống = tất cả."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "query_prometheus": {
+    "module": "skills.infra_monitor_tools",
+    "attr": "query_prometheus",
+    "meta": {
+      "name": "query_prometheus",
+      "description": "Chạy MỘT biểu thức PromQL (instant query, chỉ đọc) trên Prometheus của doanh nghiệp, ví dụ 'up == 0' hoặc 'rate(http_requests_total[5m])'. Trả các dòng nhãn + giá trị thật; không đoán số.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "promql": {
+            "type": "string",
+            "description": "Biểu thức PromQL (tối đa 600 ký tự)"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Mã nguồn Prometheus nếu có nhiều (bỏ trống = nguồn đầu tiên)"
+          }
+        },
+        "required": [
+          "promql"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "check_aws_cost": {
+    "module": "skills.integration_tools",
+    "attr": "check_aws_cost",
+    "meta": {
+      "name": "check_aws_cost",
+      "description": "Kiểm tra chi phí AWS (AWS Cost Explorer) trong khoảng thời gian. Trả về tổng chi phí USD và breakdown theo service.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "start_date": {
+            "type": "string",
+            "description": "Ngày bắt đầu (YYYY-MM-DD). Mặc định: 30 ngày trước."
+          },
+          "end_date": {
+            "type": "string",
+            "description": "Ngày kết thúc (YYYY-MM-DD). Mặc định: hôm nay."
+          },
+          "granularity": {
+            "type": "string",
+            "enum": [
+              "DAILY",
+              "MONTHLY",
+              "HOURLY"
+            ],
+            "description": "Độ chi tiết. Mặc định: MONTHLY."
+          },
+          "group_by": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Group theo dimension (SERVICE, LINKED_ACCOUNT...). Mặc định: ['SERVICE']."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "CONFIDENTIAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "check_aws_instances": {
+    "module": "skills.integration_tools",
+    "attr": "check_aws_instances",
+    "meta": {
+      "name": "check_aws_instances",
+      "description": "Lấy danh sách EC2 instances đang chạy trên AWS. Trả về instance ID, state, type, IP, tags.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "state_filter": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Lọc theo state (running, stopped, terminated...). Mặc định: ['running']."
+          },
+          "tag_filters": {
+            "type": "object",
+            "description": "Lọc theo tag key-value (ví dụ: {'Environment': 'prod'})."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "check_connector_health": {
+    "module": "skills.integration_tools",
+    "attr": "check_connector_health",
+    "meta": {
+      "name": "check_connector_health",
+      "description": "Kiểm tra sức khỏe kết nối các hệ thống ngoại vi (AWS, OCI, Paperless, eInvoice).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "connectors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "aws",
+                "oci",
+                "paperless",
+                "einvoice"
+              ]
+            },
+            "description": "Danh sách connector cần check. Mặc định: tất cả."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "check_einvoice_daily": {
+    "module": "skills.integration_tools",
+    "attr": "check_einvoice_daily",
+    "meta": {
+      "name": "check_einvoice_daily",
+      "description": "Thống kê hóa đơn điện tử (HĐĐT) trong 1 ngày: số lượng, tổng tiền, thuế, số lỗi, hủy.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Ngày thống kê (YYYY-MM-DD). Mặc định: hôm nay."
+          },
+          "tax_code": {
+            "type": "string",
+            "description": "Mã số thuế doanh nghiệp. Mặc định: config EINVOICE_TAX_CODE."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "CONFIDENTIAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "check_oci_instances": {
+    "module": "skills.integration_tools",
+    "attr": "check_oci_instances",
+    "meta": {
+      "name": "check_oci_instances",
+      "description": "Lấy danh sách Compute instances trên Oracle Cloud (OCI). Trả về OCID, display name, shape, state, IP.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "compartment_id": {
+            "type": "string",
+            "description": "OCID compartment. Mặc định: config OCI_COMPARTMENT_ID."
+          },
+          "state_filter": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Lọc theo lifecycle state (RUNNING, STOPPED...). Mặc định: ['RUNNING']."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "check_oci_metrics": {
+    "module": "skills.integration_tools",
+    "attr": "check_oci_metrics",
+    "meta": {
+      "name": "check_oci_metrics",
+      "description": "Lấy metrics CPU/RAM/Network của OCI Compute instances (Monitoring API).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "compartment_id": {
+            "type": "string",
+            "description": "OCID compartment. Mặc định: config."
+          },
+          "instance_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List OCID instance để lọc. None = tất cả."
+          },
+          "metrics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Metric names (CpuUtilization, MemoryUtilization, NetworkBytesIn, NetworkBytesOut). Mặc định: tất cả."
+          },
+          "start_time": {
+            "type": "string",
+            "description": "ISO datetime bắt đầu. Mặc định: 1 giờ trước."
+          },
+          "end_time": {
+            "type": "string",
+            "description": "ISO datetime kết thúc. Mặc định: now."
+          },
+          "interval_minutes": {
+            "type": "integer",
+            "description": "Khoảng lấy mẫu (phút). Mặc định: 5."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "download_paperless_document": {
+    "module": "skills.integration_tools",
+    "attr": "download_paperless_document",
+    "meta": {
+      "name": "download_paperless_document",
+      "description": "Tải file gốc (PDF) của tài liệu Paperless. Trả về base64 encoded.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "doc_id": {
+            "type": "integer",
+            "description": "Document ID."
+          },
+          "original": {
+            "type": "boolean",
+            "description": "True = file gốc, False = archived PDF/A. Mặc định: False."
+          }
+        },
+        "required": [
+          "doc_id"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_einvoice_details": {
+    "module": "skills.integration_tools",
+    "attr": "get_einvoice_details",
+    "meta": {
+      "name": "get_einvoice_details",
+      "description": "Lấy chi tiết 1 hóa đơn điện tử (items, seller, buyer, XML, PDF URL).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "invoice_id": {
+            "type": "string",
+            "description": "Invoice ID/UUID từ kết quả search."
+          }
+        },
+        "required": [
+          "invoice_id"
+        ]
+      },
+      "contract": {
+        "data_classification": "CONFIDENTIAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_paperless_document": {
+    "module": "skills.integration_tools",
+    "attr": "get_paperless_document",
+    "meta": {
+      "name": "get_paperless_document",
+      "description": "Lấy chi tiết đầy đủ 1 tài liệu Paperless (full OCR content, metadata, download URL).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "doc_id": {
+            "type": "integer",
+            "description": "Document ID từ kết quả search."
+          }
+        },
+        "required": [
+          "doc_id"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "search_einvoices": {
+    "module": "skills.integration_tools",
+    "attr": "search_einvoices",
+    "meta": {
+      "name": "search_einvoices",
+      "description": "Tìm kiếm hóa đơn điện tử theo từ khóa, mã số thuế người mua, trạng thái, khoảng ngày.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "Từ khóa (số hóa đơn, tên người mua...)."
+          },
+          "buyer_tax_code": {
+            "type": "string",
+            "description": "Mã số thuế người mua."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "failed",
+              "cancelled"
+            ],
+            "description": "Trạng thái HĐĐT."
+          },
+          "date_from": {
+            "type": "string",
+            "description": "Từ ngày (YYYY-MM-DD)."
+          },
+          "date_to": {
+            "type": "string",
+            "description": "Đến ngày (YYYY-MM-DD)."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Số kết quả tối đa (mặc định 20)."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Phân trang (mặc định 0)."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "CONFIDENTIAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "search_paperless_documents": {
+    "module": "skills.integration_tools",
+    "attr": "search_paperless_documents",
+    "meta": {
+      "name": "search_paperless_documents",
+      "description": "Tìm kiếm tài liệu/hợp đồng/văn bản trong Paperless-ngx (full-text OCR). Trả về danh sách document với snippet nội dung.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Từ khóa tìm kiếm (tên file, nội dung OCR, correspondent...)."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Số kết quả tối đa (mặc định 10, max 100)."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Lọc theo tag names."
+          },
+          "correspondents": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Lọc theo correspondent (người gửi/nhận)."
+          },
+          "document_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Lọc theo loại tài liệu (Hợp đồng, Hóa đơn, CV...)."
+          },
+          "created_after": {
+            "type": "string",
+            "description": "Ngày tạo sau (YYYY-MM-DD)."
+          },
+          "created_before": {
+            "type": "string",
+            "description": "Ngày tạo trước (YYYY-MM-DD)."
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "create_system_ticket": {
+    "module": "skills.itsm_skills",
+    "attr": "create_system_ticket",
+    "meta": {
+      "name": "create_system_ticket",
+      "description": "Tạo phiếu công việc ITSM khi AI phát hiện sự cố, hoàn tất xử lý hệ thống, hoặc khi nhân viên IT thực hiện thay đổi cần ghi nhận. Phiếu được lưu bất biến vào audit trail và hệ thống ERP.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Tiêu đề ngắn gọn mô tả công việc hoặc sự cố (tối đa 200 ký tự)."
+          },
+          "description": {
+            "type": "string",
+            "description": "Mô tả chi tiết vấn đề, nguyên nhân, hành động đã thực hiện và kết quả."
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "incident",
+              "change",
+              "maintenance",
+              "ai_action",
+              "alert",
+              "other"
+            ],
+            "description": "Loại phiếu: 'incident'=sự cố, 'change'=thay đổi hệ thống, 'maintenance'=bảo trì định kỳ, 'ai_action'=AI tự xử lý, 'alert'=cảnh báo, 'other'=khác."
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "info"
+            ],
+            "description": "Mức độ nghiêm trọng: critical > high > medium > low > info."
+          },
+          "assignee_name": {
+            "type": "string",
+            "description": "Tên nhân viên phụ trách (tùy chọn). Nếu bỏ trống, phiếu ở trạng thái 'unassigned'."
+          },
+          "dept_name": {
+            "type": "string",
+            "description": "Tên phòng ban liên quan (tùy chọn, ví dụ: 'Phòng IT', 'Kế Toán')."
+          },
+          "created_by_ai": {
+            "type": "boolean",
+            "description": "True nếu phiếu được tạo tự động bởi AI (không phải do người dùng nhập tay)."
+          },
+          "resolution_notes": {
+            "type": "string",
+            "description": "Ghi chú giải quyết nếu vấn đề đã được xử lý xong ngay lúc tạo phiếu."
+          },
+          "caller_id": {
+            "type": "string",
+            "description": "ID nhân viên / user đang ra lệnh. Dùng để ghi vào audit trail."
+          }
+        },
+        "required": [
+          "title",
+          "category",
+          "severity"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "generate_daily_report": {
+    "module": "skills.itsm_skills",
+    "attr": "generate_daily_report",
+    "meta": {
+      "name": "generate_daily_report",
+      "description": "Tổng hợp báo cáo cuối ngày: thống kê phiếu ITSM, nhật ký kiểm toán, KPI AI và ước tính thời gian tiết kiệm được. Trả về báo cáo văn bản tiếng Việt và dữ liệu JSON cho Dashboard.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "report_date": {
+            "type": "string",
+            "description": "Ngày cần báo cáo (ISO format YYYY-MM-DD). Nếu để trống, mặc định là hôm nay."
+          },
+          "include_audit_details": {
+            "type": "boolean",
+            "description": "True để đính kèm 10 dòng audit log gần nhất vào báo cáo."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_tickets": {
+    "module": "skills.itsm_skills",
+    "attr": "get_tickets",
+    "meta": {
+      "name": "get_tickets",
+      "description": "Xem danh sách ticket / phiếu ITSM (phiếu hỗ trợ, sự cố) từ hệ thống ERP: ticket đang mở, đang xử lý, đã đóng. Hỗ trợ lọc theo trạng thái, phòng ban, hoặc chỉ xem phiếu do AI tạo.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "status_filter": {
+            "type": "string",
+            "enum": [
+              "all",
+              "pending",
+              "in_progress",
+              "completed",
+              "cancelled"
+            ],
+            "description": "Lọc theo trạng thái. Mặc định 'all'."
+          },
+          "ai_only": {
+            "type": "boolean",
+            "description": "True để chỉ xem phiếu do AI tự tạo."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Số phiếu tối đa trả về. Mặc định 20, tối đa 100."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "update_ticket_status": {
+    "module": "skills.itsm_skills",
+    "attr": "update_ticket_status",
+    "meta": {
+      "name": "update_ticket_status",
+      "description": "Cập nhật trạng thái và ghi chú giải quyết cho một phiếu ITSM đã tồn tại. Thường dùng sau khi AI hoặc kỹ thuật viên hoàn thành xử lý sự cố.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "ticket_id": {
+            "type": "string",
+            "description": "ID phiếu cần cập nhật (ví dụ: 'erp_abc123def456')."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "in_progress",
+              "completed",
+              "cancelled"
+            ],
+            "description": "Trạng thái mới của phiếu."
+          },
+          "resolution_notes": {
+            "type": "string",
+            "description": "Ghi chú mô tả cách thức giải quyết vấn đề."
+          },
+          "caller_id": {
+            "type": "string",
+            "description": "ID người thực hiện cập nhật (dùng cho audit trail)."
+          }
+        },
+        "required": [
+          "ticket_id",
+          "status"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "send_task_to_client": {
+    "module": "skills.lean_hr_skills",
+    "attr": "send_task_to_client",
+    "meta": {
+      "name": "send_task_to_client",
+      "description": "Giao việc hoặc gửi tin nhắn nhắc việc tương tác dạng popup nổi hai chiều xuống máy con trong mạng LAN.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "Định danh mã máy trạm con (ví dụ: 'TEST-WORKER-01', 'KT-HOAN', 'MAY-KE-TOAN')."
+          },
+          "message": {
+            "type": "string",
+            "description": "Nội dung công việc hoặc thông điệp cần nhắc nhở nhân viên thực hiện."
+          },
+          "sender": {
+            "type": "string",
+            "description": "Tên người hoặc phòng ban giao việc (mặc định: 'Ban Giám Đốc')."
+          }
+        },
+        "required": [
+          "client_id",
+          "message"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "summarize_monthly_kpi": {
+    "module": "skills.lean_hr_skills",
+    "attr": "summarize_monthly_kpi",
+    "meta": {
+      "name": "summarize_monthly_kpi",
+      "description": "Đọc file nhật ký kpi_logs.csv để đếm tổng số lượng công việc đã hoàn thành hoặc vướng mắc của nhân viên theo tháng.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "Mã máy trạm cần tổng hợp (bỏ trống nếu muốn xem toàn bộ hệ thống)."
+          },
+          "month": {
+            "type": "string",
+            "description": "Tháng cần tổng hợp định dạng YYYY-MM hoặc số tháng như '9', '09' (mặc định: tháng hiện tại)."
+          }
+        }
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_ai_budget_status": {
+    "module": "skills.llmops_tools",
+    "attr": "get_ai_budget_status",
+    "meta": {
+      "name": "get_ai_budget_status",
+      "description": "Xem ngân sách AI: chế độ (off / warn / block), hạn mức token / chi phí theo ngày, tháng, người và mức đã dùng. Cách hỏi: 'còn bao nhiêu hạn mức AI', 'ngân sách AI hôm nay', 'sao AI báo hết hạn mức'.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_ai_eval_results": {
+    "module": "skills.llmops_tools",
+    "attr": "get_ai_eval_results",
+    "meta": {
+      "name": "get_ai_eval_results",
+      "description": "Xem kết quả các lần chạy bộ đánh giá chất lượng AI: tỉ lệ đạt, so với lần trước, ca nào bị TỤT (đạt → hỏng). Truyền run_id để xem chi tiết một lần chạy. Đạt nghĩa là thỏa các điều kiện quản trị viên đã viết, không chứng minh gì thêm.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "set_id": {
+            "type": "string",
+            "description": "Lọc theo bộ kiểm"
+          },
+          "run_id": {
+            "type": "string",
+            "description": "Chi tiết một lần chạy"
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_ai_usage": {
+    "module": "skills.llmops_tools",
+    "attr": "get_ai_usage",
+    "meta": {
+      "name": "get_ai_usage",
+      "description": "Xem mức dùng AI thật (token, số lượt, chi phí theo giá đã khai) trong N ngày gần nhất, theo model và theo người. Cách hỏi: 'tháng này dùng AI hết bao nhiêu', 'tốn bao nhiêu token', 'ai dùng AI nhiều nhất', 'chi phí AI'. Nếu có token chưa khai giá thì phải nói rõ phần đó chưa quy ra tiền.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "days": {
+            "type": "integer",
+            "description": "Số ngày gần nhất (1–365), mặc định 30"
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "create_new_skill": {
+    "module": "skills.meta_skills",
+    "attr": "create_new_skill",
+    "meta": {
+      "name": "create_new_skill",
+      "description": "Tạo KỸ NĂNG MỚI khi người dùng yêu cầu một VIỆC mà hiện chưa có công cụ nào làm được (vd mở bài hát/phát nhạc, tra cứu một trang web cụ thể, tự động hoá một thao tác), kể cả khi cần DỮ LIỆU TRỰC TUYẾN / THỜI GIAN THỰC chưa có công cụ lấy (giá vàng, tỷ giá, thời tiết, tin tức). Sinh mã Python, kiểm tra an toàn và nạp ngay; sau đó gọi kỹ năng mới để làm tiếp yêu cầu. KHÔNG dùng cho câu hỏi trò chuyện hay câu tự trả lời được bằng kiến thức. intent_description: mô tả đầy đủ việc cần làm, dùng chính lời người dùng.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "intent_description": {
+            "type": "string",
+            "description": "Mô tả chi tiết chức năng kỹ năng cần tạo (đầu vào, quy tắc xử lý, dữ liệu trả về)."
+          },
+          "skill_name": {
+            "type": "string",
+            "description": "Tên hàm tiếng Anh dạng snake_case (tùy chọn), ví dụ: calculate_tax, scan_lan_devices."
+          }
+        },
+        "required": [
+          "intent_description"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "list_available_skills": {
+    "module": "skills.meta_skills",
+    "attr": "list_available_skills",
+    "meta": {
+      "name": "list_available_skills",
+      "description": "Liệt kê danh sách tất cả các kỹ năng đang hoạt động trong hệ thống kèm trạng thái.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "filter_keyword": {
+            "type": "string",
+            "description": "Từ khóa lọc kỹ năng theo tên hoặc mô tả (tùy chọn)."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "reload_all_skills": {
+    "module": "skills.meta_skills",
+    "attr": "reload_all_skills",
+    "meta": {
+      "name": "reload_all_skills",
+      "description": "Nạp lại toàn bộ kho kỹ năng từ đĩa, phát hiện các module mới và cập nhật registry trong bộ nhớ.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "capture_screen_base64": {
+    "module": "skills.monitoring_skills",
+    "attr": "capture_screen_base64",
+    "meta": {
+      "name": "capture_screen_base64",
+      "description": "Chụp toàn bộ màn hình máy tính, nén in-memory và trả về chuỗi Base64 cùng thông số độ phân giải.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "quality": {
+            "type": "integer",
+            "description": "Chất lượng nén JPEG (10-100)",
+            "default": 65
+          },
+          "max_width": {
+            "type": "integer",
+            "description": "Chiều rộng tối đa để resize (px)",
+            "default": 1280
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": true
+      }
+    },
+    "enabled": true
+  },
+  "check_peripherals": {
+    "module": "skills.monitoring_skills",
+    "attr": "check_peripherals",
+    "meta": {
+      "name": "check_peripherals",
+      "description": "Kiểm tra các thiết bị ngoại vi USB, bàn phím, chuột và thiết bị cắm ngoài đang kết nối.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_active_processes": {
+    "module": "skills.monitoring_skills",
+    "attr": "get_active_processes",
+    "meta": {
+      "name": "get_active_processes",
+      "description": "Liệt kê danh sách các tiến trình đang chạy ngốn nhiều CPU và RAM nhất trên máy tính.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Số lượng tiến trình tối đa cần lấy",
+            "default": 15
+          },
+          "sort_by": {
+            "type": "string",
+            "enum": [
+              "cpu",
+              "memory"
+            ],
+            "description": "Tiêu chí sắp xếp: 'cpu' hoặc 'memory'",
+            "default": "cpu"
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_network_connections": {
+    "module": "skills.monitoring_skills",
+    "attr": "get_network_connections",
+    "meta": {
+      "name": "get_network_connections",
+      "description": "Quét các kết nối mạng đang hoạt động (ESTABLISHED, LISTEN) và địa chỉ IP đích.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Số lượng kết nối tối đa",
+            "default": 30
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "kill_process": {
+    "module": "skills.pc_control_skills",
+    "attr": "kill_process",
+    "meta": {
+      "name": "kill_process",
+      "description": "Kết thúc (terminate/kill) một tiến trình theo tên hoặc PID. Dùng force=true nếu terminate thông thường không thành công.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Tên tiến trình (ví dụ: 'notepad.exe', 'chrome.exe'). Bỏ trống nếu dùng pid.",
+            "default": ""
+          },
+          "pid": {
+            "type": "integer",
+            "description": "PID của tiến trình. Dùng khi biết chính xác PID.",
+            "default": 0
+          },
+          "force": {
+            "type": "boolean",
+            "description": "Nếu true, dùng kill() thay vì terminate() (mạnh hơn).",
+            "default": false
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "security_audit": {
+    "module": "skills.monitoring_skills",
+    "attr": "security_audit",
+    "meta": {
+      "name": "security_audit",
+      "description": "Kiểm toán an ninh: Đọc trạng thái Windows Defender (diệt virus thời gian thực) và Tường lửa (Firewall).",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "install_skill_from_url": {
+    "module": "skills.ninerouter_skills",
+    "attr": "install_skill_from_url",
+    "meta": {
+      "name": "install_skill_from_url",
+      "description": "Tải tài liệu SKILL.md hoặc mã nguồn kỹ năng từ đường dẫn URL (như GitHub raw, Gist, web link), lưu vào kho lưu trữ kỹ năng 'skills/' và tự động nạp vào runtime hệ thống. Dùng khi người dùng yêu cầu 'tải skill về', 'thêm skill từ URL', 'đọc và thêm vào kho kỹ năng'.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Đường dẫn URL chứa file kỹ năng (ví dụ: raw.githubusercontent.com/.../SKILL.md hoặc .py)."
+          },
+          "skill_name": {
+            "type": "string",
+            "description": "Tên định danh kỹ năng hoặc thư mục lưu trữ (tùy chọn, tự động nhận diện nếu để trống).",
+            "default": ""
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "ninerouter_chat": {
+    "module": "skills.ninerouter_skills",
+    "attr": "ninerouter_chat",
+    "meta": {
+      "name": "ninerouter_chat",
+      "description": "Gửi truy vấn hoặc yêu cầu sinh mã nguồn/phân tích chuyên sâu đến một mô hình LLM cụ thể trên 9Router (Gemini, Claude, GPT, DeepSeek).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "Nội dung câu hỏi hoặc yêu cầu dành cho mô hình."
+          },
+          "model": {
+            "type": "string",
+            "description": "Tên model cụ thể trên 9Router (ví dụ: 'ag/gemini-3.8-flash-low', 'ag/claude-sonnet-4-6').",
+            "default": "ag/gemini-3.8-flash-low"
+          },
+          "system_prompt": {
+            "type": "string",
+            "description": "Chỉ thị hệ thống tùy chọn (System instruction).",
+            "default": ""
+          }
+        },
+        "required": [
+          "prompt"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "ninerouter_create_embeddings": {
+    "module": "skills.ninerouter_skills",
+    "attr": "ninerouter_create_embeddings",
+    "meta": {
+      "name": "ninerouter_create_embeddings",
+      "description": "Tạo vector biểu diễn ngữ nghĩa (Embeddings) cho văn bản qua 9Router phục vụ tra cứu ngữ nghĩa, RAG và tìm kiếm tương đồng.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Văn bản cần trích xuất vector embeddings."
+          },
+          "model": {
+            "type": "string",
+            "description": "Tên model embedding (ví dụ: 'openai/text-embedding-3-small').",
+            "default": "openai/text-embedding-3-small"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "ninerouter_generate_image": {
+    "module": "skills.ninerouter_skills",
+    "attr": "ninerouter_generate_image",
+    "meta": {
+      "name": "ninerouter_generate_image",
+      "description": "Tạo hình ảnh nghệ thuật từ mô tả văn bản (Text-to-Image) thông qua cổng 9Router bằng DALL-E, Gemini Imagen, FLUX, SDWebUI, ComfyUI. Dùng khi người dùng yêu cầu vẽ tranh, tạo ảnh minh họa.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "Mô tả chi tiết bức ảnh cần tạo bằng tiếng Anh hoặc tiếng Việt."
+          },
+          "model": {
+            "type": "string",
+            "description": "Tên model tạo ảnh (ví dụ: 'openai/dall-e-3', 'flux', 'imagen').",
+            "default": "openai/dall-e-3"
+          },
+          "size": {
+            "type": "string",
+            "enum": [
+              "1024x1024",
+              "1792x1024",
+              "1024x1792",
+              "512x512"
+            ],
+            "description": "Kích thước bức ảnh.",
+            "default": "1024x1024"
+          }
+        },
+        "required": [
+          "prompt"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "ninerouter_text_to_speech": {
+    "module": "skills.ninerouter_skills",
+    "attr": "ninerouter_text_to_speech",
+    "meta": {
+      "name": "ninerouter_text_to_speech",
+      "description": "Chuyển văn bản thành giọng nói (Text-to-Speech) qua 9Router hỗ trợ giọng Edge TTS tiếng Việt, ElevenLabs, OpenAI TTS, Google TTS. Dùng khi muốn xuất file âm thanh đọc văn bản.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Đoạn văn bản cần chuyển thành giọng nói."
+          },
+          "voice_model": {
+            "type": "string",
+            "description": "Mã giọng đọc (ví dụ: 'edge-tts/vi-VN-HoaiMyNeural', 'edge-tts/vi-VN-NamMinhNeural', 'openai/tts-1').",
+            "default": "edge-tts/vi-VN-HoaiMyNeural"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "ninerouter_web_fetch": {
+    "module": "skills.ninerouter_skills",
+    "attr": "ninerouter_web_fetch",
+    "meta": {
+      "name": "ninerouter_web_fetch",
+      "description": "Cào và trích xuất nội dung văn bản sạch của một trang web thành định dạng Markdown, Text hoặc HTML qua cổng 9Router (sử dụng Jina Reader, Firecrawl, Tavily Extract). Dùng khi cần đọc bài báo, tài liệu, nội dung URL.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Địa chỉ URL của trang web cần cào nội dung."
+          },
+          "model": {
+            "type": "string",
+            "description": "Nhà cung cấp trích xuất: 'jina-reader' (nhanh, miễn phí), 'firecrawl' (hỗ trợ JS), 'tavily', 'ollama'.",
+            "default": "jina-reader"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "markdown",
+              "text",
+              "html"
+            ],
+            "description": "Định dạng kết quả trả về. Mặc định là 'markdown'.",
+            "default": "markdown"
+          },
+          "max_characters": {
+            "type": "integer",
+            "description": "Giới hạn độ dài ký tự tối đa để tránh vượt quá ngữ cảnh. Mặc định 10000.",
+            "default": 10000
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "ninerouter_web_search": {
+    "module": "skills.ninerouter_skills",
+    "attr": "ninerouter_web_search",
+    "meta": {
+      "name": "ninerouter_web_search",
+      "description": "Tìm kiếm thông tin web, tin tức và bài viết trực tuyến thông qua cổng 9Router (hỗ trợ Tavily, Brave, Exa, Serper, Google PSE). Dùng khi cần tra cứu thông tin thời gian thực trên Internet.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Câu truy vấn tìm kiếm cần tra cứu trên Internet."
+          },
+          "model": {
+            "type": "string",
+            "description": "Nhà cung cấp / model tìm kiếm (ví dụ: 'tavily', 'brave-search', 'exa', 'serper'). Mặc định 'tavily'.",
+            "default": "tavily"
+          },
+          "max_results": {
+            "type": "integer",
+            "description": "Số lượng kết quả tìm kiếm tối đa cần lấy (mặc định 5).",
+            "default": 5
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "zero_touch_onboard_employee": {
+    "module": "skills.onboarding_workflow",
+    "attr": "zero_touch_onboard_employee",
+    "meta": {
+      "name": "zero_touch_onboard_employee",
+      "description": "Quy trình tự động hóa Onboarding nhân sự mới không chạm (Zero-Touch RPA): tạo hồ sơ trong ERP, khởi tạo thư mục Workspace, gán bộ task hội nhập, gửi Telegram chào mừng và ghi nhật ký bất biến Audit Log. LƯU Ý: hệ thống KHÔNG tạo tài khoản Active Directory (chỉ sinh lệnh PowerShell để admin chạy tay) và KHÔNG tạo mailbox Google Workspace/Exchange. Kết quả trả về kèm mảng `steps` đánh dấu từng bước là executed / not_executed / failed.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Họ và tên nhân viên mới (ví dụ: 'Lê Văn Bình', 'Nguyễn Thị Mai')."
+          },
+          "position": {
+            "type": "string",
+            "description": "Vị trí chức danh (ví dụ: 'Chuyên viên Kế toán', 'Kỹ sư AI')."
+          },
+          "department_name": {
+            "type": "string",
+            "description": "Tên phòng ban tiếp nhận (ví dụ: 'Tài chính - Kế toán', 'Phòng Kỹ thuật').",
+            "default": "Nhân sự"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email cá nhân hoặc email công ty cấp (nếu để trống hệ thống tự sinh).",
+            "default": ""
+          },
+          "phone": {
+            "type": "string",
+            "description": "Số điện thoại liên hệ.",
+            "default": ""
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "operator",
+              "viewer"
+            ],
+            "description": "Phân quyền hệ thống. Chỉ 'operator'/'viewer' được phép qua skill này — các quyền đặc biệt ('admin', 'it_support') chỉ admin hệ thống mới cấp được. Mọi giá trị khác sẽ bị hạ về 'operator'.",
+            "default": "operator"
+          }
+        },
+        "required": [
+          "name",
+          "position"
+        ]
+      },
+      "contract": {
+        "data_classification": "CONFIDENTIAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_clipboard": {
+    "module": "skills.pc_control_skills",
+    "attr": "get_clipboard",
+    "meta": {
+      "name": "get_clipboard",
+      "description": "Đọc nội dung văn bản hiện tại trong clipboard của hệ thống.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": true
+      }
+    },
+    "enabled": true
+  },
+  "get_network_info": {
+    "module": "skills.pc_control_skills",
+    "attr": "get_network_info",
+    "meta": {
+      "name": "get_network_info",
+      "description": "Lấy thông tin mạng: IP address (local & public), trạng thái kết nối, tốc độ upload/download, DNS server.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "check_internet": {
+            "type": "boolean",
+            "description": "Kiểm tra kết nối Internet bằng cách ping 8.8.8.8. Mặc định: true.",
+            "default": true
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_system_info": {
+    "module": "skills.pc_control_skills",
+    "attr": "get_system_info",
+    "meta": {
+      "name": "get_system_info",
+      "description": "Lấy thông tin hệ thống máy tính / máy chủ: máy đang dùng bao nhiêu CPU, RAM, ổ đĩa (Disk), thời gian chạy (Uptime), tên máy, OS version, múi giờ, và nhiệt độ CPU (nếu có).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "include_temps": {
+            "type": "boolean",
+            "description": "Bao gồm thông tin nhiệt độ CPU/GPU nếu có. Mặc định: false.",
+            "default": false
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "list_processes": {
+    "module": "skills.pc_control_skills",
+    "attr": "list_processes",
+    "meta": {
+      "name": "list_processes",
+      "description": "Liệt kê các tiến trình đang chạy trên máy. Có thể lọc theo tên, sắp xếp theo CPU hoặc RAM.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "filter_name": {
+            "type": "string",
+            "description": "Lọc tiến trình chứa từ khóa này (không phân biệt hoa/thường). Bỏ trống = tất cả.",
+            "default": ""
+          },
+          "sort_by": {
+            "type": "string",
+            "enum": [
+              "cpu",
+              "memory",
+              "name",
+              "pid"
+            ],
+            "description": "Tiêu chí sắp xếp. Mặc định: cpu.",
+            "default": "cpu"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Số lượng tiến trình trả về tối đa. Mặc định: 20.",
+            "default": 20
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "media_control": {
+    "module": "skills.pc_control_skills",
+    "attr": "media_control",
+    "meta": {
+      "name": "media_control",
+      "description": "Điều khiển trình phát nhạc / video đang mở trên máy chủ bằng phím media của hệ điều hành (YouTube trên Chrome, Spotify, VLC…): phát tiếp / tạm dừng, bài tiếp theo, bài trước, dừng, tắt / bật tiếng, tăng / giảm âm lượng. Người dùng thường nói: 'phát tiếp nhạc', 'tạm dừng video', 'bật lại bài hát đang dừng', 'chuyển bài', 'bài tiếp theo', 'tắt tiếng'. English: play pause media, resume youtube, next track, previous track, mute.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "mute",
+              "next",
+              "play_pause",
+              "previous",
+              "stop",
+              "volume_down",
+              "volume_up"
+            ],
+            "description": "play_pause (phát tiếp / tạm dừng), next, previous, stop, mute, volume_up, volume_down."
+          },
+          "times": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10,
+            "default": 1,
+            "description": "Số lần nhấn (vd tăng âm lượng 3 nấc)."
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": true
+      }
+    },
+    "enabled": true
+  },
+  "open_application": {
+    "module": "skills.pc_control_skills",
+    "attr": "open_application",
+    "meta": {
+      "name": "open_application",
+      "description": "Mở một ứng dụng, file, hoặc URL bằng lệnh hệ thống mặc định. Ví dụ: mở Notepad, mở file PDF, mở trang web.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Tên ứng dụng (vd: 'notepad', 'calc', 'mspaint'), đường dẫn file (vd: 'C:\\\\report.pdf'), hoặc URL (vd: 'https://google.com')."
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Danh sách tham số bổ sung truyền cho ứng dụng.",
+            "default": []
+          }
+        },
+        "required": [
+          "target"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": true
+      }
+    },
+    "enabled": true
+  },
+  "run_powershell_command": {
+    "module": "skills.pc_control_skills",
+    "attr": "run_powershell_command",
+    "meta": {
+      "name": "run_powershell_command",
+      "description": "Thực thi một lệnh PowerShell trên máy tính. Có danh sách chặn các lệnh nguy hiểm. Dùng cho các tác vụ quản trị nhanh: kiểm tra sự kiện, query registry, v.v.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "Lệnh PowerShell cần thực thi."
+          },
+          "timeout_sec": {
+            "type": "integer",
+            "description": "Thời gian tối đa chờ kết quả (giây). Mặc định: 30.",
+            "default": 30
+          }
+        },
+        "required": [
+          "command"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "search_files": {
+    "module": "skills.pc_control_skills",
+    "attr": "search_files",
+    "meta": {
+      "name": "search_files",
+      "description": "Tìm kiếm file trên máy tính theo tên hoặc pattern glob. Có thể giới hạn thư mục tìm kiếm và kết quả trả về.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "Tên file hoặc glob pattern. Ví dụ: '*.pdf', 'report*.xlsx', 'config.json'."
+          },
+          "search_dir": {
+            "type": "string",
+            "description": "Thư mục bắt đầu tìm kiếm. Mặc định: thư mục home của người dùng.",
+            "default": ""
+          },
+          "max_results": {
+            "type": "integer",
+            "description": "Số kết quả tối đa. Mặc định: 30.",
+            "default": 30
+          },
+          "include_hidden": {
+            "type": "boolean",
+            "description": "Bao gồm file/thư mục ẩn. Mặc định: false.",
+            "default": false
+          }
+        },
+        "required": [
+          "pattern"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "set_clipboard": {
+    "module": "skills.pc_control_skills",
+    "attr": "set_clipboard",
+    "meta": {
+      "name": "set_clipboard",
+      "description": "Ghi một đoạn văn bản vào clipboard của hệ thống.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Nội dung văn bản cần ghi vào clipboard."
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": true
+      }
+    },
+    "enabled": true
+  },
+  "set_system_volume": {
+    "module": "skills.pc_control_skills",
+    "attr": "set_system_volume",
+    "meta": {
+      "name": "set_system_volume",
+      "description": "Điều chỉnh âm lượng hệ thống (0–100). Hỗ trợ Windows (nircmd / PowerShell) và macOS (osascript).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "integer",
+            "description": "Mức âm lượng từ 0 (tắt tiếng) đến 100 (tối đa).",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "mute": {
+            "type": "boolean",
+            "description": "Nếu true, tắt tiếng (mute) bất kể giá trị level.",
+            "default": false
+          }
+        },
+        "required": [
+          "level"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_playbook_plan": {
+    "module": "skills.playbook_tools",
+    "attr": "get_playbook_plan",
+    "meta": {
+      "name": "get_playbook_plan",
+      "description": "CHẠY THỬ một kịch bản (không thực thi gì): từng bước sẽ được cho phép / cần duyệt / bị chặn, mức rủi ro, có hoàn tác không. Dùng để báo người dùng trước khi chạy thật.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "playbook_id": {
+            "type": "string"
+          },
+          "params": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "playbook_id"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_playbook_run": {
+    "module": "skills.playbook_tools",
+    "attr": "get_playbook_run",
+    "meta": {
+      "name": "get_playbook_run",
+      "description": "Xem một lượt chạy kịch bản: trạng thái, từng bước đã làm / lỗi, kiểm chứng đạt chưa. SUCCEEDED_UNVERIFIED = chưa kiểm chứng, đừng báo là xong.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "list_playbooks": {
+    "module": "skills.playbook_tools",
+    "attr": "list_playbooks",
+    "meta": {
+      "name": "list_playbooks",
+      "description": "Liệt kê kịch bản vận hành đã được quản trị viên viết (mã, tên, mô tả, tham số). Gọi trước khi chạy để biết đúng mã và tham số.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "run_playbook": {
+    "module": "skills.playbook_tools",
+    "attr": "run_playbook",
+    "meta": {
+      "name": "run_playbook",
+      "description": "CHẠY một kịch bản vận hành (chỉ admin). Mọi bước vẫn qua chính sách. Nếu kết quả có `awaiting_approval` thì CHƯA chạy gì: nói người dùng duyệt phiếu `approval_id`. Nếu `running`, dùng get_playbook_run để xem tiến độ — KHÔNG nói đã xong khi chưa kiểm chứng.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "playbook_id": {
+            "type": "string"
+          },
+          "params": {
+            "type": "object"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "description": "Chống chạy trùng khi gọi lại"
+          }
+        },
+        "required": [
+          "playbook_id"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "assign_task_intelligently": {
+    "module": "skills.proactive_manager",
+    "attr": "assign_task_intelligently",
+    "meta": {
+      "name": "assign_task_intelligently",
+      "description": "Tự động phân tích yêu cầu công việc (VD: 'Lên kế hoạch sinh nhật công ty', 'Kiểm tra backup server'), tìm nhân viên có chuyên môn phù hợp nhất trong cơ sở dữ liệu (HR, IT, Kế toán...), gán việc, đặt deadline và gửi thông báo.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Nội dung yêu cầu công việc cần phân bổ (ví dụ: 'Chuẩn bị quà và hoa cho sinh nhật công ty tuần sau')."
+          },
+          "deadline_days": {
+            "type": "integer",
+            "description": "Số ngày deadline tính từ hôm nay (mặc định: 3 ngày).",
+            "default": 3
+          },
+          "preferred_role_or_dept": {
+            "type": "string",
+            "description": "Gợi ý vai trò hoặc phòng ban: 'hr', 'it', 'kế toán', 'admin' (nếu có).",
+            "default": ""
+          }
+        },
+        "required": [
+          "description"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "run_proactive_task_audit": {
+    "module": "skills.proactive_manager",
+    "attr": "run_proactive_task_audit",
+    "meta": {
+      "name": "run_proactive_task_audit",
+      "description": "Kích hoạt quét toàn bộ task trong công ty ngay lập tức để đôn đốc các công việc trễ hạn hoặc sắp đến deadline.",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "animate_robot": {
+    "module": "skills.robotics_tools",
+    "attr": "animate_robot",
+    "meta": {
+      "name": "animate_robot",
+      "description": "Kích hoạt cử chỉ hoặc biểu cảm vật lý của Robot (Servo cánh tay, Servo cổ, LED, OLED). Các cử chỉ hỗ trợ: wave_hand (vẫy tay chào), nod_head (gật đầu đồng ý), look_around (ngó nghiêng quan sát), excited (phấn khích mừng rỡ), sad (buồn bã hối lỗi). Chỉ sử dụng khi người dùng yêu cầu điều khiển cử chỉ Robot hoặc đang tương tác trực tiếp trên thiết bị Robot vật lý.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "animation": {
+            "type": "string",
+            "enum": [
+              "wave_hand",
+              "nod_head",
+              "look_around",
+              "excited",
+              "sad"
+            ],
+            "description": "Cử chỉ hoạt hình cần thực hiện: 'wave_hand', 'nod_head', 'look_around', 'excited', hoặc 'sad'."
+          }
+        },
+        "required": [
+          "animation"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "move_robot": {
+    "module": "skills.robotics_tools",
+    "attr": "move_robot",
+    "meta": {
+      "name": "move_robot",
+      "description": "Điều khiển cơ thể Robot vật lý (ESP32) di chuyển bằng bánh xe (Motor L298N). Hướng di chuyển gồm: forward (tiến), backward (lùi), left (rẽ trái), right (rẽ phải), stop (dừng lại). Thời gian di chuyển tính bằng mili-giây (duration_ms), giới hạn an toàn tối đa 3000ms mỗi lần.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "direction": {
+            "type": "string",
+            "enum": [
+              "forward",
+              "backward",
+              "left",
+              "right",
+              "stop"
+            ],
+            "description": "Hướng di chuyển của Robot: 'forward', 'backward', 'left', 'right', hoặc 'stop'."
+          },
+          "duration_ms": {
+            "type": "integer",
+            "description": "Thời gian di chuyển tính bằng mili-giây (ms). Tối thiểu 100ms, tối đa 3000ms (mặc định 1000ms).",
+            "default": 1000
+          }
+        },
+        "required": [
+          "direction"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "manage_windows_service": {
+    "module": "skills.sysadmin_skills",
+    "attr": "manage_windows_service",
+    "meta": {
+      "name": "manage_windows_service",
+      "description": "Quản lý dịch vụ Windows: khởi động (start), dừng (stop), hoặc khởi động lại (restart) một dịch vụ theo tên. Ví dụ: W3SVC (IIS), WinRM, Spooler.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "service_name": {
+            "type": "string",
+            "description": "Tên dịch vụ Windows (ví dụ: 'W3SVC', 'Spooler', 'WinRM')."
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "start",
+              "stop",
+              "restart",
+              "status"
+            ],
+            "description": "Hành động cần thực hiện với dịch vụ."
+          }
+        },
+        "required": [
+          "service_name",
+          "action"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "run_local_sql_check": {
+    "module": "skills.sysadmin_skills",
+    "attr": "run_local_sql_check",
+    "meta": {
+      "name": "run_local_sql_check",
+      "description": "Thực thi một câu truy vấn T-SQL lên SQL Server cục bộ (không cần GUI) thông qua tiện ích sqlcmd. Trả về kết quả dưới dạng văn bản.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "server": {
+            "type": "string",
+            "description": "Tên server hoặc instance SQL, ví dụ: 'localhost' hoặc 'localhost\\SQLEXPRESS'.",
+            "default": "localhost"
+          },
+          "database": {
+            "type": "string",
+            "description": "Tên database cần truy vấn.",
+            "default": "master"
+          },
+          "query": {
+            "type": "string",
+            "description": "Câu lệnh T-SQL cần thực thi (SELECT, sp_who2, v.v.)."
+          },
+          "username": {
+            "type": "string",
+            "description": "SQL login username. Bỏ trống để dùng Windows Authentication.",
+            "default": ""
+          },
+          "password": {
+            "type": "string",
+            "description": "SQL login password. Bỏ trống khi dùng Windows Authentication.",
+            "default": ""
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "contract": {
+        "data_classification": "CONFIDENTIAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "thong_ke_lo_xsmb": {
+    "module": "skills.thong_ke_lo_xsmb",
+    "attr": "thong_ke_lo_xsmb",
+    "meta": {
+      "name": "thong_ke_lo_xsmb",
+      "description": "Crawl kết quả XSMB trong 14 ngày gần nhất, bóc tách 2 chữ số cuối (lô tô), thống kê tần suất, lô gan và xuất báo cáo markdown.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "days_count": {
+            "type": "integer",
+            "description": "Số ngày cần thống kê tính từ hôm qua (mặc định là 14).",
+            "default": 14
+          },
+          "output_path": {
+            "type": "string",
+            "description": "Đường dẫn lưu file báo cáo markdown.",
+            "default": "reports/thong_ke_lo_xsmb.md"
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "display_visual_data": {
+    "module": "skills.visual_skills",
+    "attr": "display_visual_data",
+    "meta": {
+      "name": "display_visual_data",
+      "description": "Hiển thị một cửa sổ popup trên màn hình người dùng. CHÚ Ý: Chỉ dùng khi người dùng có nhu cầu xem dữ liệu trực quan hoặc đọc log dài.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "text_board",
+              "network_map",
+              "metric_chart",
+              "security_alert",
+              "screenshot"
+            ],
+            "description": "BẮT BUỘC CHỌN 1 TRONG CÁC LOẠI SAU:\n- text_board: Dùng để hiển thị danh sách IP, đọc file log, hoặc đoạn text dài.\n- network_map: Chỉ dùng khi được yêu cầu xem sơ đồ/cấu trúc mạng.\n- metric_chart: Chỉ dùng để xem biểu đồ CPU/RAM.\n- security_alert: Chỉ dùng khi có tấn công hoặc rủi ro thực sự.\n- screenshot: TUYỆT ĐỐI CHỈ DÙNG khi người dùng có nhắc đến chữ 'chụp ảnh màn hình' hoặc 'xem màn hình'."
+          },
+          "context_data": {
+            "type": "string",
+            "description": "Dữ liệu truyền vào. Nếu type là text_board, đây là chuỗi văn bản hoặc log cần hiển thị."
+          },
+          "target_client": {
+            "type": "string",
+            "description": "ID hoặc tên máy trạm LAN cần hiển thị (mặc định: 'master').",
+            "default": "master"
+          },
+          "title": {
+            "type": "string",
+            "description": "Tiêu đề của cửa sổ HUD Cyberpunk.",
+            "default": "TRỢ LÝ AI LY LY — HUD"
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Thời gian hiển thị tự động trước khi mờ dần (giây, mặc định 15s).",
+            "default": 15
+          }
+        },
+        "required": [
+          "type",
+          "context_data"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "list_online_workstations": {
+    "module": "skills.workstation_tools",
+    "attr": "list_online_workstations",
+    "meta": {
+      "name": "list_online_workstations",
+      "description": "Liệt kê các máy trạm / máy tính trong công ty đang kết nối Agent (trực tuyến): mã máy, tên máy, IP, hệ điều hành. Dùng TRƯỚC khi chạy công cụ trên một máy trạm cụ thể, hoặc khi được hỏi 'máy nào đang bật / đang online'. Có thể lọc theo một phần tên máy hoặc IP.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Một phần tên máy hoặc IP để lọc (bỏ trống = tất cả máy đang trực tuyến)."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  }
+}

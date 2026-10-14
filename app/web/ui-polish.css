@@ -1,0 +1,76 @@
+/* SPDX-License-Identifier: Apache-2.0
+   Copyright (c) 2026 Dương Thanh Lịch — VN-MateAI. See LICENSE and NOTICE. */
+/* web/ui-polish.css — lớp tinh chỉnh giao diện nạp SAU tailwind.css (không cần build lại Tailwind).
+ *  1. Tương phản chữ đạt WCAG AA (≥ 4,5:1) cho chữ phụ / chữ trạng thái ở cả sáng lẫn tối
+ *  2. Cỡ chữ tối thiểu 11px (trước: 8–10px ở 2/3 số chỗ)
+ *  3. Dấu focus bàn phím, giảm chuyển động, placeholder đọc được
+ *  4. Màn hình hẹp: menu trái thành ngăn kéo, đệm gọn
+ * Dùng :where() để độ ưu tiên bằng lớp tiện ích gốc — các biến thể `dark:` của Tailwind vẫn thắng khi có khai báo riêng.
+ */
+
+/* ── 1. Tương phản ─────────────────────────────────────────────────────── */
+/* Nền sáng */
+:where(html:not(.dark)) .text-slate-400 { color: #5d6b80; }
+:where(html:not(.dark)) .text-slate-500 { color: #4d5b70; }
+:where(html:not(.dark)) :is(.text-emerald-400, .text-emerald-500, .text-emerald-600) { color: #047857; }
+:where(html:not(.dark)) :is(.text-rose-400, .text-rose-500, .text-rose-600) { color: #be123c; }
+:where(html:not(.dark)) :is(.text-amber-400, .text-amber-500, .text-amber-600) { color: #b45309; }
+:where(html:not(.dark)) :is(.text-sky-400, .text-sky-500, .text-sky-600) { color: #0369a1; }
+:where(html:not(.dark)) :is(.text-cyan-400, .text-cyan-500, .text-cyan-600) { color: #0e7490; }
+:where(html:not(.dark)) :is(.text-violet-400, .text-violet-500, .text-purple-400, .text-purple-500) { color: #7c3aed; }
+:where(html:not(.dark)) :is(.text-orange-400, .text-orange-500) { color: #c2410c; }
+:where(html:not(.dark)) :is(.text-green-400, .text-green-500) { color: #15803d; }
+:where(html:not(.dark)) :is(.text-teal-400, .text-teal-500) { color: #0f766e; }
+:where(html:not(.dark)) :is(.text-indigo-400, .text-indigo-500) { color: #4f46e5; }
+:where(html:not(.dark)) :is(.text-blue-400, .text-blue-500) { color: #2563eb; }
+
+/* Nền tối */
+:where(html.dark) .text-slate-500 { color: #8b9ab0; }
+html.dark .dark\:text-slate-500 { color: #8b9ab0; }
+:where(html.dark) :is(.text-emerald-600, .text-emerald-700) { color: #34d399; }
+:where(html.dark) :is(.text-rose-500, .text-rose-600, .text-rose-700) { color: #fb7185; }
+:where(html.dark) :is(.text-amber-600, .text-amber-700) { color: #fbbf24; }
+:where(html.dark) :is(.text-sky-600, .text-sky-700) { color: #38bdf8; }
+:where(html.dark) :is(.text-cyan-600, .text-cyan-700) { color: #22d3ee; }
+:where(html.dark) :is(.text-violet-600, .text-purple-600) { color: #a78bfa; }
+:where(html.dark) :is(.text-orange-600, .text-orange-700) { color: #fb923c; }
+:where(html.dark) :is(.text-green-600, .text-green-700) { color: #4ade80; }
+
+::placeholder { color: #64748b; opacity: 1; }
+:where(html.dark) ::placeholder { color: #94a3b8; opacity: 1; }
+
+/* ── 2. Cỡ chữ tối thiểu ───────────────────────────────────────────────── */
+.text-\[8px\] { font-size: 10px; }
+.text-\[9px\], .text-\[10px\] { font-size: 11px; }
+.text-\[11px\] { font-size: 11.5px; }
+/* Chữ nhỏ không bó chặt: dấu thanh tiếng Việt dễ dính nhau khi letter-spacing âm */
+.text-\[8px\], .text-\[9px\], .text-\[10px\], .text-\[11px\], .text-xs { letter-spacing: 0; }
+
+/* ── 3. Bàn phím + chuyển động ─────────────────────────────────────────── */
+:focus-visible { outline: 2px solid #38bdf8; outline-offset: 2px; border-radius: 4px; }
+:where(html:not(.dark)) :focus-visible { outline-color: #0369a1; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+                           transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
+/* ── 4. Màn hình hẹp (< 1024px): menu trái thành ngăn kéo ──────────────── */
+.mobile-only { display: none; }
+#sidebar-backdrop { display: none; }
+@media (max-width: 1023.98px) {
+  .mobile-only { display: inline-flex; }
+  #app-sidebar { position: fixed; top: 0; bottom: 0; left: 0; z-index: 60; width: min(18rem, 86vw);
+                 transform: translateX(-102%); transition: transform .2s ease; box-shadow: none; }
+  body.sidebar-open #app-sidebar { transform: none; box-shadow: 0 0 40px rgba(0, 0, 0, .45); }
+  body.sidebar-open #sidebar-backdrop { display: block; position: fixed; inset: 0; z-index: 55; background: rgba(2, 6, 23, .55); }
+  body.sidebar-open { overflow: hidden; }
+  main { padding-left: 1rem !important; padding-right: 1rem !important; }
+}
+@media (max-width: 639.98px) {
+  main { padding-top: .75rem !important; }
+  main table { font-size: 11.5px; }
+}
+
+/* ── 5. Màn đăng nhập ở giao diện sáng: nhãn / gợi ý thiết kế cho nền tối nên gần như vô hình trên thẻ trắng ── */
+:where(html:not(.dark)) #login-screen .text-slate-300 { color: #334155; }
+:where(html:not(.dark)) #login-screen .text-slate-200 { color: #1e293b; }

@@ -1,0 +1,202 @@
+{
+  "llm": {
+    "base_url": "http://localhost:20128/v1",
+    "model_name": "YOUR_MODEL_NAME_HERE",
+    "api_key": "YOUR_9ROUTER_KEY_HERE",
+    "router_models": [],
+    "specialist_models": []
+  },
+  "auto_execute": false,
+  "ASR_BACKEND": "local_whisper",
+  "WHISPER_MODEL_SIZE": "tiny",
+  "TTS_VOICE": "vi-VN-HoaiMyNeural",
+  "TTS_RATE": "+30%",
+  "MIC_AUTO_START": false,
+  "GROQ_API_KEY": "YOUR_GROQ_API_KEY_HERE",
+  "GROQ_BASE_URL": "https://api.groq.com/openai/v1",
+  "HOST": "0.0.0.0",
+  "PORT": 443,
+  "LOG_LEVEL": "INFO",
+  "AUTO_EXECUTE_UNVERIFIED_CODE": true,
+  "security": {
+    "require_per_device_token": true,
+    "forbidden_keywords": [
+      "rmdir /s",
+      "format c:",
+      "drop database",
+      "del /f /s",
+      "Remove-Item -Recurse",
+      "net user",
+      "shutdown /r",
+      "cipher /w",
+      "mkfs",
+      ":(){ :|:& };:",
+      "eval(",
+      "exec("
+    ],
+    "require_confirmation_actions": [
+      "kill_process",
+      "run_powershell_command",
+      "manage_windows_service",
+      "deploy_skill",
+      "delete_records"
+    ],
+    "protected_directories": [
+      "C:\\Windows",
+      "C:\\Program Files",
+      "/System",
+      "/etc",
+      "/var",
+      "/usr"
+    ],
+    "mask_patterns": [
+      "(?i)(?:password|passwd|pwd)\\s*[:=]\\s*[\"']?([^\\s\"',;]+)",
+      "(?i)(?:api[_-]?key|secret[_-]?key|access[_-]?token)\\s*[:=]\\s*[\"']?([^\\s\"',;]+)",
+      "(?i)bearer\\s+([a-zA-Z0-9_\\-\\.]{20,})",
+      "(?i)(?:postgres|mysql|mongodb|redis|mssql):\\/\\/[^\\s\"']+",
+      "\\b(?:10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|192\\.168\\.\\d{1,3}\\.\\d{1,3}|172\\.(?:1[6-9]|2\\d|3[0-1])\\.\\d{1,3}\\.\\d{1,3})\\b"
+    ]
+  },
+  "telegram": {
+    "enabled": false,
+    "bot_token": "YOUR_TELEGRAM_BOT_TOKEN_HERE",
+    "admin_chat_ids": [
+      "YOUR_TELEGRAM_ADMIN_CHAT_ID_HERE"
+    ],
+    "incident_group_id": ""
+  },
+  "ad_sync": {
+    "enabled": false
+  },
+  "MODEL_NAME": "YOUR_MODEL_NAME_HERE",
+  "API_KEY": "YOUR_9ROUTER_KEY_HERE",
+  "BASE_URL": "http://localhost:20128/v1",
+  "routing": {
+    "primary": {
+      "provider_model": "YOUR_MODEL_NAME_HERE",
+      "api_key": "YOUR_9ROUTER_KEY_HERE",
+      "api_base": "http://localhost:20128/v1",
+      "api_keys": [
+        "YOUR_9ROUTER_KEY_HERE"
+      ]
+    },
+    "fallback_1": {
+      "provider_model": "",
+      "api_key": "",
+      "api_base": "",
+      "api_keys": []
+    },
+    "fallback_2": {
+      "provider_model": "",
+      "api_key": "",
+      "api_base": "",
+      "api_keys": []
+    }
+  },
+  "router": {
+    "primary": {
+      "provider_model": "YOUR_MODEL_NAME_HERE",
+      "api_key": "YOUR_9ROUTER_KEY_HERE",
+      "api_base": "http://localhost:20128/v1",
+      "api_keys": [
+        "YOUR_9ROUTER_KEY_HERE"
+      ]
+    },
+    "fallback_1": {
+      "provider_model": "",
+      "api_key": "",
+      "api_base": "",
+      "api_keys": []
+    },
+    "fallback_2": {
+      "provider_model": "",
+      "api_key": "",
+      "api_base": "",
+      "api_keys": []
+    }
+  },
+  "persona": {
+    "ai_name": "Ly Ly",
+    "wake_word": "Hey Lyly",
+    "ai_pronoun": "bạn",
+    "user_pronoun": "anh",
+    "system_prompt": ""
+  },
+  "audio": {
+    "tts_engine": "edge-tts",
+    "tts_voice": "vi-VN-HoaiMyNeural",
+    "speech_rate": 30,
+    "volume": 65,
+    "asr_engine": "local_whisper"
+  },
+  "AI_NAME": "Ly Ly",
+  "ASSISTANT_NAME": "Ly Ly",
+  "WAKE_WORD": "Hey Lyly",
+  "SYSTEM_PROMPT": "",
+  "report_templates": {
+    "incident_report": "🔴 **BÁO CÁO SỰ CỐ HỆ THỐNG**\n- **Thời gian:** {thời_gian}\n- **Dịch vụ ảnh hưởng:** {tên_dịch_vụ}\n- **Mức độ:** [Nghiêm trọng/Cảnh báo]\n- **Chi tiết lỗi:** {mô_tả}\n- **Hành động đề xuất:** {đề_xuất}",
+    "hr_summary": "👤 **THÔNG TIN NHÂN SỰ**\n- **Họ và tên:** {họ_tên}\n- **Phòng ban:** {phòng_ban}\n- **Chức danh:** {chức_danh}\n- **Thiết bị cấp phát:** {tên_máy_tính} ({ip})\n- **Liên hệ:** {email} | {sđt}",
+    "system_health": "📊 **TRẠNG THÁI HỆ THỐNG ({thời_gian})**\n- **CPU:** {cpu}%\n- **RAM:** {ram}%\n- **Active Nodes:** {số_lượng} client\n- **Cảnh báo bảo mật:** {số_lượng_cảnh_báo}"
+  },
+  "robot_behavior": {
+    "enabled": true,
+    "idle_motion": true,
+    "idle_wheels": true,
+    "speech_gestures": true,
+    "led": true,
+    "idle_min_s": 30,
+    "idle_max_s": 120,
+    "wheel_ms": 120,
+    "quiet_hours": "22:00-07:00"
+  },
+  "memory_db": {
+    "mode": "local",
+    "local_path": "./storage/vector_db",
+    "microservice_host": "http://localhost:8000",
+    "microservice_port": 8000
+  },
+  "alert_rules": {
+    "min_severity": "warning",
+    "cooldown_s": 300,
+    "watch_topology": true,
+    "down_after_s": 30,
+    "alert_on_degraded": false,
+    "ignore_nodes": "voice,hud,portal"
+  },
+  "alert_teams": {
+    "enabled": true,
+    "webhook_url": "",
+    "min_severity": ""
+  },
+  "alert_email": {
+    "enabled": true,
+    "smtp_host": "",
+    "smtp_port": 587,
+    "use_ssl": false,
+    "username": "",
+    "password": "",
+    "from_address": "",
+    "to_addresses": "",
+    "min_severity": ""
+  },
+  "alert_outlook": {
+    "enabled": true,
+    "tenant_id": "",
+    "client_id": "",
+    "client_secret": "",
+    "sender_mailbox": "",
+    "to_addresses": "",
+    "min_severity": ""
+  },
+  "alert_slack": {
+    "enabled": true,
+    "webhook_url": "",
+    "min_severity": ""
+  },
+  "alert_webhook": {
+    "enabled": true,
+    "webhook_url": "",
+    "hmac_secret": "",
+    "min_severity": ""
+  }
+}

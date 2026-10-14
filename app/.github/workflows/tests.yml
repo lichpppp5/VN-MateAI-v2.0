@@ -1,0 +1,81 @@
+name: tests
+
+# Chạy toàn bộ bộ test (pytest + test Node .mjs) trên mỗi lần push / PR.
+# Windows vì requirements có gói chỉ chạy trên Windows (pywin32, pywinauto, wmi).
+# Test gọi dịch vụ ngoài thật (marker `network`) bị bỏ qua theo pytest.ini.
+# Bộ test tự cô lập: DB tạm (VNMATEAI_DB_PATH), Telegram tắt
+# (VNMATEAI_TELEGRAM_OUTBOUND=off), sao lưu/khôi phục config — xem tests/conftest.py.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pytest:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Cài phụ thuộc
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      # Prompt cuối §125 / §139: lỗi CHẠY THẬT (tên chưa định nghĩa…) — 2026-10-06 bắt được
+      # NameError ở /api/v1/skills/execute (skill chạy xong rồi 500, mất audit).
+      - name: Lint lỗi chạy thật
+        run: ruff check --select F821,F823,F632,F704 src core main.py scripts
+
+      # Quét lỗ hổng phụ thuộc. chromadb: lỗ hổng nằm ở Chroma SERVER (/api/v2/…), chưa có bản vá;
+      # hệ thống chạy Chroma nhúng (PersistentClient, không mở cổng) — xem cognitive_memory.py.
+      - name: Quét lỗ hổng phụ thuộc
+        run: >
+          pip-audit --progress-spinner off --skip-editable
+          --ignore-vuln PYSEC-2026-311 --ignore-vuln PYSEC-2026-3813
+          --ignore-vuln PYSEC-2026-3814 --ignore-vuln PYSEC-2026-3815
+
+      # Trang admin (Next.js, xuất tĩnh ra admin/out) — server phục vụ /admin/*
+      # từ đó và test topology (phase88) gọi thật các trang này.
+      - name: Build trang admin
+        working-directory: admin
+        run: |
+          npm ci
+          npm run build
+
+      - name: Tạo config.json từ mẫu (không có bí mật)
+        shell: bash
+        run: test -f config.json || cp config.example.json config.json
+
+      - name: Chạy test
+        run: python -m pytest -q
+
+      - name: Test Node (.mjs)
+        shell: bash
+        run: for f in tests/*.mjs; do echo "== $f"; node "$f"; done
+
+      - name: Kiểm tra cú pháp (Python + JS Portal)
+        shell: bash
+        run: |
+          python -m compileall -q src core skills workers client_agent main.py
+          node --check web/app.js
+
+      # Prompt Supervisor §98–§99: khoá riêng tư / tệp bí mật không được nằm trong git.
+      - name: Không có bí mật trong repo
+        shell: bash
+        run: |
+          bad=$(git ls-files | grep -E '\.(pem|key|p12|pfx|db)$|(^|/)config\.json$|(^|/)\.env$' || true)
+          if [ -n "$bad" ]; then echo "Tệp bí mật bị theo dõi:"; echo "$bad"; exit 1; fi
+          if git grep -lE -- '-----BEGIN ([A-Z]+ )?PRIVATE KEY-----' -- . ':!*.md'; then echo "Có khoá riêng tư trong mã"; exit 1; fi

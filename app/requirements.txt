@@ -1,0 +1,110 @@
+# ============================================================
+# VN-MateAI — Dependency Manifest
+# Platform: Windows 10/11 x64 / linux | Python 3.10+
+# Pin versions for reproducible builds & PyInstaller compat
+# ============================================================
+
+# --- API Gateway & Async Runtime ---
+starlette==1.7.0   # vá PYSEC-2026-1943/1941/161 (pip-audit 2026-10-06)
+fastapi==0.135.4   # >= 0.137 gói router lười (_IncludedRouter) — vỡ bảng route; 0.135.4 cho starlette >= 1.0 (đã vá)
+# Thử 0.142.2 (2026-10-06): phục vụ đúng (851 test chức năng đạt) nhưng app.routes không còn liệt kê route,
+# không có API công khai thay thế -> 4 test bảng route phải dựa vào nội bộ fastapi. pip-audit: 0.135.4 không có
+# lỗ hổng đã biết. Nâng khi fastapi có API liệt kê route công khai hoặc khi có bản vá bảo mật cần thiết.
+uvicorn[standard]==0.29.0
+websockets==12.0
+python-multipart==0.0.32   # vá PYSEC-2026-1851/1852/3038
+
+# --- Data Validation & Settings ---
+pydantic==2.13.5   # FastAPI 0.135 cần >= 2.9
+pydantic-settings==2.2.1
+
+# --- LLM SDK (OpenAI-compatible: Thin Client → 9router proxy) ---
+openai==1.30.1
+
+# --- System Tray & GUI Notifications ---
+pystray==0.19.5
+Pillow==12.3.0   # vá PYSEC-2026-2249/2250/165
+
+# --- Windows Automation & COM Interface ---
+pywinauto==0.6.8
+pywin32==306
+
+# --- HTTP Client (for IoT telemetry polling) ---
+httpx==0.27.0
+h2>=4.1.0
+
+# --- PC Control & System Monitoring (Phase 7 Endpoint Monitoring) ---
+psutil==5.9.8
+pyperclip==1.9.0
+mss>=9.0.1
+wmi>=1.5.1; sys_platform == 'win32'
+
+# --- Audio Pipeline (Phase 2) ---
+# 6.1.12 bị dịch vụ Edge trả 403 (đo 2026-10-01); 7.2.8 tổng hợp được Hoài My, API tương thích.
+edge-tts==7.2.8
+pydub==0.25.1
+
+# --- ASR & VAD (Local faster-whisper + Silero VAD + Cloud fallback) ---
+faster-whisper>=1.0.3
+silero-vad>=5.1.2
+# torch là phụ thuộc BẮT BUỘC của silero-vad: SileroVADDetector gọi
+# torch.from_numpy(chunk) trong core/audio_processor.py::process_pcm16.
+# Trước đây requirements.txt không khai báo torch, nên trên máy mới cài lại từ
+# manifest thì VAD sẽ ImportError ngay khi thiết bị đầu tiên nói.
+# Chỉ định phiên bản CPU để tránh kéo về CUDA ~2GB nếu không cần GPU.
+torch>=2.0.0
+# httpx already included above — used for Whisper/Groq API calls
+
+# --- Utilities ---
+python-dotenv==1.2.4   # vá PYSEC-2026-2270
+aiofiles==23.2.1
+
+# --- Authentication & Security (Phase 10) ---
+pyjwt>=2.8.0
+passlib[bcrypt]>=1.7.4
+
+# --- Wake Word & Voice Widget (Phase 13) ---
+SpeechRecognition>=3.10.1
+pyaudio>=0.2.14
+numpy>=1.26.0
+
+# --- Telegram Gateway & Incident Alerting (Phase 18) ---
+python-telegram-bot>=21.0
+
+# --- SSL/TLS Encryption & PKI Management (Phase 29) ---
+cryptography>=42.0.0
+
+# --- Ly ly Visual Overlay Engine (Phase 32) ---
+customtkinter>=5.2.0
+matplotlib>=3.8.0
+networkx>=3.2.0
+
+# --- Vector Database & Long-term Memory (Phase 37.5) ---
+chromadb>=1.5.0
+
+# --- ERP Structure & Bulk Data Import Engine (Phase 47) ---
+pandas>=2.2.0
+openpyxl>=3.1.2
+
+# --- Enterprise Knowledge Base: GraphRAG & Hybrid Search (Phase 57 BƯỚC 3) ---
+# Nạp tài liệu PDF/Word vào tri thức doanh nghiệp. Trước đây
+# rag_engine.extract_text_from_file() import pypdf/python-docx một cách lười
+# (lazy import) nhưng requirements.txt không khai báo -> mọi lần upload PDF hoặc
+# Word đều ImportError và âm thầm trả chuỗi rỗng.
+pypdf>=4.2.0
+python-docx>=1.1.0
+# BM25 keyword search để ghép với vector similarity thành Hybrid Search.
+rank-bm25>=0.2.2
+
+# Gói kiến trúc đích src/mateai (code chạy thật được chuyển dần từ core/) — cài editable.
+-e .
+
+# Trace OpenTelemetry (prompt cuối §93) — dùng trực tiếp, không dựa vào chromadb kéo theo.
+opentelemetry-sdk>=1.45,<2
+opentelemetry-exporter-otlp-proto-grpc>=1.45,<2
+
+# Hạ tầng production (prompt cuối §65–§68): PostgreSQL, Redis (trạng thái dùng chung), S3.
+psycopg[binary]>=3.2,<4
+psycopg-pool>=3.2,<4
+redis>=5,<9
+minio>=7.2,<8
