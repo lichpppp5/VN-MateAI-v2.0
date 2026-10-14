@@ -1,7 +1,7 @@
 <div align="center">
 
-#  VN-MateAI
-### Nền Tảng Trợ Lý AI Vận Hành Doanh Nghiệp Toàn Diện & Robot Thông Minh
+#  VN-MateAI 
+### Nền Tảng Trợ Lý AI Vận Hành Doanh Nghiệp, Điều Phối Agent Toàn Diện & Robot Thông Minh
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg?logo=python&logoColor=white)](https://python.org)
@@ -11,7 +11,7 @@
 [![Redis](https://img.shields.io/badge/Redis-7-DC382D.svg?logo=redis&logoColor=white)](#-dữ-liệu--hạ-tầng)
 [![Hardware](https://img.shields.io/badge/Hardware-ESP32--S3%20Xiaozhi-E7352C.svg?logo=espressif&logoColor=white)](#-robot-để-bàn-esp32-s3)
 
-**VN-MateAI** là giải pháp trợ lý trí tuệ nhân tạo (AI Assistant) toàn diện phục vụ quản trị, vận hành CNTT và điều hành doanh nghiệp tự động hoá. Hệ thống kết nối đa kênh linh hoạt: từ **Web Portal**, **Màn hình tác chiến HUD**, **Telegram Bot**, **Agent máy trạm Windows** cho đến **Robot để bàn thông minh ESP32-S3**.
+**VN-MateAI** là giải pháp trợ lý trí tuệ nhân tạo (AI Assistant) toàn diện phục vụ quản trị, vận hành hạ tầng và điều hành doanh nghiệp tự động hoá. Hệ thống kết nối đa kênh linh hoạt: từ **Web Portal**, **Màn hình tương tác HUD**, **Telegram, Teams Bot**, **Agent máy trạm Windows** cho đến **Robot Trợ Lý**.
 
 [Tính Năng](#-tính-năng-nổi-bật) • [Kiến Trúc](#-kiến-trúc-hệ-thống) • [Cài Đặt Nhanh](#-cài-đặt-nhanh-quick-start) • [Cấu Hình](#-cấu-hình) • [Bảo Mật](#-an-toàn--quản-trị-ai-zero-trust) • [Giấy Phép](#-giấy-phép--bản-quyền)
 
@@ -75,7 +75,7 @@ flowchart TB
         Portal["🖥️ Web Portal (HTTPS :443 /)"]
         HUD["📊 Màn hình HUD Tác Chiến (/hud)"]
         TG["✈️ Telegram Bot (Cảnh báo & Duyệt lệnh)"]
-        Robot["🤖 Robot Để Bàn ESP32-S3 (IoT :8000)"]
+        Robot["🤖 Robot Trợ Lý (IoT :8000)"]
         Agent["💻 Agent Máy Trạm Windows (/ws/client)"]
     end
 
@@ -208,7 +208,7 @@ Portal -> Cài Đặt Hệ Thống
  ├── 🧠 Bộ Não (LLM): Cấu hình URL, API Key, Model chính, Model dự phòng
  ├── 🎙️ Giọng Đọc (TTS): Chọn Edge-TTS (tiếng Việt tự nhiên), Vbee, ElevenLabs
  ├── ✈️ Telegram Bot: Điền Bot Token & Chat ID để nhận cảnh báo và duyệt lệnh từ xa
- ├── 🛡️ Bảo Mật: Cấp phát Token định danh riêng cho từng Robot ESP32
+ ├── 🛡️ Bảo Mật: Cấp phát Token định danh riêng cho từng Robot Trợ Lý
  ├── 👥 Phân Quyền & Privacy: Cấu hình quy tắc che dữ liệu (CCCD, SĐT, tài chính...)
  └── 💾 Sao Lưu: Thiết lập cơ chế sao lưu định kỳ
 ```
