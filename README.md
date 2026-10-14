@@ -136,8 +136,8 @@ flowchart TB
 #### Trên Linux / macOS:
 ```bash
 # Clone dự án về máy
-git clone https://github.com/lichpppp/VNMateAI.git
-cd VNMateAI
+git clone https://github.com/lichpppp5/VN-MateAI-v2.0.git
+cd VN-MateAI-v2.0
 
 # Chạy trình cài đặt tự động
 sudo ./install.sh        # Trên Linux
@@ -148,8 +148,8 @@ bash install.sh          # Trên macOS (Cấp tối thiểu 8GB RAM trong Docker
 #### Trên Windows (PowerShell với quyền Administrator):
 ```powershell
 # Clone dự án về máy
-git clone https://github.com/lichpppp/VNMateAI.git
-cd VNMateAI
+git clone https://github.com/lichpppp5/VN-MateAI-v2.0.git
+cd VN-MateAI-v2.0
 
 # Chạy script cài đặt tự động
 powershell -ExecutionPolicy Bypass -File .\install.ps1
@@ -299,7 +299,7 @@ Vui lòng xem chi tiết tại [CONTRIBUTING.md](app/CONTRIBUTING.md).
 Dự án được phân phối dưới giấy phép mã nguồn mở **Apache License 2.0**. Xem chi tiết tại [LICENSE](app/LICENSE) và [NOTICE](app/NOTICE).
 
 - **Tác giả & Chủ sở hữu bản quyền**: **Dương Thanh Lịch** ([thanhlich.duong@gmail.com](mailto:thanhlich.duong@gmail.com))
-- **Kho lưu trữ chính thức**: [https://github.com/lichpppp/VNMateAI](https://github.com/lichpppp/VNMateAI)
+- **Kho lưu trữ chính thức**: [https://github.com/lichpppp5/VN-MateAI-v2.0](https://github.com/lichpppp5/VN-MateAI-v2.0)
 
 ---
 
