@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🤖 VN-MateAI
+#  VN-MateAI
 ### Nền Tảng Trợ Lý AI Vận Hành Doanh Nghiệp Toàn Diện & Robot Thông Minh
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
