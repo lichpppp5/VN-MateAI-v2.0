@@ -9,7 +9,7 @@
 [![Docker Compose](https://img.shields.io/badge/Docker%20Compose-v2-2496ED.svg?logo=docker&logoColor=white)](#-cài-đặt-nhanh-quick-start)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1.svg?logo=postgresql&logoColor=white)](#-dữ-liệu--hạ-tầng)
 [![Redis](https://img.shields.io/badge/Redis-7-DC382D.svg?logo=redis&logoColor=white)](#-dữ-liệu--hạ-tầng)
-[![Hardware](https://img.shields.io/badge/Hardware-ESP32--S3%20Xiaozhi-E7352C.svg?logo=espressif&logoColor=white)](#-robot-để-bàn-esp32-s3)
+[![Hardware](https://img.shields.io/badge/Hardware-ESP32--S3%20-E7352C.svg?logo=espressif&logoColor=white)](#-robot-trợ-lý)
 
 **VN-MateAI** là giải pháp trợ lý trí tuệ nhân tạo (AI Assistant) toàn diện phục vụ quản trị, vận hành hạ tầng và điều hành doanh nghiệp tự động hoá. Hệ thống kết nối đa kênh linh hoạt: từ **Web Portal**, **Màn hình tương tác HUD**, **Telegram, Teams Bot**, **Agent máy trạm Windows** cho đến **Robot Trợ Lý**.
 
