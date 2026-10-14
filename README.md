@@ -38,7 +38,7 @@ Trong môi trường doanh nghiệp hiện đại, việc theo dõi hạ tầng 
 - **Barge-in (Ngắt lời tức thì)**: Khi người dùng nói lệnh mới, hệ thống tự động hủy lượt đọc cũ để lắng nghe ngay lập tức.
 - **Wake Word đa thiết bị**: Hỗ trợ gọi trợ lý bằng từ đánh thức thông minh (*"Ly Ly"*, *"MateAI"*).
 
-### 🤖 2. Robot Để Bàn ESP32-S3 (Xiaozhi)
+### 🤖 2. Robot Để Bàn ESP32-S3 (Robot Trợ Lý)
 - Giao tiếp hai chiều với robot phần cứng ESP32-S3 qua giao thức WebSocket IoT độc lập (cổng `8000`).
 - Hiển thị cảm xúc, trạng thái lắng nghe, phản hồi âm thanh trực tiếp tại bàn làm việc của nhân viên hoặc phòng họp điều hành.
 
