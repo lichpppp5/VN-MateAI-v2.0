@@ -1,7 +1,7 @@
 <div align="center">
 
-#  VN-MateAI 
-### Nền Tảng Trợ Lý AI Vận Hành Doanh Nghiệp, Điều Phối Agent Toàn Diện & Robot Thông Minh
+# 🤖 VN-MateAI
+### Nền Tảng Trợ Lý AI Vận Hành Doanh Nghiệp, Master Điều Phối Agent & Robot Trợ Lý
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg?logo=python&logoColor=white)](https://python.org)
@@ -11,22 +11,112 @@
 [![Redis](https://img.shields.io/badge/Redis-7-DC382D.svg?logo=redis&logoColor=white)](#-dữ-liệu--hạ-tầng)
 [![Hardware](https://img.shields.io/badge/Hardware-ESP32--S3%20-E7352C.svg?logo=espressif&logoColor=white)](#-robot-trợ-lý)
 
-**VN-MateAI** là giải pháp trợ lý trí tuệ nhân tạo (AI Assistant) toàn diện phục vụ quản trị, vận hành hạ tầng và điều hành doanh nghiệp tự động hoá. Hệ thống kết nối đa kênh linh hoạt: từ **Web Portal**, **Màn hình tương tác HUD**, **Telegram, Teams Bot**, **Agent máy trạm Windows** cho đến **Robot Trợ Lý**.
+<br/>
 
-[Tính Năng](#-tính-năng-nổi-bật) • [Kiến Trúc](#-kiến-trúc-hệ-thống) • [Cài Đặt Nhanh](#-cài-đặt-nhanh-quick-start) • [Cấu Hình](#-cấu-hình) • [Bảo Mật](#-an-toàn--quản-trị-ai-zero-trust) • [Giấy Phép](#-giấy-phép--bản-quyền)
+<p align="center">
+  <img src="banner/01-executive-command-center.png" alt="VN-MateAI Executive Command Center" width="100%" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+</p>
+
+**VN-MateAI** là giải pháp hạt nhân **Master Điều Phối Agent (Master Agent Orchestrator)** toàn diện cho doanh nghiệp. Hệ thống hợp nhất việc quản trị, vận hành hạ tầng, điều phối đội ngũ AI Agent chuyên trách (DevOps, IT, HR, Kế toán, Máy trạm, Robot phần cứng) hoạt động trên đa kênh: từ **Web Portal C-Level**, **Màn hình tương tác HUD 3D**, **Telegram & Teams Bot**, **Agent máy trạm Windows** cho đến **Robot Trợ Lý để bàn ESP32-S3**.
+
+[Tổng Quan](#-tổng-quan--master-điều-phối-agent) • [Giao Diện Thực Tế](#-giao-diện-thực-tế-application-showcase) • [Tính Năng](#-tính-năng-nổi-bật) • [Kiến Trúc Tri-Brain](#-kiến-trúc-3-bộ-não-chuyên-biệt-tri-brain-engine) • [Cài Đặt](#-cài-đặt-nhanh-quick-start) • [Bảo Mật](#-an-toàn--quản-trị-ai-zero-trust) • [Giấy Phép](#-giấy-phép--bản-quyền)
 
 </div>
 
 ---
 
-## 🌟 Giới Thiệu
+## 🌟 Tổng Quan — Master Điều Phối Agent Doanh Nghiệp
 
-Trong môi trường doanh nghiệp hiện đại, việc theo dõi hạ tầng máy chủ, kiểm tra số liệu ERP, quản lý phân quyền và điều khiển máy trạm thường phân mảnh và tiêu tốn nhiều thời gian. **VN-MateAI** được xây dựng nhằm giải quyết bài toán đó thông qua một nền tảng AI hợp nhất:
+Trong các tổ chức hiện đại, việc ứng dụng AI thường gặp tình trạng phân mảnh: mỗi phòng ban sử dụng một công cụ rời rạc, thiếu khả năng kiểm soát tập trung, không có cơ chế phân quyền bảo mật và không thể phối hợp chéo giữa các tác vụ.
 
-- 🗣️ **Giao tiếp tự nhiên bằng Tiếng Việt**: Xử lý giọng nói thời gian thực với độ trễ thấp, hỗ trợ ngắt lời tự nhiên (full-duplex thoại).
-- ⚙️ **Thực thi hành động thực tế**: Không chỉ dừng lại ở trò chuyện, VN-MateAI kết nối trực tiếp với hơn **100+ kỹ năng (skills)** để tra cứu dữ liệu, kiểm tra server, gửi báo cáo, điều khiển máy tính từ xa.
-- 🛡️ **Quản trị rủi ro nghiêm ngặt (Human-in-the-loop)**: Mọi thao tác tác động hệ thống đều đi qua cổng kiểm duyệt phân quyền (RBAC/ABAC), xếp hạng rủi ro (L0–L4) và yêu cầu phê duyệt từ cấp quản lý trước khi chạy.
-- 📦 **Triển khai 1-Click độc lập**: Đóng gói hoàn chỉnh trên Docker Compose, không phụ thuộc dịch vụ đám mây bắt buộc, dữ liệu doanh nghiệp nằm trọn vẹn tại máy chủ nội bộ.
+**VN-MateAI được thiết kế để đóng vai trò Tổng Chỉ Huy (Master Orchestrator)** vận hành mọi mắt xích AI trong doanh nghiệp:
+
+```
+                                  ┌─────────────────────────────┐
+                                  │      NGƯỜI DÙNG / SẾP       │
+                                  │  Web Portal · HUD · Telegram│
+                                  │   Robot ESP32 · Giọng Nói   │
+                                  └──────────────┬──────────────┘
+                                                 │
+                                                 ▼
+                       ╔═════════════════════════════════════════════════╗
+                       ║        VN-MATEAI — MASTER ORCHESTRATOR         ║
+                       ║    Tri-Brain Engine · Policy Gate · Zero Trust  ║
+                       ╚═════════════════════════════════════════════════╝
+                                                 │
+         ┌───────────────────┬───────────────────┼───────────────────┬───────────────────┐
+         ▼                   ▼                   ▼                   ▼                   ▼
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│  AGENT DEVOPS   │ │  AGENT MÁY TRẠM │ │   AGENT ERP     │ │  ROBOT BÀN LÀM  │ │  AGENT AN NINH  │
+│ Hạ tầng, Docker │ │  Windows Client │ │ MISA, SAP, Odoo │ │   ESP32-S3      │ │ Audit Log, PII  │
+│  Server, Cloud  │ │  COM, Excel, App│ │  Hóa đơn, Thuế  │ │  Cảm xúc, Thoại │ │  Sentinel 24/7  │
+└─────────────────┘ └─────────────────┘ └─────────────────┘ └─────────────────┘ └─────────────────┘
+```
+
+1. **Điều Phối Đa Tác Tử (Multi-Agent Swarm)**: Tiếp nhận một yêu cầu cấp cao từ ban điều hành, tự động phân tích ý định, bẻ nhỏ thành các chuỗi hành động và giao nhiệm vụ cho từng Agent chuyên môn phù hợp.
+2. **Kiểm Soát Rủi Ro Tập Trung (Zero-Trust Gate)**: Mọi quyết định hay thao tác của bất kỳ Agent nào xuống hệ thống vật lý đều phải đi qua chốt chặn an toàn: đánh giá mức độ rủi ro (L0–L4), kích hoạt hàng đợi phê duyệt (Human-in-the-loop) trước khi thực thi.
+3. **Giám Sát Toàn Cảnh Thời Gian Thực**: Trực quan hóa toàn bộ topology dòng chảy dữ liệu giữa các Agent, Webhook, cơ sở dữ liệu và máy trạm trên bảng điều khiển tương tác trực tiếp.
+
+---
+
+## 📸 Giao Diện Thực Tế (Application Showcase)
+
+Dưới đây là hình ảnh thực tế từ các phân hệ vận hành chính của VN-MateAI:
+
+### 1. Bảng Điều Khiển Trung Tâm Chỉ Huy (Executive Command Center)
+Giao diện C-Level dành cho ban lãnh đạo và giám đốc CNTT: theo dõi tỷ lệ tác vụ thành công, lượng Token LLM tiêu thụ, thời gian phản hồi P50, cảnh báo sự cố hạ tầng và trạng thái kết nối các node trong mạng lưới.
+
+<p align="center">
+  <img src="banner/01-executive-command-center.png" alt="Executive Command Center" width="100%" style="border-radius: 8px;">
+</p>
+
+---
+
+### 2. Sơ Đồ Topology Master Điều Phối Luồng & Agent Thời Gian Thực
+Bản đồ trực quan hóa toàn bộ cấu trúc điều phối của VN-MateAI: từ các cổng đón lệnh (Telegram, HUD, Web Portal, Robot, Email, Webhook), qua Sentinel tự hành, lõi Voice STT/TTS, AI Dispatch Gateway (9Router), Tool Gateway (108 kỹ năng), Hàng đợi duyệt, Đa tác tử (Multi-Agent), tới hạ tầng CSDL, Active Directory, Cloud và hệ thống ERP.
+
+<p align="center">
+  <img src="banner/02-topology-orchestrator.png" alt="Topology Master Orchestrator" width="100%" style="border-radius: 8px;">
+</p>
+
+---
+
+### 3. Màn Hình Tác Chiến HUD 3D Buồng Lái (Mission Control Cockpit)
+Thiết kế tối ưu cho màn hình lớn treo tường phòng điều hành (NOC): trang bị quả cầu thần kinh 3D phản ứng thời gian thực theo âm thanh và trạng thái hệ thống, hiển thị chỉ số sức khỏe máy chủ, telemetry và hỗ trợ tương tác giọng nói trực tiếp.
+
+<p align="center">
+  <img src="banner/03-hud-3d-cockpit.png" alt="HUD 3D Cockpit Ly Ly" width="100%" style="border-radius: 8px;">
+</p>
+
+---
+
+### 4. Kiến Trúc 3 Bộ Não Chuyên Biệt (Tri-Brain Engine)
+Cấu hình phân tách rạch ròi 3 tầng mô hình AI: **Não Kiểm Soát (Router Zero-Trust)** phân tích luồng $\rightarrow$ **Não Giao Tiếp (<300ms)** phản hồi tức thì $\rightarrow$ **Não Vận Hành (108 Skills)** thực thi tác vụ chuyên sâu. Tương thích linh hoạt với mọi Gateway LLM (Gemini, Claude, GPT, DeepSeek, vLLM, Ollama).
+
+<p align="center">
+  <img src="banner/04-tri-brain-engine.png" alt="Tri-Brain Engine Configuration" width="100%" style="border-radius: 8px;">
+</p>
+
+---
+
+### 5. Trung Tâm Tích Hợp Doanh Nghiệp (ERP, Cloud & Workstations)
+Kết nối sẵn sàng với các hệ thống CNTT doanh nghiệp hàng đầu: AWS, Oracle Cloud OCI, Hóa đơn điện tử, Paperless OCR, phần mềm kế toán MISA, ERP Odoo, SAP, Microsoft Dynamics 365, Zoho và Google Sheets.
+
+<p align="center">
+  <img src="banner/05-enterprise-connectors.png" alt="Enterprise Connectors & ERP" width="100%" style="border-radius: 8px;">
+</p>
+
+---
+
+## 🧠 Kiến Trúc 3 Bộ Não Chuyên Biệt (Tri-Brain Engine)
+
+Khác với các ứng dụng AI thông thường dồn toàn bộ prompt vào một mô hình duy nhất dẫn đến độ trễ cao và dễ ảo giác (hallucination), VN-MateAI áp dụng cơ chế **Tri-Brain**:
+
+| Bộ Não | Chức Năng Chính | Mô Hình Khuyên Dùng | Thời Gian Phản Hồi |
+|---|---|---|---|
+| **1. Não Kiểm Soát** *(Router)* | Phân tích ý định, kiểm tra phân quyền RBAC/ABAC, chặn lệnh nguy hiểm, điều phối luồng sang Agent phụ trách | Mô hình suy luận nhanh: `gemini-3.6-flash-high`, `gpt-4o-mini`, `deepseek-chat` | ~100–200 ms |
+| **2. Não Giao Tiếp** *(Conversational)* | Giao tiếp thoại tự nhiên, không phải nạp danh mục kỹ năng cồng kềnh, sinh câu phản hồi thoại mượt mà | Mô hình streaming tốc độ cao: `gemini-3.6-flash`, `gpt-4o-mini` | **< 300 ms** |
+| **3. Não Vận Hành** *(Execution)* | Nạp 108+ công cụ (Skills), lập kế hoạch ReAct, thực thi code, truy vấn SQL, gọi API ERP, điều khiển máy trạm | Mô hình thông minh cao: `claude-3-7-sonnet`, `gemini-1.5-pro`, `gpt-4o` | Theo độ phức tạp tác vụ |
 
 ---
 
@@ -43,7 +133,7 @@ Trong môi trường doanh nghiệp hiện đại, việc theo dõi hạ tầng 
 - Hiển thị cảm xúc, trạng thái lắng nghe, phản hồi âm thanh trực tiếp tại bàn làm việc của nhân viên hoặc phòng họp điều hành.
 
 ### 💻 3. Agent Tự Động Hóa Máy Trạm Windows (`client_agent`)
-- Ứng dụng chạy nền gọn nhẹ (`VNMateAgent.exe`), không đòi hỏi cài đặt môi trường Python phức tạp trên từng máy client.
+- Ứng dụng chạy nền gọn nhẹ (`VNMateAgent.exe`), không đòi hỏi cài đặt môi trường Python trên từng máy client.
 - **Khả năng tự động hóa mạnh mẽ**:
   - Điều khiển tác vụ: mở ứng dụng, điều chỉnh âm lượng, điều khiển media, clipboard, chạy lệnh PowerShell có kiểm soát.
   - Tự động hóa bảng tính Excel qua Windows COM interface.
@@ -67,7 +157,7 @@ Trong môi trường doanh nghiệp hiện đại, việc theo dõi hạ tầng 
 
 ---
 
-## 🏛️ Kiến Trúc Hệ Thống
+## 🏛️ Kiến Trúc Luồng Hệ Thống
 
 ```mermaid
 flowchart TB
@@ -79,23 +169,23 @@ flowchart TB
         Agent["💻 Agent Máy Trạm Windows (/ws/client)"]
     end
 
-    subgraph Core["🧠 VN-MATEAI RUNTIME (FastAPI + Python 3.11)"]
+    subgraph Core["🧠 VN-MATEAI MASTER RUNTIME (FastAPI + Python 3.11)"]
         Auth["🔐 Xác thực & Định danh (JWT · Device Token)"]
         VoiceEngine["🎙️ Pipeline Thoại (faster-whisper + VAD + Edge-TTS)"]
-        AgentLoop["🔄 Vòng Lặp Agent (LLM ReAct Loop)"]
+        AgentLoop["🔄 Vòng Lặp Master Agent (ReAct & Multi-Agent Routing)"]
         PolicyEngine["🚦 Policy Engine (Kill Switch · RBAC · ABAC · Risk Gate)"]
-        SkillRegistry["⚙️ Kho Kỹ Năng (DevOps, AD/LDAP, ERP, Windows, Office)"]
+        SkillRegistry["⚙️ Kho 108+ Kỹ Năng (DevOps, AD/LDAP, ERP, Windows, Office)"]
         ApprovalQueue["⏳ Hàng Đợi Duyệt Lệnh (Human-in-the-loop)"]
         PrivacyMask["🎭 Bộ Lọc Dữ Liệu Nhạy Cảm (Privacy Masking)"]
         AuditLedger["🧾 Sổ Nhật Ký Bất Biến (Hash-chained Audit Log)"]
     end
 
-    subgraph LLMGateways["🌐 CỔNG KẾT NỐI MÔ HÌNH NGÔN NGỮ"]
-        LLM["OpenAI / DeepSeek / Gemini / OpenRouter / Ollama / vLLM"]
+    subgraph LLMGateways["🌐 CỔNG KẾT NỐI MÔ HÌNH NGÔN NGỮ (9ROUTER / OPENAI-COMPATIBLE)"]
+        LLM["OpenAI / DeepSeek / Gemini / Claude / OpenRouter / Ollama / vLLM"]
     end
 
     subgraph Infra["🗄️ HẠ TẦNG LƯU TRỮ & DỊCH VỤ"]
-        PG[("🗄️ PostgreSQL 16\n(Dữ liệu nghiệp vụ & Audit)")]
+        PG[("🗄️ PostgreSQL 16\n(Dữ liệu nghiệp vụ & Audit Log)")]
         Redis[("⚡ Redis 7\n(Rate limit, Session & Cache)")]
         S3[("📦 S3 / SeaweedFS\n(Tài liệu RAG & Sao lưu)")]
         OTel["📡 OpenTelemetry\n(Tracing & Metrics)"]
@@ -205,7 +295,7 @@ Toàn bộ cấu hình chuyên sâu có thể điều chỉnh trực tiếp trê
 
 ```
 Portal -> Cài Đặt Hệ Thống
- ├── 🧠 Bộ Não (LLM): Cấu hình URL, API Key, Model chính, Model dự phòng
+ ├── 🧠 Bộ Não (LLM): Cấu hình URL, API Key, Model chính, Model dự phòng, Tri-Brain
  ├── 🎙️ Giọng Đọc (TTS): Chọn Edge-TTS (tiếng Việt tự nhiên), Vbee, ElevenLabs
  ├── ✈️ Telegram Bot: Điền Bot Token & Chat ID để nhận cảnh báo và duyệt lệnh từ xa
  ├── 🛡️ Bảo Mật: Cấp phát Token định danh riêng cho từng Robot Trợ Lý
