@@ -1778,12 +1778,43 @@ function hudOpenMicForFollowup() {
   }
   window.quickCmd = quickCmd;
 
+  let isComposingCmd = false;
+  let enterPressedDuringComposition = false;
+
   if (cmdInputEl) {
+    // Theo dõi bộ gõ tiếng Việt (IME: macOS Telex/Simple Telex, Unikey, EVKey...)
+    cmdInputEl.addEventListener('compositionstart', () => {
+      isComposingCmd = true;
+      enterPressedDuringComposition = false;
+    });
+
+    cmdInputEl.addEventListener('compositionend', () => {
+      isComposingCmd = false;
+      // Nếu người dùng vừa ấn Enter để hoàn tất từ tiếng Việt cuối cùng,
+      // đợi browser cập nhật giá trị vào input rồi submit đầy đủ nội dung.
+      if (enterPressedDuringComposition) {
+        enterPressedDuringComposition = false;
+        setTimeout(() => {
+          submitHudCmd();
+        }, 20);
+      }
+    });
+
     cmdInputEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
+        // Nếu bộ gõ IME đang ghép từ/dấu (isComposing hoặc keyCode 229):
+        // KHÔNG preventDefault hay đọc value ngay kẻo mất chữ cuối!
+        // Đánh dấu để compositionend kích hoạt submit ngay sau khi ghép từ xong.
+        if (e.isComposing || isComposingCmd || e.keyCode === 229) {
+          enterPressedDuringComposition = true;
+          return;
+        }
         e.preventDefault();
+        e.stopPropagation();
         submitHudCmd();
       } else if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
         cmdInputEl.blur();
       }
     });
@@ -2500,7 +2531,7 @@ function hudOpenMicForFollowup() {
     } else if (e.code === 'Space') {
       e.preventDefault();
       toggleHudMic();
-    } else if (e.key === '/' || e.key === 'Enter') {
+    } else if (e.key === '/') {
       e.preventDefault();
       if (cmdInputEl) {
         cmdInputEl.focus();
