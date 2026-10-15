@@ -17,7 +17,7 @@
   <img src="banner/01-executive-command-center.png" alt="VN-MateAI Executive Command Center" width="100%" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
 </p>
 
-**VN-MateAI** là giải pháp hạt nhân **Master Điều Phối Agent (Master Agent Orchestrator)** toàn diện cho doanh nghiệp. Hệ thống hợp nhất việc quản trị, vận hành hạ tầng, điều phối đội ngũ AI Agent chuyên trách (DevOps, IT, HR, Kế toán, Máy trạm, Robot phần cứng) hoạt động trên đa kênh: từ **Web Portal C-Level**, **Màn hình tương tác HUD 3D**, **Telegram & Teams Bot**, **Agent máy trạm Windows** cho đến **Robot Trợ Lý để bàn ESP32-S3**.
+**VN-MateAI** là giải pháp hạt nhân **Master Điều Phối Agent (Master Agent Orchestrator)** cho doanh nghiệp. Hệ thống hợp nhất việc quản trị, vận hành hạ tầng, điều phối đội ngũ AI Agent chuyên trách (DevOps, IT, HR, Kế toán, Máy trạm, Robot trợ lý) hoạt động trên đa kênh: từ **Web Portal C-Level**, **Màn hình tương tác HUD 3D**, **Telegram & Teams Bot**, **Agent máy trạm Windows** cho đến **Robot Trợ Lý**.
 
 [Tổng Quan](#-tổng-quan--master-điều-phối-agent) • [Giao Diện Thực Tế](#-giao-diện-thực-tế-application-showcase) • [Tính Năng](#-tính-năng-nổi-bật) • [Kiến Trúc Tri-Brain](#-kiến-trúc-3-bộ-não-chuyên-biệt-tri-brain-engine) • [Cài Đặt](#-cài-đặt-nhanh-quick-start) • [Bảo Mật](#-an-toàn--quản-trị-ai-zero-trust) • [Giấy Phép](#-giấy-phép--bản-quyền)
 
