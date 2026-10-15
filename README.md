@@ -1,7 +1,7 @@
 <div align="center">
 
 # 🤖 VN-MateAI
-### Nền Tảng Trợ Lý AI Vận Hành Doanh Nghiệp, Master Điều Phối Agent & Robot Trợ Lý
+### Nền Tảng Trợ Lý AI Vận Hành, Master Điều Phối Agent & Robot Trợ Lý
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg?logo=python&logoColor=white)](https://python.org)
@@ -25,7 +25,7 @@
 
 ---
 
-## 🌟 Tổng Quan — Master Điều Phối Agent Doanh Nghiệp
+## 🌟 Tổng Quan — Master Điều Phối Agent 
 
 Trong các tổ chức hiện đại, việc ứng dụng AI thường gặp tình trạng phân mảnh: mỗi phòng ban sử dụng một công cụ rời rạc, thiếu khả năng kiểm soát tập trung, không có cơ chế phân quyền bảo mật và không thể phối hợp chéo giữa các tác vụ.
 
