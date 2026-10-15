@@ -39,7 +39,7 @@ const AgentGatewayUI = (() => {
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
       <p class="text-xs text-slate-600 dark:text-slate-300">Nối <b>MCP server</b> có sẵn của doanh nghiệp (ERP, CRM, ITSM, agent nội bộ…). Mỗi công cụ của server thành công cụ của AI,
         đi qua <b>cùng chính sách</b>: mặc định chỉ admin dùng, rủi ro từ L3 phải duyệt, mọi lời gọi ghi audit.
-        <span class="block mt-1 text-[11px] text-slate-500">Hệ thống chỉ có REST / SQL API (không nói MCP): tab <b>Tích hợp hệ thống → Kết nối</b>. Cụm Mac mini / OpenClaw: tab <b>Dev Fleet</b>.</span></p>
+        <span class="block mt-1 text-[11px] text-slate-500">Hệ thống chỉ có REST / SQL API (không nói MCP): tab <b>Tích hợp hệ thống → Kết nối</b>. Cụm Work Node / OpenClaw: tab <b>Dev Fleet</b>.</span></p>
       <button type="button" data-ag="refresh" class="${BTN} bg-primary-600 hover:bg-primary-700 text-white shrink-0">Làm mới</button>
     </div>
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">

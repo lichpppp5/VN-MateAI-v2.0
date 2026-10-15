@@ -29,13 +29,13 @@ class FakeMaster:
         self.token = token
         self.api_version = api_version
         self.workers: List[Dict[str, Any]] = [
-            {"worker_id": "mac-01", "hostname": "macmini-01", "platform": "macos", "architecture": "arm64", "os_version": "15.1",
+            {"worker_id": "mac-01", "hostname": "worknode-01", "platform": "macos", "architecture": "arm64", "os_version": "15.1",
              "state": "idle", "cpu": 12, "memory": 40, "disk": 55, "capabilities": ["git", "python", "nodejs", "docker"],
              "openclaw_status": "online", "openclaw_version": "x.y", "last_seen": _now()},
-            {"worker_id": "mac-02", "hostname": "macmini-02", "platform": "macos", "architecture": "arm64", "os_version": "15.1",
+            {"worker_id": "mac-02", "hostname": "worknode-02", "platform": "macos", "architecture": "arm64", "os_version": "15.1",
              "state": "idle", "cpu": 70, "memory": 60, "disk": 50, "capabilities": ["git", "python", "xcode", "ios"],
              "openclaw_status": "online", "last_seen": _now()},
-            {"worker_id": "mac-03", "hostname": "macmini-03", "platform": "macos", "state": "offline",
+            {"worker_id": "mac-03", "hostname": "worknode-03", "platform": "macos", "state": "offline",
              "capabilities": ["git", "python"], "last_seen": "2020-01-01T00:00:00Z"},
         ]
         self.agents: List[Dict[str, Any]] = [{"agent_id": "agent-be-01", "worker_id": "mac-01", "role": "Backend Developer",

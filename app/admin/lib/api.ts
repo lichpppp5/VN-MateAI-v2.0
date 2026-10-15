@@ -281,7 +281,7 @@ export interface RoutingAction {
  * Số liệu tổng quan — đúng cấu trúc `GET /api/v1/system/stats`.
  *
  * Đây là endpoint portal đang dùng, không phải endpoint mới. Ở đây KHÔNG
- * có "17/17 Mac Mini" hay "Ubuntu Gateway": hệ thống chưa đăng ký cụm máy
+ * có "17/17 Work Node" hay "Ubuntu Gateway": hệ thống chưa đăng ký cụm máy
  * nào, nên những ô đó sẽ báo "chưa có nguồn" thay vì bịa số.
  */
 export interface SystemStats {

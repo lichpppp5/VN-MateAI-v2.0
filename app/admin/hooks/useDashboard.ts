@@ -66,10 +66,10 @@ export function useDashboard() {
 }
 
 /**
- * Danh sách "worker ngoại vi" (Mac Mini, Ubuntu Gateway, Robot ESP32...).
+ * Danh sách "worker ngoại vi" (Work Node, Ubuntu Gateway, Robot ESP32...).
  *
  * KHÔNG có endpoint nào trả danh sách này — hệ thống chưa đăng ký cụm máy
- * nào. Briefing có vẽ "🟢 17/17 Mac Minis Online" nhưng con số đó không có
+ * nào. Briefing có vẽ "🟢 17/17 Work Nodes Online" nhưng con số đó không có
  * nguồn, nên ở đây trả về mảng rỗng kèm lý do, để giao diện hiện "chưa có
  * nguồn dữ liệu" thay vì bịa 17/17.
  */

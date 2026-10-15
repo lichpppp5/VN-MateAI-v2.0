@@ -1,20 +1,20 @@
 # Dev Fleet — điều phối cụm Dev qua Ubuntu Master
 
-VN-MateAI là **Project Authority + AI Supervisor**; Ubuntu Master là **cổng hạ tầng**; OpenClaw là **runtime thực thi**; Mac mini là **worker**. Module này là **ngoại vi**: tắt thì voice, chat, agent, RAG, ERP… vẫn chạy nguyên.
+VN-MateAI là **Project Authority + AI Supervisor**; Ubuntu Master là **cổng hạ tầng**; OpenClaw là **runtime thực thi**; Work Node là **worker**. Module này là **ngoại vi**: tắt thì voice, chat, agent, RAG, ERP… vẫn chạy nguyên.
 
 ```
-Người ─▶ VN-MateAI ──(Master Control API v1, HTTPS + Bearer)──▶ Ubuntu Master ──▶ Mac mini + OpenClaw
+Người ─▶ VN-MateAI ──(Master Control API v1, HTTPS + Bearer)──▶ Ubuntu Master ──▶ Work Node + OpenClaw
          │ dự án · tác vụ · lập lịch · chính sách · duyệt · kiểm chứng · audit      │ Ansible · 9Router · OpenClaw
 ```
 
-> **Trạng thái trung thực.** Mã phía VN-MateAI đã làm xong và được kiểm thử với **Master giả theo hợp đồng v1** (`tests/fake_master.py`). **Chưa** thử với Ubuntu Master / OpenClaw / Mac mini thật — khi viết, repo và môi trường này không có quyền truy cập vào chúng. Hợp đồng v1 dưới đây là do VN-MateAI **định nghĩa**; phía Master phải cung cấp API đúng hợp đồng (hoặc một adapter mỏng bọc API sẵn có). Xem mục 8.
+> **Trạng thái trung thực.** Mã phía VN-MateAI đã làm xong và được kiểm thử với **Master giả theo hợp đồng v1** (`tests/fake_master.py`). **Chưa** thử với Ubuntu Master / OpenClaw / Work Node thật — khi viết, repo và môi trường này không có quyền truy cập vào chúng. Hợp đồng v1 dưới đây là do VN-MateAI **định nghĩa**; phía Master phải cung cấp API đúng hợp đồng (hoặc một adapter mỏng bọc API sẵn có). Xem mục 8.
 
 ## 1. Phát hiện khi audit (Phase 0, chỉ đọc)
 
 | Hạng mục | Hiện trạng thật trong repo |
 |---|---|
 | Cấu trúc | `core/` cũ đã chuyển sang `src/mateai/{application,infrastructure,interfaces}`; prompt mô tả `core/…` là bản cũ |
-| OpenClaw / Master / Ansible | Repo **không có** mã tích hợp. Duy nhất: chữ "Mac Mini OpenClaw" trong `application/devices/elastic_grid_manager.py` |
+| OpenClaw / Master / Ansible | Repo **không có** mã tích hợp. Duy nhất: chữ "Work Node OpenClaw" trong `application/devices/elastic_grid_manager.py` |
 | Sổ worker sẵn có | `elastic_grid_manager` — worker **tự đẩy heartbeat** (`POST /api/v1/worknodes/heartbeat`), RAM, TTL 15 s, trạng thái READY/OFFLINE. **Khác** mô hình Dev Fleet (Master báo hộ), nên giữ nguyên, không trộn. *2026-10-12:* đường này **chưa từng giao việc** (hàm giao việc không được gọi ở đâu) → đã gỡ phần giao việc giả và mục con "Elastic Grid"; danh sách trạm tự báo nhịp tim hiện ở tab Dev Fleet, **chỉ để theo dõi** |
 | Sổ tác vụ | `application/tasks/ledger.py` (`op_tasks`): **một** máy trạng thái NEW…COMPLETED, bằng chứng, cổng COMPLETED chỉ khi kiểm chứng đạt — **tái dùng** |
 | Chính sách | `policy_engine.authorize` + `zero_trust.execute_with_hitl`: kill switch, L0–L5, duyệt, audit — **tái dùng** |
@@ -96,7 +96,7 @@ Ranh giới: Master lo Ansible, 9Router, OpenClaw (pairing, capability approval,
 
 ## 8. Chưa làm / rủi ro còn lại — **KHÔNG sẵn sàng production**
 
-1. **Chưa thử với Master / OpenClaw / Mac mini thật.** Cần: (a) Master hiện thực đúng hợp đồng v1 (hoặc adapter bọc API sẵn có); (b) kiểm tra phiên bản OpenClaw và giao thức Gateway thực tế ở phía Master (Phase 0 phía hạ tầng: OS, Ansible inventory, vị trí 9Router/OpenClaw, mô hình pairing) — **chưa thực hiện được từ đây**.
+1. **Chưa thử với Master / OpenClaw / Work Node thật.** Cần: (a) Master hiện thực đúng hợp đồng v1 (hoặc adapter bọc API sẵn có); (b) kiểm tra phiên bản OpenClaw và giao thức Gateway thực tế ở phía Master (Phase 0 phía hạ tầng: OS, Ansible inventory, vị trí 9Router/OpenClaw, mô hình pairing) — **chưa thực hiện được từ đây**.
 2. Mới poll (mặc định 20 s) — chưa có cầu nối **sự kiện đẩy** từ Master (§39) và chưa có backpressure.
 3. Chưa có: hàng đợi ưu tiên/SLA, đồ thị phụ thuộc, đường găng, tự thử lại / tự chữa lành, `pause`/`resume` ở service (provider đã có), Redis cho khoá/hiện diện, ước tính chi phí (hiển thị UNKNOWN), đa cluster.
 4. Chưa có giao diện (trang Dev Fleet trong Command Center) và đường lệnh nhanh bằng giọng nói; hiện dùng API + công cụ AI.

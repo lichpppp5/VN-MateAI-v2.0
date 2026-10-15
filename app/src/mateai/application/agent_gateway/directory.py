@@ -113,7 +113,7 @@ def _peripheral_rows() -> List[Dict[str, Any]]:
         mode = dev_fleet.mode
         if mode != "disabled":
             tasks = dev_fleet._task_counts()
-            rows.append({"agent_id": "dev-fleet", "kind": "devfleet", "name": "Dev Fleet (Ubuntu Master → Mac mini / OpenClaw)",
+            rows.append({"agent_id": "dev-fleet", "kind": "devfleet", "name": "Dev Fleet (Ubuntu Master → Work Node / OpenClaw)",
                          "status": ACTIVE, "url": dev_fleet.cfg.endpoint or None, "mode": mode, "tasks": tasks.get("total", 0),
                          "manage_at": "Dev Fleet"})
     except Exception as exc:  # noqa: BLE001

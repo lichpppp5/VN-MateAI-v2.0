@@ -7,7 +7,7 @@ Phase 90: Computer-Use & Native OS Action Protocol Schema for VN-MateAI.
 
 Định nghĩa cấu trúc dữ liệu chuẩn cho các tác vụ tương tác giao diện (GUI):
 - Chuẩn hóa điều khiển GUI & OS (Native Computer-Use).
-- Tương thích cụm Worker phân tán (Mac Mini / Headless nodes).
+- Tương thích cụm Worker phân tán (Work Node / Headless nodes).
 """
 
 from __future__ import annotations

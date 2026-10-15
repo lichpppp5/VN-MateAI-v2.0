@@ -8,7 +8,7 @@ Cung cấp các endpoint:
   (Sơ đồ hệ thống: /api/v1/system/topology — trạng thái thật, interfaces/http/topology.py.)
   2. GET  /api/v1/admin/departments/overview: Danh sách phòng ban, nguồn dữ liệu và cảnh báo.
   3. POST /api/v1/admin/departments/save: Lưu cấu hình phòng ban & nguồn dữ liệu động (No-Code Form).
-  4. POST /api/v1/worknodes/heartbeat: Nhận ping từ các máy trạm Mac Mini OpenClaw và phát sóng live event.
+  4. POST /api/v1/worknodes/heartbeat: Nhận ping từ các máy trạm Work Node OpenClaw và phát sóng live event.
   5. GET  /api/v1/worknodes/status: Thống kê trạng thái cụm Elastic Grid.
   6. POST /api/v1/admin/cross-report: Tạo báo cáo điều hành liên phòng ban tức thì.
 """
@@ -124,7 +124,7 @@ async def save_department_config(req: DepartmentSaveRequest, user: dict = _ADMIN
 @router.post("/worknodes/heartbeat")
 async def receive_worknode_heartbeat(req: WorknodeHeartbeatRequest) -> Dict[str, Any]:
     """
-    Endpoint nhận ping từ máy Mac Mini OpenClaw hoặc trạm ngoại vi.
+    Endpoint nhận ping từ máy Work Node OpenClaw hoặc trạm ngoại vi.
     Tự động phát hiện node mới và phát sóng sự kiện qua WebSocket Topology.
     """
     ack = elastic_grid_manager.record_heartbeat(

@@ -415,7 +415,7 @@ class PluginRegistry:
                     return "plugin_paperless"
                 if any(k in n for k in ("einvoice", "invoice", "tax", "hoa_don")):
                     return "plugin_einvoice"
-                if any(k in n for k in ("worker", "worknote", "rpa", "macmini", "client")):
+                if any(k in n for k in ("worker", "worknote", "worknode", "rpa", "macmini", "client")):
                     return "worker_cluster"
                 return "router_9"
 

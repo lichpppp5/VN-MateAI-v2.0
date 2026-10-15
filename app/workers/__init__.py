@@ -4,7 +4,7 @@
 workers/__init__.py
 ===================
 VN-MateAI Worker Cluster Execution Engine (Phase 90).
-Specialized for macOS / Mac Mini Headless RPA Nodes.
+Specialized for macOS / Work Node Headless RPA Nodes.
 """
 
 from workers.browser_session_vault import BrowserSessionVault

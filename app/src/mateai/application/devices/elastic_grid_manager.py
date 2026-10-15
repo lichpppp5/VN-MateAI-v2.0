@@ -6,7 +6,7 @@ mateai/application/devices/elastic_grid_manager.py
 Sổ trạm TỰ BÁO NHỊP TIM (`workers/remote_worker_daemon.py` → POST /api/v1/worknodes/heartbeat; quá 15 giây → OFFLINE).
 
 CHỈ THEO DÕI. Không giao việc: hàm `dispatch_or_standby` + hàng đợi PENDING_STANDBY cũ chưa từng được gọi ở đâu (rà 2026-10-12), nên
-không trạm nào nhận được việc qua đường này — đã gỡ để giao diện không hứa điều không có. Giao việc cho cụm Mac mini / OpenClaw đi qua
+không trạm nào nhận được việc qua đường này — đã gỡ để giao diện không hứa điều không có. Giao việc cho cụm Work Node / OpenClaw đi qua
 **Dev Fleet** (Ubuntu Master, docs/integrations/dev-fleet.md); việc trên máy trạm Windows / macOS đi qua **agent máy trạm**
 (`client_agent/`, `target_client` của công cụ). Danh sách trạm này hiện trong tab Dev Fleet.
 """

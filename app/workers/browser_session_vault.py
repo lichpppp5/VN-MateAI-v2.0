@@ -57,7 +57,7 @@ STEALTH_INJECTION_SCRIPT = """
         configurable: true
     });
 
-    // 3. Giả lập WebGL Vendor và Renderer chuẩn Apple Silicon (Mac Mini / M-series)
+    // 3. Giả lập WebGL Vendor và Renderer chuẩn Apple Silicon (Work Node / M-series)
     const getParameterProxyHandler = {
         apply: function(target, ctx, args) {
             const param = args[0];

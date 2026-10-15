@@ -3,7 +3,7 @@
 """
 workers/native_os_driver.py
 ===========================
-Phase 90: Native OS & Input Injection Driver for macOS Worker Nodes (Mac Mini).
+Phase 90: Native OS & Input Injection Driver for macOS Worker Nodes (Work Node).
 
 Thực thi các lệnh cấp hệ điều hành trên macOS:
 1. mouse_click(x, y, button="left"): Gửi sự kiện CGEvent vật lý tới Window Server.

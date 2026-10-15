@@ -56,8 +56,8 @@ async def api_computer_use_status() -> Dict[str, Any]:
             "status": "success",
             "worker_cluster": {
                 "nodes": [
-                    {"id": "worker-mac-01", "name": "Mac Mini M2 Pro (Primary)", "os": "macOS Sonoma (Darwin)", "status": "online", "load": "12%"},
-                    {"id": "worker-mac-02", "name": "Mac Mini M1 (Secondary)", "os": "macOS Ventura (Darwin)", "status": "standby", "load": "4%"},
+                    {"id": "worker-mac-01", "name": "Work Node M2 Pro (Primary)", "os": "macOS Sonoma (Darwin)", "status": "online", "load": "12%"},
+                    {"id": "worker-mac-02", "name": "Work Node M1 (Secondary)", "os": "macOS Ventura (Darwin)", "status": "standby", "load": "4%"},
                 ],
                 "active_workers": 2,
                 "engine_status": "READY",

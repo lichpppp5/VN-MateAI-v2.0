@@ -47,7 +47,7 @@ async def _safe(coro) -> Dict[str, Any]:
 
 @export_skill(
     name="get_dev_fleet_status",
-    description=("Xem tình trạng cụm Dev (Ubuntu Master, các Mac mini, agent, số tác vụ). Dùng khi hỏi 'cụm dev thế nào', "
+    description=("Xem tình trạng cụm Dev (Ubuntu Master, các Work Node, agent, số tác vụ). Dùng khi hỏi 'cụm dev thế nào', "
                  "'Master có khỏe không', 'Mac nào đang rảnh'. Chỉ đọc."),
     parameters_schema={"type": "object", "properties": {}, "required": []},
 )
@@ -67,7 +67,7 @@ async def get_dev_fleet_status() -> Dict[str, Any]:
 
 @export_skill(
     name="list_dev_fleet_workers",
-    description="Liệt kê các Mac mini / worker do Master báo, kèm trạng thái, độ tươi dữ liệu, capability. Chỉ đọc.",
+    description="Liệt kê các Work Node / worker do Master báo, kèm trạng thái, độ tươi dữ liệu, capability. Chỉ đọc.",
     parameters_schema={"type": "object", "properties": {
         "state": {"type": "string", "description": "Lọc theo trạng thái: IDLE, BUSY, OFFLINE… Bỏ trống = tất cả."}}, "required": []},
 )
@@ -119,7 +119,7 @@ async def _wrap(coro) -> Dict[str, Any]:
 @export_skill(
     name="create_dev_fleet_task",
     description=(
-        "Giao một tác vụ lập trình cho cụm Dev (qua Ubuntu Master → Mac mini). BẮT BUỘC có mục tiêu cụ thể, tiêu chí chấp nhận "
+        "Giao một tác vụ lập trình cho cụm Dev (qua Ubuntu Master → Work Node). BẮT BUỘC có mục tiêu cụ thể, tiêu chí chấp nhận "
         "và bước kiểm chứng — không nhận 'hãy sửa lỗi này'. Tác vụ rủi ro medium trở lên cần người duyệt: nếu kết quả có "
         "`awaiting_approval`, nói người dùng duyệt phiếu `approval_id`, KHÔNG nói là đã giao. Đặt `require_tests`/`require_build`/"
         "`require_commit` để tác vụ chỉ được coi là xong khi có bằng chứng."

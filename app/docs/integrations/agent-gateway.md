@@ -60,7 +60,7 @@ Khai báo nằm ở `config/mcp_servers.json` (quyền 600, không lên Git).
 | Chỉ có API dữ liệu (REST / SQL), hoặc AWS / OCI / Paperless / eInvoice / M365 có sẵn | **Tích hợp hệ thống → Kết nối** (`docs/integrations/connectors.md`) |
 | Gửi cảnh báo vào (Prometheus Alertmanager, Zabbix…) | **Tích hợp hệ thống → Webhook**; kịch bản có thể tự chạy theo cảnh báo |
 | Nói MCP, hoặc là agent AI (gọi vào / A2A) | **Cổng Agent** (tài liệu này) |
-| Cụm Mac mini / OpenClaw sau Ubuntu Master | **Dev Fleet** (`docs/integrations/dev-fleet.md`) |
+| Cụm Work Node / OpenClaw sau Ubuntu Master | **Dev Fleet** (`docs/integrations/dev-fleet.md`) |
 | Máy tính của nhân viên | **Tích hợp hệ thống → Máy trạm** (agent máy trạm) |
 
 ### Agent gọi vào

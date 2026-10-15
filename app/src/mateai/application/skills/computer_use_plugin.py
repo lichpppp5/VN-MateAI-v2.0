@@ -103,7 +103,7 @@ async def tool_execute_gui_task(
 ) -> Dict[str, Any]:
     """
     Đăng ký Tool: tool_execute_gui_task
-    Thực thi tác vụ giao diện tự động hóa chuyên sâu trên cụm Worker (Mac Mini).
+    Thực thi tác vụ giao diện tự động hóa chuyên sâu trên cụm Worker (Work Node).
     """
     logger.info("[ComputerUsePlugin] Received GUI task: '%s' on '%s' (session: %s)",
                 task_goal, system_target, session_id)
@@ -200,7 +200,7 @@ def register_computer_use_tool(registry=None) -> Dict[str, Any]:
     tool_name = "tool_execute_gui_task"
     description = (
         "Thực thi tác vụ điều khiển chuột, bàn phím và giao diện (Computer-Use) tự động hóa "
-        "trên môi trường Worker cô lập (Mac Mini). Hỗ trợ vượt bảo vệ anti-bot và tự phục hồi giao diện. "
+        "trên môi trường Worker cô lập (Work Node). Hỗ trợ vượt bảo vệ anti-bot và tự phục hồi giao diện. "
         "Tự động chuyển cấp độ rủi ro 4 khi phát hiện thao tác chuyển tiền hoặc duyệt lệnh."
     )
 

@@ -51,8 +51,8 @@ interface SelfHealingLog {
 export default function ComputerUseDashboard() {
   const [activeTab, setActiveTab] = useState<'console' | 'vault' | 'logs'>('console');
   const [workerNodes, setWorkerNodes] = useState<WorkerNode[]>([
-    { id: 'worker-mac-01', name: 'Mac Mini M2 Pro (Primary Node)', os: 'macOS Sonoma (Darwin)', status: 'online', load: '14%' },
-    { id: 'worker-mac-02', name: 'Mac Mini M1 (Secondary Fallback)', os: 'macOS Ventura (Darwin)', status: 'standby', load: '3%' },
+    { id: 'worker-mac-01', name: 'Work Node M2 Pro (Primary Node)', os: 'macOS Sonoma (Darwin)', status: 'online', load: '14%' },
+    { id: 'worker-mac-02', name: 'Work Node M1 (Secondary Fallback)', os: 'macOS Ventura (Darwin)', status: 'standby', load: '3%' },
   ]);
 
   // Form State
@@ -198,7 +198,7 @@ export default function ComputerUseDashboard() {
             <Cpu className="w-4 h-4 text-cyan-400 animate-pulse" />
             <span>Phase 90 • Enterprise RPA Worker Node</span>
             <span className="text-slate-600">/</span>
-            <span className="text-emerald-400">Isolated Mac Mini Cluster</span>
+            <span className="text-emerald-400">Isolated Work Node Cluster</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-teal-200 to-indigo-300">
             COMPUTER-USE & WORKER CONSOLE
@@ -238,7 +238,7 @@ export default function ComputerUseDashboard() {
             <span className="text-xs text-emerald-400 font-mono">100% Sẵn Sàng</span>
           </div>
           <div className="mt-2 text-[11px] text-slate-400 flex items-center justify-between border-t border-slate-800/60 pt-2">
-            <span>Mac Mini M2 Pro</span>
+            <span>Work Node M2 Pro</span>
             <span className="text-cyan-400 font-mono">Tải: 14%</span>
           </div>
         </div>
@@ -346,7 +346,7 @@ export default function ComputerUseDashboard() {
                     <span className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block" />
                   </div>
                   <span className="text-xs font-mono text-slate-300 ml-2">
-                    Mac Mini M2 — Display Mirror (Retina 1920x1080@2x)
+                    Work Node M2 — Display Mirror (Retina 1920x1080@2x)
                   </span>
                 </div>
 
@@ -389,7 +389,7 @@ export default function ComputerUseDashboard() {
                       CỤM WORKER HEADLESS ĐANG HOẠT ĐỘNG
                     </span>
                     <span className="text-xs text-slate-400 max-w-md mt-1">
-                      Màn hình Mac Mini đang được điều khiển bằng giao thức CGEvent & Playwright Stealth Engine.
+                      Màn hình Work Node đang được điều khiển bằng giao thức CGEvent & Playwright Stealth Engine.
                     </span>
                   </div>
                 )}

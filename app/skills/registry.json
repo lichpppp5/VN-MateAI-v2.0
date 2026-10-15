@@ -568,7 +568,7 @@
     "attr": "capture_worker_screen",
     "meta": {
       "name": "capture_worker_screen",
-      "description": "Chụp ảnh màn hình cửa sổ ứng dụng hoặc toàn màn hình worker Mac Mini đang điều khiển (Base64).",
+      "description": "Chụp ảnh màn hình cửa sổ ứng dụng hoặc toàn màn hình worker Work Node đang điều khiển (Base64).",
       "parameters": {
         "type": "object",
         "properties": {
@@ -594,7 +594,7 @@
     "attr": "get_computer_use_status",
     "meta": {
       "name": "get_computer_use_status",
-      "description": "Kiểm tra trạng thái cụm Worker (Mac Mini), danh sách phiên Browser Vault và tỷ lệ tự phục hồi UI.",
+      "description": "Kiểm tra trạng thái cụm Worker (Work Node), danh sách phiên Browser Vault và tỷ lệ tự phục hồi UI.",
       "parameters": {
         "type": "object",
         "properties": {}
@@ -615,7 +615,7 @@
     "attr": "tool_execute_gui_task",
     "meta": {
       "name": "tool_execute_gui_task",
-      "description": "Thực thi tác vụ điều khiển chuột, bàn phím và giao diện (Computer-Use) tự động hóa trên môi trường Worker cô lập (Mac Mini). Hỗ trợ vượt bảo vệ anti-bot (Apple M-series) và tự phục hồi giao diện 2 tầng (Semantic DOM + Vision OCR). Tự động chuyển cấp độ rủi ro 4 khi phát hiện thao tác chuyển tiền hoặc duyệt lệnh để kích hoạt cổng phê duyệt Telegram HITL.",
+      "description": "Thực thi tác vụ điều khiển chuột, bàn phím và giao diện (Computer-Use) tự động hóa trên môi trường Worker cô lập (Work Node). Hỗ trợ vượt bảo vệ anti-bot (Apple M-series) và tự phục hồi giao diện 2 tầng (Semantic DOM + Vision OCR). Tự động chuyển cấp độ rủi ro 4 khi phát hiện thao tác chuyển tiền hoặc duyệt lệnh để kích hoạt cổng phê duyệt Telegram HITL.",
       "parameters": {
         "type": "object",
         "properties": {
@@ -866,7 +866,7 @@
     "attr": "create_dev_fleet_task",
     "meta": {
       "name": "create_dev_fleet_task",
-      "description": "Giao một tác vụ lập trình cho cụm Dev (qua Ubuntu Master → Mac mini). BẮT BUỘC có mục tiêu cụ thể, tiêu chí chấp nhận và bước kiểm chứng — không nhận 'hãy sửa lỗi này'. Tác vụ rủi ro medium trở lên cần người duyệt: nếu kết quả có `awaiting_approval`, nói người dùng duyệt phiếu `approval_id`, KHÔNG nói là đã giao. Đặt `require_tests`/`require_build`/`require_commit` để tác vụ chỉ được coi là xong khi có bằng chứng.",
+      "description": "Giao một tác vụ lập trình cho cụm Dev (qua Ubuntu Master → Work Node). BẮT BUỘC có mục tiêu cụ thể, tiêu chí chấp nhận và bước kiểm chứng — không nhận 'hãy sửa lỗi này'. Tác vụ rủi ro medium trở lên cần người duyệt: nếu kết quả có `awaiting_approval`, nói người dùng duyệt phiếu `approval_id`, KHÔNG nói là đã giao. Đặt `require_tests`/`require_build`/`require_commit` để tác vụ chỉ được coi là xong khi có bằng chứng.",
       "parameters": {
         "type": "object",
         "properties": {
@@ -992,7 +992,7 @@
     "attr": "get_dev_fleet_status",
     "meta": {
       "name": "get_dev_fleet_status",
-      "description": "Xem tình trạng cụm Dev (Ubuntu Master, các Mac mini, agent, số tác vụ). Dùng khi hỏi 'cụm dev thế nào', 'Master có khỏe không', 'Mac nào đang rảnh'. Chỉ đọc.",
+      "description": "Xem tình trạng cụm Dev (Ubuntu Master, các Work Node, agent, số tác vụ). Dùng khi hỏi 'cụm dev thế nào', 'Master có khỏe không', 'Mac nào đang rảnh'. Chỉ đọc.",
       "parameters": {
         "type": "object",
         "properties": {},
@@ -1043,7 +1043,7 @@
     "attr": "list_dev_fleet_workers",
     "meta": {
       "name": "list_dev_fleet_workers",
-      "description": "Liệt kê các Mac mini / worker do Master báo, kèm trạng thái, độ tươi dữ liệu, capability. Chỉ đọc.",
+      "description": "Liệt kê các Work Node / worker do Master báo, kèm trạng thái, độ tươi dữ liệu, capability. Chỉ đọc.",
       "parameters": {
         "type": "object",
         "properties": {

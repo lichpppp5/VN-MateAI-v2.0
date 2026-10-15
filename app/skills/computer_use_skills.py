@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
     name="tool_execute_gui_task",
     description=(
         "Thực thi tác vụ điều khiển chuột, bàn phím và giao diện (Computer-Use) tự động hóa "
-        "trên môi trường Worker cô lập (Mac Mini). Hỗ trợ vượt bảo vệ anti-bot (Apple M-series) "
+        "trên môi trường Worker cô lập (Work Node). Hỗ trợ vượt bảo vệ anti-bot (Apple M-series) "
         "và tự phục hồi giao diện 2 tầng (Semantic DOM + Vision OCR). "
         "Tự động chuyển cấp độ rủi ro 4 khi phát hiện thao tác chuyển tiền hoặc duyệt lệnh "
         "để kích hoạt cổng phê duyệt Telegram HITL."
@@ -86,7 +86,7 @@ def tool_execute_gui_task(
 
 @export_skill(
     name="get_computer_use_status",
-    description="Kiểm tra trạng thái cụm Worker (Mac Mini), danh sách phiên Browser Vault và tỷ lệ tự phục hồi UI.",
+    description="Kiểm tra trạng thái cụm Worker (Work Node), danh sách phiên Browser Vault và tỷ lệ tự phục hồi UI.",
     parameters_schema={
         "type": "object",
         "properties": {},
@@ -124,7 +124,7 @@ def get_computer_use_status() -> Dict[str, Any]:
 
 @export_skill(
     name="capture_worker_screen",
-    description="Chụp ảnh màn hình cửa sổ ứng dụng hoặc toàn màn hình worker Mac Mini đang điều khiển (Base64).",
+    description="Chụp ảnh màn hình cửa sổ ứng dụng hoặc toàn màn hình worker Work Node đang điều khiển (Base64).",
     parameters_schema={
         "type": "object",
         "properties": {

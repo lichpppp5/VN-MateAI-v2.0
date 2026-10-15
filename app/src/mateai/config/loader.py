@@ -653,7 +653,7 @@ class AppSettings(BaseSettings):
     # Kịch bản tự kích hoạt
     playbook_triggers: PlaybookTriggersConfig = Field(default_factory=PlaybookTriggersConfig)
 
-    # Dev Fleet: điều phối cụm Dev (Ubuntu Master -> Mac mini/OpenClaw) — mặc định tắt
+    # Dev Fleet: điều phối cụm Dev (Ubuntu Master -> Work Node/OpenClaw) — mặc định tắt
     dev_fleet: DevFleetConfig = Field(default_factory=DevFleetConfig)
 
     # Phase 28: Enterprise Reporting & Template Engine

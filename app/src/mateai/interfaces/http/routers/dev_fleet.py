@@ -54,7 +54,7 @@ async def fleet_status(user: Dict[str, Any] = _READ) -> Dict[str, Any]:
     return await dev_fleet.status()
 
 
-@router.get("/api/v1/dev-fleet/workers", summary="Danh sách worker (Mac mini) do Master báo", tags=_TAG)
+@router.get("/api/v1/dev-fleet/workers", summary="Danh sách worker (Work Node) do Master báo", tags=_TAG)
 async def fleet_workers(user: Dict[str, Any] = _READ) -> Dict[str, Any]:
     snap = await _guard(dev_fleet.snapshot())
     return {"reachable": snap["reachable"], "error": snap["error"], "observed_at": snap["observed_at"], "workers": snap["workers"]}

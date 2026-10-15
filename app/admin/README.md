@@ -30,7 +30,7 @@ Enterprise-grade administration dashboard for the VN-MateAI RPA platform. Built 
 - **System Health**: CPU, memory, uptime with visual indicators
 - **Live Audit Log**: WebSocket-powered activity feed
 - **Pending Approvals**: High-risk task approval queue with one-click actions
-- **Worker Status**: External worker monitoring (Mac Minis, Ubuntu, ESP32)
+- **Worker Status**: External worker monitoring (Work Nodes, Ubuntu, ESP32)
 
 ### Settings (`/admin/settings`)
 - **General**: App name, URL, timezone, maintenance mode
