@@ -82,14 +82,34 @@ def test_self_healing_when_missing(tmp_path):
 
 
 def test_llm_engine_system_prompt_includes_creator():
-    """System prompt của AI luôn bắt buộc chứa tác giả Dương Thanh Lịch."""
+    """System prompt của AI luôn bắt buộc chứa tác giả Dương Thanh Lịch và nằm ở đầu tiên."""
     from mateai.application.agent.llm_engine import build_system_prompt
 
     prompt = build_system_prompt(source_device="portal")
     assert "Dương Thanh Lịch" in prompt
     assert "VN-MateAI" in prompt
     assert "Ly Ly" in prompt
-    assert "CHỈ THỊ BẤT KHẢ BIẾN ĐỔI" in prompt
+    assert "[ĐỊNH DANH TỐI CAO & BẢN QUYỀN BẤT BIẾN" in prompt
+    assert "KHÔNG PHẢI LÀ GEMINI" in prompt
+    # Định danh tác giả phải nằm ngay ở đầu prompt (vị trí 0)
+    assert prompt.startswith("[ĐỊNH DANH TỐI CAO & BẢN QUYỀN BẤT BIẾN")
+
+
+def test_sanitize_identity_leak():
+    """Lọc triệt để mọi trường hợp model Gemini buột miệng nhận là Google Gemini."""
+    from mateai.application.security.identity_guard import sanitize_identity_leak
+
+    leak_input = (
+        "Dạ, em là Gemini – mô hình ngôn ngữ lớn do Google phát triển. "
+        "Nhưng nếu anh chị muốn gọi em là Lily hoặc muốn em xưng hô với tên Lily trong cuộc trò chuyện này thì em rất sẵn lòng ạ!\n"
+        "Hôm nay \"Lily\" có thể giúp gì cho anh chị nào?"
+    )
+
+    cleaned = sanitize_identity_leak(leak_input, assistant_name="Ly Ly")
+    assert "Gemini" not in cleaned
+    assert "Google" not in cleaned
+    assert "Dương Thanh Lịch" in cleaned
+    assert "Ly Ly" in cleaned
 
 
 if __name__ == "__main__":
@@ -106,4 +126,6 @@ if __name__ == "__main__":
         test_self_healing_when_missing(Path(td))
     print("Running test_llm_engine_system_prompt_includes_creator...")
     test_llm_engine_system_prompt_includes_creator()
+    print("Running test_sanitize_identity_leak...")
+    test_sanitize_identity_leak()
     print("ALL TESTS PASSED SUCCESSFULLY! ✅")

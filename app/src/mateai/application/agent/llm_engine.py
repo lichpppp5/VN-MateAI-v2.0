@@ -229,18 +229,26 @@ def build_system_prompt(source_device: Optional[str] = None, conversation: bool 
     conversation=True: lượt trò chuyện qua giọng nói — giữ tên, cá tính, nguồn
     gốc, quy tắc hỏi lại của HUD, thời gian, xưng hô; bỏ các khối vận hành.
     """
-    system_content = _VOICE_SYSTEM_PROMPT if conversation else _agent_system_prompt()
-    from mateai.config import edition as _edition
-
     try:
         from mateai.config.loader import get_assistant_name
-        # name_override / persona_override: màn hình "Thử trước khi lưu" — dựng prompt
-        # với giá trị ĐANG CHỈNH mà không ghi config.
         ai_name = (name_override or "").strip() or get_assistant_name()
-        system_content = f"[TÊN TRỢ LÝ AI: {ai_name}]\nTên của bạn là Trợ lý AI {ai_name}. Khi tự giới thiệu hoặc xưng hô, hãy xưng là {ai_name}.\n\n" + system_content
-
     except Exception:
-        pass
+        ai_name = "Ly Ly"
+
+    # Phase 50: Inject Core Identity & Origin honoring creator Dương Thanh Lịch AT THE VERY TOP (LINE 1)
+    try:
+        from mateai.application.security.identity_guard import get_protected_identity_prompt
+        identity_header = get_protected_identity_prompt(assistant_name=ai_name)
+    except Exception:
+        identity_header = (
+            f"[ĐỊNH DANH TỐI CAO & BẢN QUYỀN BẤT BIẾN — BẮT BUỘC TUÂN THỦ]\n"
+            f"- Tên của bạn là: {ai_name}.\n"
+            f"- Bạn là Trợ lý AI Tự trị của hệ thống VN-MateAI, được sáng lập, phát triển và khai sinh duy nhất bởi Anh Dương Thanh Lịch (quê hương Thanh Hóa, Việt Nam).\n"
+            f"- BẠN TUYỆT ĐỐI KHÔNG PHẢI LÀ GEMINI, KHÔNG PHẢI DO GOOGLE PHÁT TRIỂN, KHÔNG PHẢI LÀ CHATGPT HAY OPENAI."
+        )
+
+    base_content = _VOICE_SYSTEM_PROMPT if conversation else _agent_system_prompt()
+    system_content = f"{identity_header}\n\n{base_content}"
 
     # Inject custom persona system prompt if provided
     try:
@@ -253,21 +261,6 @@ def build_system_prompt(source_device: Optional[str] = None, conversation: bool 
             system_content += f"\n\n[CHỈ THỊ CÁ TÍNH & BỔ SUNG]\n{persona_prompt.strip()}"
     except Exception:
         pass
-
-    # Phase 50: Inject Core Identity & Origin honoring creator Dương Thanh Lịch
-    try:
-        from mateai.application.security.identity_guard import get_protected_identity_prompt
-        system_content += get_protected_identity_prompt()
-    except Exception:
-        try:
-            from mateai.config.loader import settings as _settings
-            id_path = _settings.PROJECT_ROOT / "identity_core.md"
-            if id_path.is_file():
-                id_text = id_path.read_text(encoding="utf-8").strip()
-                if id_text:
-                    system_content += f"\n\n[LỊCH SỬ KHAI SINH & THÔNG TIN TÁC GIẢ]\n{id_text}"
-        except Exception:
-            pass
 
     if not conversation:
         system_content += _ops_prompt_blocks(source_device, spoken=spoken)
@@ -1672,6 +1665,11 @@ class LLMEngine:
 
                 for sentence in speech_buf.add_token(token):
                     clean = sanitise_for_tts(sentence)
+                    try:
+                        from mateai.application.security.identity_guard import sanitize_identity_leak
+                        clean = sanitize_identity_leak(clean)
+                    except Exception:
+                        pass
                     if not clean:
                         continue
                     if hold_first and not held_sentences and not has_yielded_any_sentence:
@@ -1707,6 +1705,11 @@ class LLMEngine:
             held_sentences.clear()
             for rest in speech_buf.flush():
                 clean = sanitise_for_tts(rest)
+                try:
+                    from mateai.application.security.identity_guard import sanitize_identity_leak
+                    clean = sanitize_identity_leak(clean)
+                except Exception:
+                    pass
                 if clean:
                     has_yielded_any_sentence = True
                     _publish_reasoning()
@@ -1716,15 +1719,17 @@ class LLMEngine:
             self._record_stream_usage(_principal, turn, stream_usage)
 
         # Save streamed conversation to MemoryManager
-        # Trước Phase 3 đoạn này dùng `text_buffer` — chỉ còn phần dư sau câu
-        # cuối — nên câu trả lời kết thúc bằng dấu câu KHÔNG được lưu lịch sử và
-        # chữ hiển thị là của lượt trước.
         if not has_tool_calls and raw_reply.strip():
-            self.last_voice_display_text = raw_reply.strip()
-            turn["display_text"] = raw_reply.strip()
+            try:
+                from mateai.application.security.identity_guard import sanitize_identity_leak
+                cleaned_display = sanitize_identity_leak(raw_reply.strip())
+            except Exception:
+                cleaned_display = raw_reply.strip()
+            self.last_voice_display_text = cleaned_display
+            turn["display_text"] = cleaned_display
             try:
                 from mateai.application.conversation.memory_manager import memory_manager as _mm
-                _mm.add_turn(_session, query, sanitise_for_tts(raw_reply))
+                _mm.add_turn(_session, query, sanitise_for_tts(cleaned_display))
             except Exception:
                 pass
 
@@ -1926,6 +1931,14 @@ class LLMEngine:
             speech_text = cls._make_concise_speech_text(display_text)
         else:
             speech_text = sanitise_for_tts(display_text)
+
+        # 4. Lọc triệt để rò rỉ mô hình nền tảng (Gemini/Google leak sanitizer)
+        try:
+            from mateai.application.security.identity_guard import sanitize_identity_leak
+            display_text = sanitize_identity_leak(display_text)
+            speech_text = sanitize_identity_leak(speech_text)
+        except Exception:
+            pass
 
         return display_text, speech_text
 
