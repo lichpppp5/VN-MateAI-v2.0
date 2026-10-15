@@ -21,7 +21,7 @@ dành cho người cần đi sâu.
 ## Báo cáo
 
 - **Hiệu Quả ROI** (mở tab mới): phiếu hỗ trợ, thống kê kiểm toán, giờ tiết kiệm theo ngày.
-- **Thương Mại & Tuân Thủ**: báo cáo hiệu năng theo tháng (lượt thoại, độ trễ, tỉ lệ thành công, chi phí) — tải CSV để đưa vào
+- **Chính Sách & Tuân Thủ**: báo cáo hiệu năng theo tháng (lượt thoại, độ trễ, tỉ lệ thành công, chi phí) — tải CSV để đưa vào
   báo cáo SLA.
 
 ## Sự cố và hạ tầng

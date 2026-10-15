@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2026 Dương Thanh Lịch — VN-MateAI. See LICENSE and NOTICE.
-// Tab "Thương mại & Tuân thủ" (web/compliance.js) với DOM giả + API giả: hiện đúng số máy chủ trả, thoát HTML, phần dữ liệu cá nhân
+// Tab "Chính Sách & Tuân Thủ" (web/compliance.js) với DOM giả + API giả: hiện đúng số máy chủ trả, thoát HTML, phần dữ liệu cá nhân
 // chỉ cho admin, xoá cần gõ lại định danh, không dùng onclick inline (sẵn cho CSP chặt).
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';

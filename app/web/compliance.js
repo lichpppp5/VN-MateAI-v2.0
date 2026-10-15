@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2026 Dương Thanh Lịch — VN-MateAI. See LICENSE and NOTICE.
 /**
- * web/compliance.js — tab "Thương mại & Tuân thủ" (thẩm định thương mại 14/10/2026):
+ * web/compliance.js — tab "Chính Sách & Tuân Thủ" (thẩm định thương mại 14/10/2026):
  *   Bản quyền + lượng sử dụng · Hiệu năng theo tháng · Dữ liệu cá nhân (sổ xử lý, tra cứu, xoá theo yêu cầu) · Danh mục kỹ năng.
  * Sự kiện gắn bằng addEventListener (không onclick inline — sẵn cho CSP chặt). Chữ động đều qua _esc.
  * Cần các hàm chung của app.js: _esc, API_BASE, apiFetch, showToast, currentUser (vai trò).

@@ -107,7 +107,7 @@ Chú thích trạng thái:
 
 | # | Hạng mục | Trạng thái | Còn lại / ghi chú |
 |---|---|---|---|
-| 15 | Số đo lưu bền 13 tháng | **Xong** | Giữ 400 ngày. API báo cáo tháng (JSON/CSV) và **màn hình trong tab "Thương mại & Tuân thủ"**. |
+| 15 | Số đo lưu bền 13 tháng | **Xong** | Giữ 400 ngày. API báo cáo tháng (JSON/CSV) và **màn hình trong tab "Chính Sách & Tuân Thủ"**. |
 | 16 | Chính sách khai báo (OPA/Cedar), duyệt hai người cho L4 | **Một phần** | Đã có duyệt hai người (`security.dual_approval_min_risk`, mặc định tắt): hai người khác nhau, người yêu cầu không tự duyệt. Chính sách khai báo OPA/Cedar: đợt 3. |
 | 17 | Neo chuỗi băm audit ra ngoài, xuất báo cáo kiểm toán | **Xong** | Xuất CSV và HTML in được, kèm kết quả kiểm chuỗi. Neo đầu chuỗi ra ổ khác và S3 sau mỗi lần sao lưu, kiểm ở `/audit-logs/verify`. Muốn có WORM thật: bật Object Lock ở bucket. Dịch vụ dấu thời gian (TSA) tuỳ chọn. |
 | 18 | SSO OIDC/SAML, vai trò tuỳ biến, phân tách nhiệm vụ | **Phần lớn** | Đã có OIDC. **Tách nhiệm vụ** (15/10, `security.separation_of_duties`, mặc định tắt): người yêu cầu và người soạn / sửa kịch bản không tự duyệt. Còn: SAML, vai trò tuỳ biến (làm khi khách hàng cần). |

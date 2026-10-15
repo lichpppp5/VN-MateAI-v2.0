@@ -268,7 +268,7 @@ const TAB_TITLES = {
   'dev-fleet': 'Dev Fleet — Cụm Master - WorkNode',
   'infra-monitor': 'Giám Sát Hạ Tầng — Prometheus · Grafana',
   'playbooks': 'Kịch Bản Vận Hành — chạy thử, duyệt, hoàn tác, kiểm chứng',
-  'compliance': 'Thương Mại & Tuân Thủ — bản quyền, hiệu năng, dữ liệu cá nhân, kỹ năng',
+  'compliance': 'Chính Sách & Tuân Thủ — bản quyền, hiệu năng, dữ liệu cá nhân, kỹ năng',
   'agent-gateway': 'Cổng Agent — nối MCP server / agent có sẵn của doanh nghiệp',
 };
 

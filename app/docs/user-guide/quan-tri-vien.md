@@ -45,7 +45,7 @@ màu). Mọi thay đổi vào nhật ký kiểm toán và lịch sử cấu hìn
   lưu ra ổ khác và S3. **Xuất báo cáo** CSV hoặc HTML in được cho đoàn kiểm toán.
 - **Thiết bị**: robot và máy trạm dùng token riêng; thu hồi được từng thiết bị và các quyền đã nhớ của nó.
 
-**Thương Mại & Tuân Thủ**: sổ hoạt động xử lý dữ liệu cá nhân, tra cứu và xoá dữ liệu theo yêu cầu của chủ thể (Nghị định 13),
+**Chính Sách & Tuân Thủ**: sổ hoạt động xử lý dữ liệu cá nhân, tra cứu và xoá dữ liệu theo yêu cầu của chủ thể (Nghị định 13),
 bản quyền và mức sử dụng so với hạn mức.
 
 ## Sao lưu và nâng cấp
