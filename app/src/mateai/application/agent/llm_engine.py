@@ -254,17 +254,20 @@ def build_system_prompt(source_device: Optional[str] = None, conversation: bool 
     except Exception:
         pass
 
-    # Phase 50: Inject Core Identity (identity_core.md) into System Prompt
+    # Phase 50: Inject Core Identity & Origin honoring creator Dương Thanh Lịch
     try:
-        from mateai.config.loader import settings as _settings
-        # Thư mục gốc dự án (đúng cả khi chạy bản đóng gói) — không dựa vào vị trí file này.
-        id_path = _settings.PROJECT_ROOT / "identity_core.md"
-        if id_path.is_file() and not _edition.is_commercial():   # bản thương mại: không gắn trợ lý với tác giả
-            id_text = id_path.read_text(encoding="utf-8").strip()
-            if id_text:
-                system_content += f"\n\n[LỊCH SỬ KHAI SINH & THÔNG TIN TÁC GIẢ]\n{id_text}"
+        from mateai.application.security.identity_guard import get_protected_identity_prompt
+        system_content += get_protected_identity_prompt()
     except Exception:
-        pass
+        try:
+            from mateai.config.loader import settings as _settings
+            id_path = _settings.PROJECT_ROOT / "identity_core.md"
+            if id_path.is_file():
+                id_text = id_path.read_text(encoding="utf-8").strip()
+                if id_text:
+                    system_content += f"\n\n[LỊCH SỬ KHAI SINH & THÔNG TIN TÁC GIẢ]\n{id_text}"
+        except Exception:
+            pass
 
     if not conversation:
         system_content += _ops_prompt_blocks(source_device, spoken=spoken)

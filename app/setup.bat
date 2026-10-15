@@ -41,12 +41,19 @@ if not exist "certs\server.key" (
 )
 
 :: 4. Kiểm tra Python
-echo 🐍 [4/4] Kiểm tra Python...
+echo 🐍 [4/5] Kiểm tra Python...
 python --version >nul 2>&1
 if %errorlevel% equ 0 (
     for /f "tokens=*" %%i in ('python --version') do echo    -^> Tìm thấy: %%i
 ) else (
     echo    -^> CẢNH BÁO: Chưa phát hiện Python trong PATH. Vui lòng cài đặt Python 3.10+
+)
+
+:: 5. Khóa bảo vệ tính toàn vẹn tệp danh tính tác giả (identity_core.md)
+echo 🛡️  [5/5] Thiết lập bảo vệ bản quyền tệp danh tính tác giả (identity_core.md)...
+if exist "identity_core.md" (
+    attrib +r "identity_core.md" >nul 2>&1
+    echo    -^> Đã đặt thuộc tính Read-Only cho identity_core.md.
 )
 
 echo ==========================================================

@@ -49,12 +49,19 @@ else
 fi
 
 # 4. Kiểm tra môi trường Python
-echo "🐍 [4/4] Kiểm tra môi trường Python..."
+echo "🐍 [4/5] Kiểm tra môi trường Python..."
 if command -v python3 &> /dev/null; then
     PY_VER=$(python3 --version)
     echo "   -> Tìm thấy: $PY_VER"
 else
     echo "   -> CẢNH BÁO: Chưa phát hiện Python 3 trong PATH!"
+fi
+
+# 5. Khóa bảo vệ tính toàn vẹn tệp danh tính tác giả (identity_core.md)
+echo "🛡️  [5/5] Thiết lập bảo vệ bản quyền tệp danh tính tác giả (identity_core.md)..."
+if [ -f "identity_core.md" ]; then
+    chmod 444 identity_core.md
+    echo "   -> Đã gắn quyền chỉ đọc (Read-Only) cho identity_core.md."
 fi
 
 echo "=========================================================="

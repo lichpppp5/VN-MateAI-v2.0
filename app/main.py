@@ -458,6 +458,9 @@ def main() -> None:
     from mateai.infrastructure.security.tls import ensure_ssl_certs
     ensure_ssl_certs()
 
+    from mateai.application.security.identity_guard import verify_and_restore_identity
+    verify_and_restore_identity()
+
     logger.info(
         "=== VN-MateAI starting up (HTTPS/WSS) | Model: %s | API: https://%s:%d ===",
         settings.MODEL_NAME,
