@@ -17,6 +17,7 @@ discover and register them automatically at startup / hot-reload.
 from __future__ import annotations
 
 import logging
+import re
 import subprocess
 from typing import Any, Dict, List, Optional
 
@@ -90,6 +91,9 @@ def _run_cmd(
 # ---------------------------------------------------------------------------
 
 
+_SERVICE_NAME_RE = re.compile(r"[A-Za-z0-9 _.$@-]{1,256}")
+
+
 @export_skill(
     name="manage_windows_service",
     description=(
@@ -126,6 +130,11 @@ def manage_windows_service(service_name: str, action: str) -> Dict[str, Any]:
     """
     action = action.lower().strip()
     svc = service_name.strip()
+    # Tên dịch vụ Windows: chữ, số, khoảng trắng, _ - . $ @ (≤ 256). Chặn ; & | < > ` " ' / \ — lệnh đi dạng danh sách
+    # đối số nên không chèn được lệnh, nhưng tên lạ không bao giờ là tên dịch vụ thật (thẩm định thương mại #3).
+    if not _SERVICE_NAME_RE.fullmatch(svc):
+        return {"success": False, "error": f"Tên dịch vụ không hợp lệ: {svc[:60]!r}", "output": "", "service": svc[:60],
+                "action": action}
 
     if action == "status":
         result = _run_cmd(["sc", "query", svc])

@@ -314,11 +314,8 @@ class TaskManager:
         self._recent_history.insert(0, record)
         del self._recent_history[200:]
 
-        try:
-            with open(self.csv_path, mode="a", newline="", encoding="utf-8") as f:
-                csv.writer(f).writerow([timestamp_iso, client_id, task_msg, st])
-        except Exception as exc:
-            logger.error("Lỗi ghi kpi_logs.csv: %s", exc)
+        # Nguồn KPI là bảng `tasks` (status + responded_at, ghi trong giao dịch ở _close). Trước 2026-10-14 còn ghi song song
+        # logs/kpi_logs.csv — tệp phẳng không giao dịch, không phân quyền (thẩm định thương mại §6 "Không đạt").
 
         if st == "completed":
             announcement = f"Báo cáo Sếp, máy {client_id} vừa báo cáo đã hoàn thành công việc: {task_msg}."
@@ -480,34 +477,23 @@ class TaskManager:
         else:
             target_month_prefix = now.strftime("%Y-%m")
 
-        if not self.csv_path.exists():
-            return f"Chưa có dữ liệu nhật ký công việc trong tháng {target_month_prefix}."
-
         completed_by_client: Dict[str, int] = {}
         issue_by_client: Dict[str, int] = {}
         total_completed = 0
         total_issues = 0
 
         try:
-            with open(self.csv_path, mode="r", encoding="utf-8") as f:
-                reader = csv.DictReader(f)
-                for row in reader:
-                    ts = row.get("Timestamp", "")
-                    if not ts.startswith(target_month_prefix):
-                        continue
-
-                    cid = row.get("Client_ID", "").strip()
-                    st = row.get("Status", "").strip().lower()
-
-                    if client_id and client_id.lower() != cid.lower():
-                        continue
-
-                    if st == "completed":
-                        completed_by_client[cid] = completed_by_client.get(cid, 0) + 1
-                        total_completed += 1
-                    elif st in ("issue", "error"):
-                        issue_by_client[cid] = issue_by_client.get(cid, 0) + 1
-                        total_issues += 1
+            for row in db_manager.task_responses_in_month(target_month_prefix):   # bảng tasks (trước: kpi_logs.csv)
+                cid = str(row.get("client_id") or "").strip()
+                st = str(row.get("status") or "").strip().lower()
+                if client_id and client_id.lower() != cid.lower():
+                    continue
+                if st == "completed":
+                    completed_by_client[cid] = completed_by_client.get(cid, 0) + 1
+                    total_completed += 1
+                elif st in ("issue", "error"):
+                    issue_by_client[cid] = issue_by_client.get(cid, 0) + 1
+                    total_issues += 1
 
             if client_id:
                 cnt = completed_by_client.get(client_id, 0)
@@ -529,7 +515,7 @@ class TaskManager:
 
         except Exception as exc:
             logger.error("Lỗi khi tổng hợp KPI tháng: %s", exc)
-            return f"Không thể đọc tệp nhật ký KPI: {exc}"
+            return f"Không thể đọc dữ liệu KPI: {exc}"
 
 
 # Module-level singleton

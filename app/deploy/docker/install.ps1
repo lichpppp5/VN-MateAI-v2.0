@@ -27,6 +27,10 @@ function SetV($k, $v) {
   if ($envText -match "^$k=") { $script:envText = $envText | ForEach-Object { if ($_ -match "^$k=") { "$k=$v" } else { $_ } } }
   else { $script:envText += "$k=$v" }
 }
+# Nâng cấp: .env của bản trước vẫn ghi VNMATE_VERSION cũ -> compose sẽ chạy image CŨ. Đồng bộ theo phiên bản của gói này.
+$bundleVer = ((Get-Content (Join-Path $PSScriptRoot "env.example") -Encoding UTF8 | Where-Object { $_ -match "^VNMATE_VERSION=" } |
+  Select-Object -First 1) -replace "^VNMATE_VERSION=", "").Trim()
+if ($bundleVer -and (GetV "VNMATE_VERSION").Trim() -ne $bundleVer) { Say "Phiên bản: $((GetV "VNMATE_VERSION").Trim()) -> $bundleVer"; SetV "VNMATE_VERSION" $bundleVer }
 foreach ($k in "VNMATE_ADMIN_PASSWORD","VNMATE_MANAGER_PASSWORD","VNMATE_VIEWER_PASSWORD","VNMATE_PG_PASSWORD","VNMATE_REDIS_PASSWORD") {
   if (-not (GetV $k).Trim()) { SetV $k (Rnd 24) }
 }
@@ -47,7 +51,7 @@ if (-not (GetV "VNMATE_PUBLIC_HOST").Trim()) {   # địa chỉ LAN cho gói "T�
 [System.IO.File]::WriteAllLines((Join-Path $PSScriptRoot ".env"), $envText, (New-Object System.Text.UTF8Encoding($false)))
 
 # 3. Khởi động
-$ver = (GetV "VNMATE_VERSION").Trim(); if (-not $ver) { $ver = "1.0.0" }
+$ver = (GetV "VNMATE_VERSION").Trim(); if (-not $ver) { $ver = "2.0.1" }
 docker image inspect "vnmateai/app:$ver" *> $null
 if ($LASTEXITCODE -eq 0) { docker compose up -d } else { Say "Không thấy image dựng sẵn — build từ mã nguồn (cần Internet, 10-20 phút)..."; docker compose up -d --build }
 if ($LASTEXITCODE -ne 0) { Die "docker compose lỗi — xem thông báo ở trên." }

@@ -9,6 +9,9 @@
  */
 const LoginMfa = (() => {
   const e = (s) => _esc(s == null ? '' : String(s));
+  /** Ảnh QR của liên kết otpauth (máy chủ tạo sẵn dạng SVG data: URI) — không có thì chỉ hiện khoá nhập tay. */
+  const qr = (s) => (typeof s.qr_svg === 'string' && s.qr_svg.startsWith('data:image/svg+xml')
+    ? `<img src="${e(s.qr_svg)}" alt="Mã QR để quét bằng ứng dụng xác thực" class="block mx-auto w-48 rounded-lg bg-white p-2" />` : '');
   const INPUT = 'input-dark w-full text-center tracking-[0.4em] text-base py-2.5 font-mono';
   const BTN = 'btn-neon-cyan w-full py-2.5 text-xs font-bold mt-2';
   const GHOST = 'w-full py-2 text-xs text-slate-400 hover:text-slate-200 mt-1';
@@ -50,7 +53,7 @@ const LoginMfa = (() => {
   function promptCode(mfaToken) {
     const p = panel();
     p.innerHTML = `
-      <p class="text-sm font-bold text-slate-100 text-center">Xác thực hai lớp</p>
+      <p class="text-sm font-bold text-slate-800 dark:text-slate-100 text-center">Xác thực hai lớp</p>
       <p class="text-xs text-slate-400 text-center">Nhập mã 6 số trong ứng dụng xác thực (Google / Microsoft Authenticator…). Mất điện thoại? Dùng một mã khôi phục dạng <span class="font-mono">ABCDE-FGHIJ</span>.</p>
       <input id="login-mfa-code" class="${INPUT}" inputmode="text" autocomplete="one-time-code" maxlength="16" aria-label="Mã xác thực" placeholder="000000" />
       ${msg('')}
@@ -83,9 +86,10 @@ const LoginMfa = (() => {
     if (!r.ok) { p.innerHTML = `${msg(errText(r))}<button type="button" id="login-mfa-back" class="${GHOST}">← Quay lại</button>`; document.getElementById('login-mfa-back').addEventListener('click', back); return; }
     const s = r.data;
     p.innerHTML = `
-      <p class="text-sm font-bold text-slate-100 text-center">Vai trò của bạn bắt buộc xác thực hai lớp</p>
+      <p class="text-sm font-bold text-slate-800 dark:text-slate-100 text-center">Vai trò của bạn bắt buộc xác thực hai lớp</p>
+      ${qr(s)}
       <ol class="text-xs text-slate-300 list-decimal pl-5 space-y-1">
-        <li>Mở ứng dụng xác thực → thêm tài khoản → <b>nhập khoá thủ công</b>.</li>
+        <li>Mở ứng dụng xác thực → thêm tài khoản → <b>${s.qr_svg ? 'quét mã QR ở trên' : 'nhập khoá thủ công'}</b>${s.qr_svg ? ' (hoặc nhập khoá thủ công)' : ''}.</li>
         <li>Khoá: <span class="font-mono text-cyan-300 select-all" id="login-mfa-secret">${e(s.secret_grouped)}</span> (theo thời gian, 6 số, 30 giây).</li>
         <li>Nhập mã 6 số đang hiện để xác nhận.</li></ol>
       <details class="text-[11px] text-slate-400"><summary class="cursor-pointer">Liên kết otpauth (dán vào ứng dụng hỗ trợ)</summary><p class="font-mono break-all select-all mt-1">${e(s.otpauth_uri)}</p></details>
@@ -114,12 +118,50 @@ const LoginMfa = (() => {
     document.getElementById('login-mfa-saved').addEventListener('click', onDone);
   }
 
-  return { promptCode, promptSetup, showRecovery, back };
+  /** Mật khẩu ban đầu / admin vừa đặt lại / mật khẩu dev: đặt mật khẩu mới rồi mới vào (MFA nếu có đi tiếp sau). */
+  function promptPasswordChange(changeToken, detail) {
+    const p = panel();
+    const PW = 'input-dark w-full text-sm py-2.5 px-3';
+    p.innerHTML = `
+      <p class="text-sm font-bold text-slate-800 dark:text-slate-100 text-center">Đặt mật khẩu mới</p>
+      <p class="text-xs text-slate-400 text-center">${e(detail || 'Bạn cần đặt mật khẩu mới trước khi vào hệ thống.')} Ít nhất 10 ký tự, có chữ và số, khác tên đăng nhập.</p>
+      <input id="login-pw-new" type="password" class="${PW}" autocomplete="new-password" aria-label="Mật khẩu mới" placeholder="Mật khẩu mới" />
+      <input id="login-pw-again" type="password" class="${PW}" autocomplete="new-password" aria-label="Nhập lại mật khẩu mới" placeholder="Nhập lại mật khẩu mới" />
+      ${msg('')}
+      <button type="button" id="login-pw-submit" class="${BTN}">Lưu mật khẩu mới</button>
+      <button type="button" id="login-mfa-back" class="${GHOST}">← Quay lại đăng nhập</button>`;
+    const err = (t) => { document.getElementById('login-mfa-error').textContent = t; };
+    const submit = async () => {
+      const a = document.getElementById('login-pw-new').value;
+      const b = document.getElementById('login-pw-again').value;
+      if (a !== b) { err('Hai lần nhập không khớp.'); return; }
+      const btn = document.getElementById('login-pw-submit');
+      btn.disabled = true;
+      try {
+        const r = await call('/api/v1/login/change-password', { change_token: changeToken, new_password: a });
+        if (!r.ok) { err(errText(r)); if (r.status === 401) setTimeout(back, 1500); return; }
+        const d = r.data || {};
+        if (d.access_token) { back(); completeLogin(d); return; }
+        if (d.status === 'mfa_required' && d.mfa_token) { promptCode(d.mfa_token); return; }
+        if (d.status === 'mfa_setup_required' && d.setup_token) { promptSetup(d.setup_token); return; }
+        err(errText(r));
+      } finally { btn.disabled = false; }
+    };
+    document.getElementById('login-pw-submit').addEventListener('click', submit);
+    document.getElementById('login-pw-again').addEventListener('keydown', (ev) => { if (ev.key === 'Enter') { ev.preventDefault(); submit(); } });
+    document.getElementById('login-mfa-back').addEventListener('click', back);
+    document.getElementById('login-pw-new').focus();
+  }
+
+  return { promptCode, promptSetup, showRecovery, back, promptPasswordChange };
 })();
 
 /** Thẻ MFA trong tab Bảo mật. */
 const MfaCard = (() => {
   const e = (s) => _esc(s == null ? '' : String(s));
+  /** Ảnh QR của liên kết otpauth (máy chủ tạo sẵn dạng SVG data: URI) — không có thì chỉ hiện khoá nhập tay. */
+  const qr = (s) => (typeof s.qr_svg === 'string' && s.qr_svg.startsWith('data:image/svg+xml')
+    ? `<img src="${e(s.qr_svg)}" alt="Mã QR để quét bằng ứng dụng xác thực" class="block mx-auto w-48 rounded-lg bg-white p-2" />` : '');
   const BOX = 'rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/60 p-4 space-y-2';
   const BTN = 'px-3 py-1.5 text-xs font-semibold rounded-lg transition active:scale-95 disabled:opacity-40';
   const INPUT = 'w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-mono';
@@ -170,7 +212,8 @@ const MfaCard = (() => {
     if (!r.ok) { document.getElementById('mfa-msg').textContent = err(r); return; }
     const s = r.data;
     el.innerHTML = `<div class="${BOX}"><h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Cài xác thực hai lớp</h3>
-      <ol class="text-xs text-slate-600 dark:text-slate-300 list-decimal pl-5 space-y-1"><li>Trong ứng dụng xác thực: thêm tài khoản → <b>nhập khoá thủ công</b>.</li>
+      ${qr(s)}
+      <ol class="text-xs text-slate-600 dark:text-slate-300 list-decimal pl-5 space-y-1"><li>Trong ứng dụng xác thực: thêm tài khoản → <b>${s.qr_svg ? 'quét mã QR ở trên' : 'nhập khoá thủ công'}</b>${s.qr_svg ? ' (hoặc nhập khoá thủ công)' : ''}.</li>
       <li>Khoá: <span class="font-mono select-all text-primary-600 dark:text-primary-400">${e(s.secret_grouped)}</span></li><li>Nhập mã 6 số đang hiện để xác nhận.</li></ol>
       <details class="text-[11px] text-slate-500"><summary class="cursor-pointer">Liên kết otpauth</summary><p class="font-mono break-all select-all mt-1">${e(s.otpauth_uri)}</p></details>
       <div class="flex gap-2"><input id="mfa-code" class="${INPUT}" inputmode="numeric" maxlength="8" placeholder="000000" aria-label="Mã xác thực" /><button type="button" id="mfa-confirm" class="${BTN} bg-primary-600 text-white shrink-0">Xác nhận</button></div>

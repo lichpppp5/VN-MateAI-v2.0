@@ -185,7 +185,7 @@ check("không còn `await s_task` ngay lập tức",
       "await s_task" not in body_code,
       "tạo task rồi chờ ngay = không song song")
 check("rải nốt câu cuối sau khi vòng lặp kết thúc",
-      "finally:\n            await pipeline.mark_complete(seq)" in voice_turn,
+      "finally:\n            await pipeline.mark_complete(spoken)" in voice_turn,
       "bỏ bước này thì câu cuối không bao giờ phát")
 
 print(f"\nTổng: {PASS + FAIL} | Pass: {PASS} | Fail: {FAIL}")

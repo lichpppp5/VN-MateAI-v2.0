@@ -284,3 +284,19 @@ async def batch_toggle_skills(
             plugin_manager.toggle_skill(name, payload.enabled)
             count += 1
     return {"success": True, "count": count, "enabled": payload.enabled}
+
+
+@router.get("/api/v1/skills/catalog", summary="Danh mục kỹ năng: nhóm, chủ sở hữu, kiểm thử, có trong phiên bản này không",
+            tags=["Skills"])
+async def get_skills_catalog(user: dict = Depends(require_roles(["manager", "admin"]))) -> Dict[str, Any]:
+    """skills/catalog.json (scripts/skill_catalog.py) + trạng thái thật: bị chặn ở phiên bản, thiếu nguồn dữ liệu (thẩm định #3)."""
+    from mateai.application.skills.tool_readiness import ready_reason
+    from mateai.config import edition
+    path = Path(settings.PROJECT_ROOT) / "skills" / "catalog.json"
+    catalog = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+    items = []
+    for name, c in sorted(catalog.items()):
+        items.append({"name": name, **c, "blocked_in_edition": edition.blocked_reason(name) or None,
+                      "source_missing": ready_reason(name) or None})
+    return {"edition": edition.current(), "count": len(items),
+            "untested_in_commercial": sum(1 for i in items if i["commercial"] and not i["tested"]), "skills": items}

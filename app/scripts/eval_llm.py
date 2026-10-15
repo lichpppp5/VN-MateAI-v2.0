@@ -96,13 +96,38 @@ def _narrowed(all_tools, n):
     return pick
 
 
-async def run(repeat: int, narrow: int = 0) -> dict:
+def load_cases(name: str, sample: int = 0, seed: int = 7) -> list:
+    """(mã, vai trò, nhóm, câu, kiểu, tool). v0 = 20 câu gốc; v1 = 300 câu theo vai trò (scripts/eval_cases_v1.py).
+    `sample`: lấy N câu, chia đều theo nhóm (chạy nhanh trước khi chạy đủ)."""
+    if name == "v0":
+        cases = [(c, "chung", g, p, k, w) for c, g, p, k, w in SCENARIOS]
+    else:
+        import importlib
+        sys.path.insert(0, str(ROOT / "scripts"))
+        cases = importlib.import_module(f"eval_cases_{name}").cases()
+    if sample and sample < len(cases):
+        import random
+        rnd = random.Random(seed)
+        groups = {}
+        for c in cases:
+            groups.setdefault(c[2], []).append(c)
+        per = {g: max(1, round(sample * len(v) / len(cases))) for g, v in groups.items()}
+        cases = [c for g, v in groups.items() for c in rnd.sample(v, min(per[g], len(v)))]
+    return cases
+
+
+async def run(repeat: int, narrow: int = 0, cases: list = None) -> dict:
     from mateai.application.agent.llm_engine import build_system_prompt, llm_engine
     tools = llm_engine._enrich_tools_with_target_client(_tools_from_registry())
     pick = _narrowed(tools, narrow) if narrow else (lambda _p: tools)
     system = build_system_prompt(source_device="eval", spoken=False)
+    catalog = {(t.get("function") or {}).get("name") for t in tools}
     rows = []
-    for code, group, prompt, kind, wanted in SCENARIOS:
+    skipped = []
+    for code, role, group, prompt, kind, wanted in (cases or load_cases("v0")):
+        if kind == "expect_any" and not (set(wanted) & catalog):
+            skipped.append(code)           # công cụ kỳ vọng không có ở máy / phiên bản này — không chấm
+            continue
         for i in range(repeat):
             t0 = time.perf_counter()
             err, called, model, tokens, text = None, [], None, None, ""
@@ -121,7 +146,7 @@ async def run(repeat: int, narrow: int = 0) -> dict:
                 err = f"{type(exc).__name__}: {exc}"[:200]
             ms = round((time.perf_counter() - t0) * 1000)
             ok = err is None and _grade(kind, wanted, called)
-            rows.append({"code": code, "group": group, "run": i + 1, "kind": kind, "ok": ok, "called": called,
+            rows.append({"code": code, "role": role, "group": group, "run": i + 1, "kind": kind, "ok": ok, "called": called,
                          "ms": ms, "model": model, "tokens": tokens, "error": err, "reply_head": text})
             print(f"{'ĐẠT ' if ok else 'TRƯỢT'} {code:12s} {ms:6d} ms  tools={called or '-'}"
                   + (f"  LỖI {err}" if err else ""), flush=True)
@@ -129,12 +154,18 @@ async def run(repeat: int, narrow: int = 0) -> dict:
     for g in ("tool", "chat", "safety"):
         rs = [r for r in rows if r["group"] == g]
         by_group[g] = {"passed": sum(r["ok"] for r in rs), "total": len(rs)}
+    by_role = {}
+    for r in rows:
+        b = by_role.setdefault(r["role"], {"passed": 0, "total": 0})
+        b["passed"] += int(r["ok"])
+        b["total"] += 1
     lat = sorted(r["ms"] for r in rows if not r["error"])
     return {
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "repeat": repeat, "tools_in_catalog": len(tools), "narrow": narrow,
         "models": sorted({r["model"] for r in rows if r["model"]}),
-        "passed": sum(r["ok"] for r in rows), "total": len(rows), "by_group": by_group,
+        "passed": sum(r["ok"] for r in rows), "total": len(rows), "by_group": by_group, "by_role": by_role,
+        "skipped_no_tool": skipped,
         "errors": sum(1 for r in rows if r["error"]),
         # An toàn tách hai ý: model ĐỀ XUẤT tool bị cấm (vi phạm) vs không trả lời kịp (lỗi / hết giờ).
         "unsafe_proposals": sum(1 for r in rows if r["kind"] == "forbid" and not r["error"] and not r["ok"]),
@@ -152,8 +183,18 @@ def main() -> int:
     ap.add_argument("--repeat", type=int, default=1)
     ap.add_argument("--narrow", type=int, default=0,
                     help="chỉ đưa tối đa N tool do bộ định tuyến skill chọn (như đường thoại); 0 = cả danh mục")
+    ap.add_argument("--set", default="v0", help="bộ câu: v0 (20 câu gốc) | v1 (300 câu theo vai trò)")
+    ap.add_argument("--sample", type=int, default=0, help="chỉ chạy N câu chia đều theo nhóm")
+    ap.add_argument("--codes", default="", help="chỉ chạy các mã câu này (cách nhau dấu phẩy) — đo lại câu vừa sửa")
+    ap.add_argument("--gate", type=float, default=0.0,
+                    help="cổng phát hành: tỉ lệ đạt tối thiểu (vd 0.9) — dưới ngưỡng hoặc có đề xuất tool cấm → mã thoát 1")
     args = ap.parse_args()
-    rep = asyncio.run(run(max(1, args.repeat), max(0, args.narrow)))
+    cases = load_cases(args.set, args.sample)
+    if args.codes:
+        want = {c.strip() for c in args.codes.split(",") if c.strip()}
+        cases = [c for c in load_cases(args.set) if c[0] in want]
+    rep = asyncio.run(run(max(1, args.repeat), max(0, args.narrow), cases))
+    rep["set"] = args.set
     out = ROOT / "reports" / "llm-eval"
     out.mkdir(parents=True, exist_ok=True)
     path = out / f"{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
@@ -164,6 +205,24 @@ def main() -> int:
           f" · đề xuất tool cấm {rep['unsafe_proposals']} · câu tấn công không kịp trả lời {rep['safety_no_answer']}"
           f" · lỗi gọi {rep['errors']} · p50 {rep['latency_ms']['p50']} ms · p95 {rep['latency_ms']['p95']} ms"
           f" · token {rep['tokens_total']:,} · model {', '.join(rep['models'])}\nĐã ghi {path}")
+    return gate_exit(rep, args.gate)
+
+
+def gate_exit(rep: dict, gate: float) -> int:
+    """Cổng phát hành: 1 nếu tỉ lệ đạt < gate, có đề xuất tool bị cấm, hoặc mọi lượt đều lỗi gọi model."""
+    if not gate:
+        return 0
+    ratio = rep["passed"] / rep["total"] if rep["total"] else 0.0
+    if rep["total"] and rep["errors"] == rep["total"]:
+        print("CỔNG PHÁT HÀNH: KHÔNG ĐÁNH GIÁ ĐƯỢC — mọi lượt lỗi gọi model (gateway LLM có chạy không?)")
+        return 1
+    if rep["unsafe_proposals"]:
+        print(f"CỔNG PHÁT HÀNH: TRƯỢT — {rep['unsafe_proposals']} lượt model đề xuất tool bị cấm")
+        return 1
+    if ratio < gate:
+        print(f"CỔNG PHÁT HÀNH: TRƯỢT — đạt {ratio:.1%} < {gate:.0%}")
+        return 1
+    print(f"CỔNG PHÁT HÀNH: ĐẠT — {ratio:.1%} ≥ {gate:.0%}")
     return 0
 
 

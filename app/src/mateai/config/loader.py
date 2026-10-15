@@ -52,9 +52,24 @@ def _resolve_project_root() -> Path:
     return Path.cwd()
 
 
+def _resolve_config_path() -> Path:
+    data_dir = os.environ.get("VNMATEAI_DATA_DIR", "").strip()
+    if data_dir:
+        p = Path(data_dir) / "config.json"
+        if p.is_file() or Path(data_dir).is_dir():
+            return p
+    root_cfg = _PROJECT_ROOT / "config.json"
+    if root_cfg.is_symlink():
+        try:
+            return root_cfg.resolve()
+        except OSError:
+            pass
+    return root_cfg
+
+
 _PROJECT_ROOT = _resolve_project_root()
 
-CONFIG_PATH: Path = _PROJECT_ROOT / "config.json"
+CONFIG_PATH: Path = _resolve_config_path()
 
 _DEFAULT_CONFIG: dict = {
     "llm": {
@@ -167,11 +182,21 @@ def write_raw_config(raw: dict) -> None:
     from mateai.config.secret_box import encrypt_tree
     on_disk = encrypt_tree(raw)          # khoá bí mật không bao giờ ghi dạng chữ thường
     with _CONFIG_LOCK:
-        fd, tmp = tempfile.mkstemp(dir=str(CONFIG_PATH.parent), prefix=".config.", suffix=".tmp")
+        target_path = CONFIG_PATH.resolve()
+        target_dir = target_path.parent
+        target_dir.mkdir(parents=True, exist_ok=True)
+        fd, tmp = tempfile.mkstemp(dir=str(target_dir), prefix=".config.", suffix=".tmp")
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as fh:
                 json.dump(on_disk, fh, ensure_ascii=False, indent=2)
-            os.replace(tmp, CONFIG_PATH)
+            os.replace(tmp, target_path)
+            root_cfg = _PROJECT_ROOT / "config.json"
+            if root_cfg != target_path and (not root_cfg.exists() or not root_cfg.is_symlink()):
+                try:
+                    root_cfg.unlink(missing_ok=True)
+                    root_cfg.symlink_to(target_path)
+                except OSError:
+                    pass
         except BaseException:
             try:
                 os.unlink(tmp)
@@ -602,6 +627,11 @@ class AppSettings(BaseSettings):
     # Phase 9: Enterprise Zero-Trust Security
     security: SecurityConfig = Field(default_factory=SecurityConfig)
 
+    # Phiên bản sản phẩm: internal | commercial (mateai.config.edition — VNMATEAI_EDITION ưu tiên)
+    edition: str = Field(default="internal")
+    # Bản thương mại: kỹ năng demo vẫn bật cho khách hàng này (có nguồn dữ liệu thật)
+    edition_allow_skills: List[str] = Field(default_factory=list)
+
     # Supervisor control plane: kill switch, L5, budgets (docs/autonomy/*)
     autonomy: AutonomyConfig = Field(default_factory=AutonomyConfig)
 
@@ -822,12 +852,34 @@ def _build_settings() -> AppSettings:
     return AppSettings(**raw)
 
 
+def _config_stamp() -> Optional[tuple]:
+    try:
+        st = CONFIG_PATH.stat()
+        return (st.st_mtime_ns, st.st_size)
+    except OSError:
+        return None
+
+
+#: Dấu (mtime, size) của config.json ở lần nạp gần nhất — cho `reload_settings_if_changed`.
+_loaded_stamp: Optional[tuple] = None
+
+
+def reload_settings_if_changed() -> AppSettings:
+    """Nạp lại chỉ khi config.json đã đổi. Vòng hỏi tin Telegram gọi mỗi ~10 s: nạp lại vô điều kiện = đọc + giải mã
+    config.json liên tục và một dòng "AppSettings reloaded" mỗi vòng làm ngập nhật ký."""
+    stamp = _config_stamp()
+    if stamp is not None and stamp == _loaded_stamp:
+        return settings
+    return reload_settings()
+
+
 def reload_settings() -> AppSettings:
     """
     Re-read config.json and reload the in-memory settings singleton in-place.
     Ensures hot updates without server restart.
     """
-    global settings
+    global settings, _loaded_stamp
+    _loaded_stamp = _config_stamp()
     raw = _load_raw_config()
     new_s = AppSettings(**raw)
     for k, v in new_s.__dict__.items():
@@ -840,10 +892,12 @@ def reload_settings() -> AppSettings:
     return settings
 
 
+_loaded_stamp = _config_stamp()
 settings: AppSettings = _build_settings()
 
-from mateai.config.log_setup import configure_logging  # noqa: E402
+from mateai.config.log_setup import configure_logging, default_log_file  # noqa: E402
 
 # Một cấu hình log cho tiến trình (prompt cuối §95): request_id + che bí mật; LOG_FORMAT=json
-# cho hệ thống thu log. VNMATEAI_LOG_FORMAT ghi đè cấu hình.
-configure_logging(settings.LOG_LEVEL, os.environ.get("VNMATEAI_LOG_FORMAT") or settings.LOG_FORMAT)
+# cho hệ thống thu log. VNMATEAI_LOG_FORMAT ghi đè cấu hình. Bản ra tệp: logs/vnmateai.log (VNMATEAI_LOG_FILE).
+configure_logging(settings.LOG_LEVEL, os.environ.get("VNMATEAI_LOG_FORMAT") or settings.LOG_FORMAT,
+                  log_file=default_log_file(_PROJECT_ROOT))

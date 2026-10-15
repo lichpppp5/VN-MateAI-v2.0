@@ -99,6 +99,23 @@ CHANNELS: Dict[str, Dict[str, Any]] = {
             "min_severity": ("", "Mức tối thiểu", "info / warning / critical — để trống: theo quy tắc chung.", False),
         },
     },
+    "alert_zalo": {
+        "display_name": "Zalo OA",
+        "description": "Gửi tin cảnh báo tới người quan tâm Official Account (API tin nhắn tư vấn v3). Access token OA hết hạn "
+                       "~25 giờ: điền App ID + App secret + Refresh token để hệ thống TỰ LÀM MỚI (refresh token dùng một lần — "
+                       "token mới được lưu lại, mã hoá).",
+        "node": "notify:zalo",
+        "required": ("access_token", "user_ids"),
+        "fields": {
+            "access_token": ("", "OA access token", "Zalo for Developers → ứng dụng → Official Account → Access Token.", True),
+            "user_ids": ("", "User ID người nhận", "user_id (theo OA) của người đã quan tâm OA, cách nhau dấu phẩy.", False),
+            "app_id": ("", "App ID", "Tuỳ chọn — để tự làm mới token: Zalo for Developers → ứng dụng → App ID.", False),
+            "app_secret": ("", "App secret", "Tuỳ chọn — để tự làm mới token.", True),
+            "refresh_token": ("", "Refresh token", "Tuỳ chọn — lấy cùng access token; hệ thống thay bằng token mới sau mỗi lần làm mới.", True),
+            "enabled": (True, "Bật kênh", "", False),
+            "min_severity": ("", "Mức tối thiểu", "info / warning / critical — để trống: theo quy tắc chung.", False),
+        },
+    },
     "alert_webhook": {
         "display_name": "Webhook tuỳ chỉnh",
         "description": "POST JSON tới hệ thống bất kỳ (ITSM, Jira/ServiceNow automation, Zalo OA qua middleware…).",
@@ -265,6 +282,75 @@ async def _send_slack(s: Dict[str, Any], alert: Dict[str, Any]) -> Tuple[bool, s
     return await _post_json(s["webhook_url"], {"text": format_text(alert)})
 
 
+ZALO_MESSAGE_URL = "https://openapi.zalo.me/v3.0/oa/message/cs"
+ZALO_TOKEN_URL = "https://oauth.zaloapp.com/v4/oa/access_token"
+#: Mã lỗi Zalo cho token hết hạn / không hợp lệ.
+ZALO_TOKEN_ERRORS = {-216, -124, -14002}
+
+
+async def _refresh_zalo_token(s: Dict[str, Any]) -> Tuple[bool, str]:
+    """Đổi refresh token lấy cặp token mới và LƯU NGAY (refresh token Zalo chỉ dùng một lần). Ghi cấu hình qua
+    update_config_section → access_token / refresh_token được mã hoá (secret_box)."""
+    if not (s.get("app_id") and s.get("app_secret") and s.get("refresh_token")):
+        return False, "token hết hạn — chưa cấu hình App ID / App secret / Refresh token để tự làm mới"
+    try:
+        async with httpx.AsyncClient(timeout=SEND_TIMEOUT_S) as client:
+            resp = await client.post(ZALO_TOKEN_URL, headers={"secret_key": str(s["app_secret"])},
+                                     data={"refresh_token": str(s["refresh_token"]), "app_id": str(s["app_id"]),
+                                           "grant_type": "refresh_token"})
+        body = resp.json()
+    except (httpx.HTTPError, ValueError) as exc:
+        return False, f"làm mới token lỗi ({type(exc).__name__})"
+    if not body.get("access_token"):
+        return False, f"làm mới token bị từ chối: {body.get('error_description') or body.get('message') or body}"[:200]
+    from mateai.config.loader import update_config_section
+    update_config_section("alert_zalo", {"access_token": body["access_token"],
+                                         "refresh_token": body.get("refresh_token") or s["refresh_token"]})
+    s["access_token"] = body["access_token"]
+    s["refresh_token"] = body.get("refresh_token") or s["refresh_token"]
+    return True, "đã làm mới token"
+
+
+async def _send_zalo(s: Dict[str, Any], alert: Dict[str, Any]) -> Tuple[bool, str]:
+    """Zalo trả HTTP 200 cả khi lỗi — kết quả thật nằm ở trường `error` (0 = thành công). Token hết hạn → tự làm mới (nếu có
+    App ID / App secret / Refresh token) rồi gửi lại MỘT lần."""
+    first = await _send_zalo_once(s, alert)
+    if first[2]:                                   # có người nhận báo token hết hạn
+        refreshed, why = await _refresh_zalo_token(s)
+        if not refreshed:
+            return first[0], f"{first[1]}; {why}"
+        again = await _send_zalo_once(s, alert)
+        return again[0], f"{why}; {again[1]}"
+    return first[0], first[1]
+
+
+async def _send_zalo_once(s: Dict[str, Any], alert: Dict[str, Any]) -> Tuple[bool, str, bool]:
+    text = format_text(alert)[:2000]
+    token_expired = False
+    sent, problems = 0, []
+    for uid in _addresses(s.get("user_ids")):
+        try:
+            async with httpx.AsyncClient(timeout=SEND_TIMEOUT_S) as client:
+                resp = await client.post(ZALO_MESSAGE_URL, headers={"access_token": str(s["access_token"])},
+                                         json={"recipient": {"user_id": uid}, "message": {"text": text}})
+        except httpx.HTTPError as exc:
+            problems.append(f"lỗi mạng ({type(exc).__name__})")
+            continue
+        try:
+            body = resp.json()
+        except ValueError:
+            body = {}
+        code = int(body.get("error", -1)) if str(body.get("error", "-1")).lstrip("-").isdigit() else -1
+        if resp.status_code == 200 and code == 0:
+            sent += 1
+        else:
+            token_expired = token_expired or code in ZALO_TOKEN_ERRORS
+            problems.append(f"{uid}: {body.get('message') or resp.status_code}")
+    if sent and not problems:
+        return True, f"đã gửi {sent} người", False
+    return (sent > 0), f"đã gửi {sent}; lỗi: {'; '.join(problems)[:200]}", token_expired
+
+
 async def _send_webhook(s: Dict[str, Any], alert: Dict[str, Any]) -> Tuple[bool, str]:
     data = {k: alert.get(k) for k in ("title", "message", "severity", "category", "source", "resolved")}
     data["time"] = datetime.fromtimestamp(alert.get("time") or 0).isoformat(timespec="seconds")
@@ -339,6 +425,7 @@ _SENDERS = {
     "alert_outlook": _send_outlook,
     "alert_slack": _send_slack,
     "alert_webhook": _send_webhook,
+    "alert_zalo": _send_zalo,
 }
 
 

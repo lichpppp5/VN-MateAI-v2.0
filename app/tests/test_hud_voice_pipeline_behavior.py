@@ -35,6 +35,10 @@ TTS_DELAY = {s: 0.25 - i * 0.05 for i, s in enumerate(SENTENCES)}
 
 @pytest.fixture
 def hud(monkeypatch):
+    # Bộ test này kiểm THỨ TỰ phát + không mất câu: tắt giới hạn số câu đọc to của kênh có màn hình
+    # (giới hạn có test riêng: test_edition_commercial.test_long_answer_reads_four_sentences_then_points_to_screen).
+    from mateai.application.voice import voice_turn
+    monkeypatch.setattr(voice_turn, "spoken_sentence_limit", lambda *_a, **_k: 0)
     events: list = []
     llm_yield_times: list = []
     started: list = []

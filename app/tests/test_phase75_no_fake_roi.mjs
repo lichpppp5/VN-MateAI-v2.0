@@ -30,7 +30,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8').replace(/\r\n/g, '\n');
 
 const appJs = read('web/app.js');
-const roiHtml = read('web/roi_dashboard.html');
+// Script của trang đã tách ra web/roi_dashboard.js (CSP chặt) — ghép lại để các kiểm tra bên dưới đọc như một trang.
+const roiHtml = read('web/roi_dashboard.html').replace(
+  '<script src="/static/roi_dashboard.js?v=1"></script>', `<script>\n${read('web/roi_dashboard.js')}\n</script>`);
 
 let pass = 0;
 let fail = 0;

@@ -154,9 +154,20 @@ async def change_password_endpoint(
     payload: ChangeUserPasswordRequest,
     admin_user: Dict[str, Any] = Depends(require_roles(["admin"])),
 ) -> Dict[str, Any]:
-    """Mã hóa và ghi đè mật khẩu mới cho người dùng."""
+    """Mã hóa và ghi đè mật khẩu mới cho người dùng. Đặt lại cho NGƯỜI KHÁC: người đó phải đổi ở lần đăng nhập tới (admin
+    không nên biết mật khẩu đang dùng của người khác)."""
     try:
-        auth_manager.change_user_password(user_id, payload.new_password)
+        target = auth_manager.get_user(user_id) or {}
+        me = str(admin_user.get("username") or "").lower()
+        must_change = str(target.get("username") or "").lower() != me
+        auth_manager.change_user_password(user_id, payload.new_password, must_change=must_change)
+        try:  # yêu cầu quên mật khẩu đang mở của tài khoản này coi như đã xử lý + kiểm toán việc admin cấp lại
+            from mateai.application.security import password_reset
+            password_reset.close_for_user(str(target.get("username") or user_id), me or "admin")
+            password_reset._audit(me or "admin", "PASSWORD_SET_BY_ADMIN", str(target.get("username") or user_id), True,
+                                  {"must_change": must_change})
+        except Exception:  # noqa: BLE001
+            logger.warning("Không đóng được yêu cầu quên mật khẩu của %s", user_id)
         return {
             "status": "success",
             "message": f"Đã đặt lại mật khẩu cho tài khoản '{user_id}' thành công.",

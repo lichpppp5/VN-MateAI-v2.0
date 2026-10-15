@@ -13,6 +13,7 @@ Dành cho: chủ dự án / quản trị viên. Những việc dưới đây c�
   - Kết quả: lượt thoại qua LLM chữ đầu 8,5 s (lượt đầu) / 2,8 s (lượt sau) — trước đó 88,9 s.
   - Còn lại: khối cũ `router.primary.provider_model` = `oc/ling-3.0-flash-fin-free` (lỗi 400) — KHÔNG được dùng khi đã có khối `llm`; có thể xoá khỏi config.json cho gọn.
 - [x] **9Router** đã hoạt động lại (chủ dự án sửa 2026-10-02).
+- [x] **MFA bắt buộc cho admin** (2026-10-14): `security.require_mfa_roles = ["admin"]`. Lần đăng nhập tới: quét mã QR bằng ứng dụng xác thực và **cất mã khôi phục** (mất điện thoại mà không có mã → sửa `config.json` bỏ "admin" khỏi danh sách, khởi động lại). Robot / máy trạm / Telegram không bị ảnh hưởng (dùng token thiết bị). Bản cấu hình trước khi đổi: `backups/config.json.before-mfa-*`.
 
 ## Telegram
 
@@ -82,7 +83,7 @@ Robot nạp firmware cũ (token rỗng) hiện bị từ chối (HTTP 403) — n
 
 ## Tạo kỹ năng mới (2026-10-04)
 
-- [ ] **`auto_execute = true`** trong `config.json`: mã do AI sinh được cài NGAY sau kiểm toán AST, không người duyệt. Muốn duyệt tay: đặt `false` → mã sinh ra nằm ở `skills/pending/`, xem rồi chuyển vào `skills/` và nói "nạp lại kỹ năng".
+- [x] **Quyết định 2026-10-14: giữ `auto_execute = true`** (chủ dự án: kỹ năng không cần duyệt), và **không đặt hạn mức chi phí LLM** (`llmops.*_limit` để trống). Ghi chú cũ — `auto_execute = true` trong `config.json`: mã do AI sinh được cài NGAY sau kiểm toán AST, không người duyệt. Muốn duyệt tay: đặt `false` → mã sinh ra nằm ở `skills/pending/`, xem rồi chuyển vào `skills/` và nói "nạp lại kỹ năng".
 - [ ] Kỹ năng AI sinh có thể dùng nguồn dữ liệu đã cũ / bị chặn (thử "giá vàng SJC": hai nguồn model chọn đều từ chối). Chưa có tự kiểm tra sau khi tạo (chạy thử có thể gây tác dụng phụ — vd mở trình duyệt). Kỹ năng hỏng thì xoá tệp `skills/auto_*.py` tương ứng rồi "nạp lại kỹ năng" để lần sau trợ lý tạo lại.
 - [ ] `install_skill_from_url` chỉ lưu `SKILL.md` vào thư mục con, không nạp mã — mô tả của công cụ ("tự nạp vào runtime") nói quá; quyết định giữ / sửa mô tả.
 

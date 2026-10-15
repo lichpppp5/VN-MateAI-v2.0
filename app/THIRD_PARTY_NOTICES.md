@@ -51,6 +51,7 @@ VN-MateAI © 2026 Dương Thanh Lịch, giấy phép Apache-2.0 (xem `LICENSE`, 
 | pywinauto | BSD 3-clause |
 | rank-bm25 | Apache2.0 |
 | redis | MIT |
+| segno | BSD License |
 | silero-vad | MIT License |
 | SpeechRecognition | BSD-3-Clause |
 | starlette | BSD-3-Clause |
@@ -79,6 +80,10 @@ Các gói sau dùng giấy phép LGPL (hoặc tương tự). Chúng được dù
 | Share Tech Mono | SIL OFL 1.1 | `web/fonts/ShareTechMono-*` | https://fonts.google.com/specimen/Share+Tech+Mono |
 
 Font theo SIL Open Font License 1.1: được dùng, đóng kèm và phân phối cùng phần mềm; không được bán riêng font.
+
+## MCP server tham chiếu chính thức (`vendor/mcp-servers/`)
+
+`mcp-server-time`, `mcp-server-fetch`, `mcp-server-git` 2026.10.10 của dự án Model Context Protocol (https://github.com/modelcontextprotocol/servers), đóng kèm nguyên mã đã rà soát. Giấy phép: MIT, đang chuyển dần sang Apache-2.0 — xem `vendor/mcp-servers/LICENSE` và LICENSE trong từng thư mục. Chạy trong môi trường Python riêng (`.mcp-venv` / `/opt/mcp-venv`) với các thư viện ghim ở `vendor/mcp-servers/constraints.txt` (mcp, httpx, GitPython, readabilipy, markdownify, protego…), mỗi thư viện theo giấy phép riêng.
 
 ## Ứng dụng quản trị Next.js (`admin/`)
 

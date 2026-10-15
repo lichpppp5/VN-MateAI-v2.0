@@ -144,6 +144,9 @@ def test_declaration_is_validated_and_secrets_are_masked(fake):
 
 
 def test_stdio_is_off_by_default(fake, monkeypatch):
+    from mateai.config.loader import AgentGatewayConfig
+    assert AgentGatewayConfig().allow_stdio is False                     # mặc định của mã (máy vận hành có thể đã bật trong config.json)
+    monkeypatch.setattr(settings.agent_gateway, "allow_stdio", False)
     with pytest.raises(gw.GatewayError, match="stdio"):
         gw.save_server("cuc-bo", {"transport": "stdio", "command": sys.executable}, "admin")
     monkeypatch.setattr(settings.agent_gateway, "allow_stdio", True)

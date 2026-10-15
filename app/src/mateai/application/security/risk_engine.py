@@ -39,6 +39,10 @@ RISK_LEVEL_MAP: Dict[str, int] = {
     "get_attendance_report": 1,
     "get_executive_leaderboard": 1,
     "get_executive_standup_briefing": 1,
+    # Lõi điều phối: xem năng lực / phiếu là chỉ đọc; GIAO việc tự xin duyệt theo rủi ro của phiếu (orchestration/service.py).
+    "list_agent_capabilities": 1,
+    "get_work_order_status": 1,
+    "dispatch_work_order": 2,
 
     # Quản lý kỹ năng: liệt kê chỉ đọc; nạp lại chỉ chạy mã đã có trên đĩa;
     # TẠO kỹ năng là cài mã Python mới vào tiến trình máy chủ (đã qua kiểm toán

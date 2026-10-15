@@ -1,0 +1,779 @@
+{
+  "animate_robot": {
+    "module": "robotics_tools",
+    "tier": "demo",
+    "owner": "Robot",
+    "tested": false,
+    "commercial": false
+  },
+  "append_genealogy_record": {
+    "module": "excel_records_skill",
+    "tier": "personal",
+    "owner": "Cá nhân",
+    "tested": false,
+    "commercial": false
+  },
+  "assign_task_intelligently": {
+    "module": "proactive_manager",
+    "tier": "core",
+    "owner": "Nhân sự & giao việc",
+    "tested": true,
+    "commercial": true
+  },
+  "auto_get_hanoi_weather": {
+    "module": "auto_get_hanoi_weather",
+    "tier": "personal",
+    "owner": "Cá nhân",
+    "tested": false,
+    "commercial": false
+  },
+  "auto_play_music": {
+    "module": "auto_play_music",
+    "tier": "personal",
+    "owner": "Cá nhân",
+    "tested": true,
+    "commercial": false
+  },
+  "cancel_dev_fleet_task": {
+    "module": "dev_fleet_tools",
+    "tier": "demo",
+    "owner": "Nội bộ đội phát triển",
+    "tested": true,
+    "commercial": false
+  },
+  "capture_screen_base64": {
+    "module": "monitoring_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "capture_worker_screen": {
+    "module": "computer_use_skills",
+    "tier": "demo",
+    "owner": "Nền tảng AI",
+    "tested": false,
+    "commercial": false
+  },
+  "check_aws_cost": {
+    "module": "integration_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "check_aws_instances": {
+    "module": "integration_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "check_cashflow_predictive_health": {
+    "module": "analytics_engine",
+    "tier": "demo",
+    "owner": "Dữ liệu doanh nghiệp",
+    "tested": false,
+    "commercial": false
+  },
+  "check_connector_health": {
+    "module": "integration_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "check_einvoice_daily": {
+    "module": "integration_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "check_oci_instances": {
+    "module": "integration_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "check_oci_metrics": {
+    "module": "integration_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "check_peripherals": {
+    "module": "monitoring_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "create_dev_fleet_task": {
+    "module": "dev_fleet_tools",
+    "tier": "demo",
+    "owner": "Nội bộ đội phát triển",
+    "tested": true,
+    "commercial": false
+  },
+  "create_new_skill": {
+    "module": "meta_skills",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": false
+  },
+  "create_system_ticket": {
+    "module": "itsm_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "delegate_to_multi_agent": {
+    "module": "agent_orchestrator",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "delegate_to_specialist": {
+    "module": "ai_delegation",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "delete_item": {
+    "module": "file_system",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "dispatch_work_order": {
+    "module": "orchestration_tools",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "display_visual_data": {
+    "module": "visual_skills",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "download_paperless_document": {
+    "module": "integration_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "fetch_data_source": {
+    "module": "data_source_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "generate_daily_report": {
+    "module": "itsm_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "generate_dynamic_sql_chart": {
+    "module": "analytics_engine",
+    "tier": "core",
+    "owner": "Dữ liệu doanh nghiệp",
+    "tested": true,
+    "commercial": true
+  },
+  "get_active_processes": {
+    "module": "monitoring_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "get_ai_budget_status": {
+    "module": "llmops_tools",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "get_ai_eval_results": {
+    "module": "llmops_tools",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "get_ai_usage": {
+    "module": "llmops_tools",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "get_attendance_report": {
+    "module": "business_tools",
+    "tier": "demo",
+    "owner": "Demo",
+    "tested": true,
+    "commercial": false
+  },
+  "get_chrome_tabs_info": {
+    "module": "auto_count_chrome_tabs",
+    "tier": "personal",
+    "owner": "Cá nhân",
+    "tested": false,
+    "commercial": false
+  },
+  "get_clipboard": {
+    "module": "pc_control_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "get_computer_use_status": {
+    "module": "computer_use_skills",
+    "tier": "demo",
+    "owner": "Nền tảng AI",
+    "tested": false,
+    "commercial": false
+  },
+  "get_cpu_and_ram_usage": {
+    "module": "auto_check_cpu_ram_performance",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "get_dev_fleet_briefing": {
+    "module": "dev_fleet_tools",
+    "tier": "demo",
+    "owner": "Nội bộ đội phát triển",
+    "tested": true,
+    "commercial": false
+  },
+  "get_dev_fleet_status": {
+    "module": "dev_fleet_tools",
+    "tier": "demo",
+    "owner": "Nội bộ đội phát triển",
+    "tested": true,
+    "commercial": false
+  },
+  "get_dev_fleet_task": {
+    "module": "dev_fleet_tools",
+    "tier": "demo",
+    "owner": "Nội bộ đội phát triển",
+    "tested": true,
+    "commercial": false
+  },
+  "get_einvoice_details": {
+    "module": "integration_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "get_enterprise_executive_summary": {
+    "module": "agent_orchestrator",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "get_executive_leaderboard": {
+    "module": "business_tools",
+    "tier": "demo",
+    "owner": "Demo",
+    "tested": true,
+    "commercial": false
+  },
+  "get_executive_standup_briefing": {
+    "module": "agent_orchestrator",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "get_financial_summary": {
+    "module": "business_tools",
+    "tier": "demo",
+    "owner": "Demo",
+    "tested": true,
+    "commercial": false
+  },
+  "get_hr_fairness_report": {
+    "module": "ethics_tools",
+    "tier": "core",
+    "owner": "Nhân sự & giao việc",
+    "tested": true,
+    "commercial": true
+  },
+  "get_infra_alerts": {
+    "module": "infra_monitor_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "get_infra_status": {
+    "module": "infra_monitor_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "get_network_connections": {
+    "module": "monitoring_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "get_network_info": {
+    "module": "pc_control_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "get_paperless_document": {
+    "module": "integration_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "get_playbook_plan": {
+    "module": "playbook_tools",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "get_playbook_run": {
+    "module": "playbook_tools",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "get_system_info": {
+    "module": "pc_control_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "get_system_uptime": {
+    "module": "auto_get_server_uptime",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "get_tickets": {
+    "module": "itsm_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "get_work_order_status": {
+    "module": "orchestration_tools",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "install_skill_from_url": {
+    "module": "ninerouter_skills",
+    "tier": "integration",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": false
+  },
+  "kill_process": {
+    "module": "pc_control_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "list_agent_capabilities": {
+    "module": "orchestration_tools",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "list_available_skills": {
+    "module": "meta_skills",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "list_data_sources": {
+    "module": "data_source_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "list_dev_fleet_workers": {
+    "module": "dev_fleet_tools",
+    "tier": "demo",
+    "owner": "Nội bộ đội phát triển",
+    "tested": true,
+    "commercial": false
+  },
+  "list_directory": {
+    "module": "file_system",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "list_grafana_dashboards": {
+    "module": "infra_monitor_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "list_online_workstations": {
+    "module": "workstation_tools",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "list_playbooks": {
+    "module": "playbook_tools",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "list_processes": {
+    "module": "pc_control_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "lookup_domain_info": {
+    "module": "domain_alert_skills",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "manage_windows_service": {
+    "module": "sysadmin_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "media_control": {
+    "module": "pc_control_skills",
+    "tier": "demo",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": false
+  },
+  "move_robot": {
+    "module": "robotics_tools",
+    "tier": "demo",
+    "owner": "Robot",
+    "tested": false,
+    "commercial": false
+  },
+  "ninerouter_chat": {
+    "module": "ninerouter_skills",
+    "tier": "integration",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "ninerouter_create_embeddings": {
+    "module": "ninerouter_skills",
+    "tier": "integration",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "ninerouter_generate_image": {
+    "module": "ninerouter_skills",
+    "tier": "integration",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "ninerouter_text_to_speech": {
+    "module": "ninerouter_skills",
+    "tier": "integration",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "ninerouter_web_fetch": {
+    "module": "ninerouter_skills",
+    "tier": "integration",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "ninerouter_web_search": {
+    "module": "ninerouter_skills",
+    "tier": "integration",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": true
+  },
+  "open_application": {
+    "module": "pc_control_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "open_text_file_notepad": {
+    "module": "auto_open_notepad_file",
+    "tier": "personal",
+    "owner": "Cá nhân",
+    "tested": true,
+    "commercial": false
+  },
+  "open_youtube": {
+    "module": "auto_open_youtube",
+    "tier": "personal",
+    "owner": "Cá nhân",
+    "tested": true,
+    "commercial": false
+  },
+  "prepare_data_source_export": {
+    "module": "data_source_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "query_company_policy": {
+    "module": "enterprise_rag",
+    "tier": "core",
+    "owner": "Dữ liệu doanh nghiệp",
+    "tested": true,
+    "commercial": true
+  },
+  "query_enterprise_graph_rag": {
+    "module": "graph_rag",
+    "tier": "core",
+    "owner": "Dữ liệu doanh nghiệp",
+    "tested": true,
+    "commercial": true
+  },
+  "query_organization_data": {
+    "module": "erp_organization",
+    "tier": "core",
+    "owner": "Dữ liệu doanh nghiệp",
+    "tested": true,
+    "commercial": true
+  },
+  "query_prometheus": {
+    "module": "infra_monitor_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "read_file": {
+    "module": "file_system",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "record_attendance_skill": {
+    "module": "business_tools",
+    "tier": "demo",
+    "owner": "Demo",
+    "tested": false,
+    "commercial": false
+  },
+  "record_expense": {
+    "module": "business_tools",
+    "tier": "demo",
+    "owner": "Demo",
+    "tested": true,
+    "commercial": false
+  },
+  "record_income": {
+    "module": "business_tools",
+    "tier": "demo",
+    "owner": "Demo",
+    "tested": true,
+    "commercial": false
+  },
+  "reload_all_skills": {
+    "module": "meta_skills",
+    "tier": "core",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": false
+  },
+  "run_data_source_action": {
+    "module": "data_source_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "run_local_sql_check": {
+    "module": "sysadmin_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "run_playbook": {
+    "module": "playbook_tools",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "run_powershell_command": {
+    "module": "pc_control_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "run_proactive_task_audit": {
+    "module": "proactive_manager",
+    "tier": "core",
+    "owner": "Nhân sự & giao việc",
+    "tested": true,
+    "commercial": true
+  },
+  "search_einvoices": {
+    "module": "integration_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "search_files": {
+    "module": "pc_control_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "search_paperless_documents": {
+    "module": "integration_tools",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "security_audit": {
+    "module": "monitoring_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "send_task_to_client": {
+    "module": "lean_hr_skills",
+    "tier": "core",
+    "owner": "Nhân sự & giao việc",
+    "tested": true,
+    "commercial": true
+  },
+  "send_telegram_message": {
+    "module": "domain_alert_skills",
+    "tier": "integration",
+    "owner": "Tích hợp",
+    "tested": true,
+    "commercial": true
+  },
+  "set_clipboard": {
+    "module": "pc_control_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "set_system_volume": {
+    "module": "pc_control_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "simulate_incoming_customer_email": {
+    "module": "email_gateway",
+    "tier": "demo",
+    "owner": "Demo",
+    "tested": true,
+    "commercial": false
+  },
+  "summarize_monthly_kpi": {
+    "module": "lean_hr_skills",
+    "tier": "core",
+    "owner": "Nhân sự & giao việc",
+    "tested": true,
+    "commercial": true
+  },
+  "test_ping_host": {
+    "module": "custom_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "tool_execute_gui_task": {
+    "module": "computer_use_skills",
+    "tier": "demo",
+    "owner": "Nền tảng AI",
+    "tested": true,
+    "commercial": false
+  },
+  "update_ticket_status": {
+    "module": "itsm_skills",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "write_file": {
+    "module": "file_system",
+    "tier": "core",
+    "owner": "Vận hành CNTT",
+    "tested": true,
+    "commercial": true
+  },
+  "zero_touch_onboard_employee": {
+    "module": "onboarding_workflow",
+    "tier": "core",
+    "owner": "Nhân sự & giao việc",
+    "tested": true,
+    "commercial": true
+  }
+}

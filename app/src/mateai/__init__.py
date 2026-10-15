@@ -13,4 +13,4 @@ Các tầng kiến trúc (Architectural Layers):
 - config: Chứa quản lý cấu hình hệ thống tập trung.
 """
 
-__version__ = "2.0.0-enterprise"
+__version__ = "2.0.1"

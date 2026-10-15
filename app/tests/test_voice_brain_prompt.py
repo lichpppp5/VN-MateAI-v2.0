@@ -18,7 +18,9 @@ from mateai.application.agent.llm_engine import build_system_prompt, llm_engine
 def test_conversation_prompt_drops_ops_blocks_keeps_identity():
     full = build_system_prompt(source_device="hud")
     voice = build_system_prompt(source_device="hud", conversation=True)
-    assert len(voice) < len(full) / 2
+    # Prompt vận hành đã gọn (14/10/2026) nên không còn gấp đôi; điều cần giữ: trò chuyện KHÔNG mang các khối vận hành (ở trên)
+    # và vẫn ngắn hơn rõ rệt.
+    assert len(voice) < len(full) - 2000
     for ops_only in ("PHÂN QUYỀN THIẾT BỊ", "NATIVE FILE SYSTEM", "ERP DOANH NGHIỆP", "DUAL-LLM"):
         assert ops_only in full and ops_only not in voice
     for kept in ("[TÊN TRỢ LÝ AI:", "QUY TẮC HỎI LẠI", "XƯNG HÔ BẮT BUỘC"):

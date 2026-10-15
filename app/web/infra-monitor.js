@@ -46,6 +46,7 @@ const InfraMonitorUI = (() => {
     <div id="im-summary" class="${CARD} text-xs text-slate-500">Đang tải…</div>
     <div id="im-empty" class="${CARD} hidden"></div>
     <div id="im-sources" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+    <div id="im-data" class="space-y-4">
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
       <div class="${CARD}"><h3 class="text-sm font-bold mb-2 text-slate-800 dark:text-slate-100">Cảnh báo đang bật</h3><div id="im-alerts" class="overflow-x-auto"></div></div>
       <div class="${CARD}"><h3 class="text-sm font-bold mb-2 text-slate-800 dark:text-slate-100">Target không phản hồi (down)</h3><div id="im-targets" class="overflow-x-auto"></div></div>
@@ -58,6 +59,7 @@ const InfraMonitorUI = (() => {
         <div class="flex gap-2"><input id="im-promql" class="${INPUT}" placeholder='up == 0' maxlength="600" aria-label="Biểu thức PromQL" />
           <button type="button" data-im="query" class="${BTN} bg-primary-600 hover:bg-primary-700 text-white shrink-0">Chạy</button></div>
         <div id="im-query-result" class="text-xs overflow-x-auto"></div></div>
+    </div>
     </div>`;
   }
 
@@ -80,6 +82,7 @@ const InfraMonitorUI = (() => {
     const sum = d.summary || {};
     if (d.enabled === false) {
       $('im-summary').innerHTML = 'Giám sát hạ tầng đang <b>tắt</b> (cấu hình <code>monitoring.enabled</code>).';
+      $('im-data').classList.add('hidden');
       ['im-sources', 'im-alerts', 'im-targets', 'im-metrics', 'im-dashboards'].forEach((id) => { $(id).innerHTML = ''; });
       return;
     }
@@ -87,6 +90,7 @@ const InfraMonitorUI = (() => {
     if (!d.configured) {
       $('im-summary').innerHTML = `${pill(HEALTH, 'UNKNOWN')} <span class="ml-2">Chưa có nguồn giám sát nào được khai báo.</span>`;
       empty.classList.remove('hidden');
+      $('im-data').classList.add('hidden');
       empty.innerHTML = `<p class="text-sm font-bold text-slate-800 dark:text-slate-100">Kết nối Prometheus / Grafana</p>
         <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Vào <b>Tích Hợp Hệ Thống → Thêm kết nối</b>, chọn mẫu <b>Prometheus</b> hoặc <b>Grafana</b>, điền địa chỉ (và token cho Grafana), rồi bấm Thử kết nối.</p>
         <button type="button" data-im="goto-integration" class="${BTN} bg-primary-600 hover:bg-primary-700 text-white mt-3">Mở Tích Hợp Hệ Thống</button>`;
@@ -95,6 +99,7 @@ const InfraMonitorUI = (() => {
       return;
     }
     empty.classList.add('hidden');
+    $('im-data').classList.remove('hidden');
     $('im-summary').innerHTML = `<div class="flex flex-wrap items-center gap-x-6 gap-y-2">
       <div><span class="text-[11px] uppercase text-slate-500">Tình trạng</span><br>${pill(HEALTH, sum.health || 'UNKNOWN')}</div>
       <div><span class="text-[11px] uppercase text-slate-500">Nguồn liên lạc được</span><br><b>${dash(sum.sources_reachable)}</b> / ${dash(sum.sources_total)}</div>

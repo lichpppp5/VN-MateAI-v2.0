@@ -176,6 +176,12 @@ def can_view_pii(caller: Any) -> bool:
     cfg = privacy_settings()
     if not cfg.get("mask_pii", True):
         return True
+    # Dữ liệu tới AI đi tiếp tới LLM BÊN NGOÀI (9Router → Gemini / Claude…): bật `privacy.external_llm_mask_pii` (bản
+    # thương mại: luôn bật) thì che với MỌI người, kể cả admin — dữ liệu cá nhân không ra khỏi mạng khách hàng
+    # (thẩm định 14/10/2026 P0-4; Luật Bảo vệ dữ liệu cá nhân 2025: chuyển dữ liệu ra nước ngoài).
+    from mateai.config import edition
+    if edition.mask_pii_for_llm():
+        return False
     who = str(caller or "").strip()
     if not who or who.lower().startswith(_NON_PERSON_PREFIXES):
         return False

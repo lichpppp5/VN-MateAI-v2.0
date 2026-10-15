@@ -21,12 +21,12 @@ echo 🐍 [1/4] Kiểm tra môi trường Python...
 set "PYTHON_EXE="
 if exist ".venv\Scripts\python.exe" (
     set "PYTHON_EXE=.venv\Scripts\python.exe"
-    echo    -^> Sử dụng Python Virtualenv (.venv)
+    echo    -^> Sử dụng Python Virtualenv ^(.venv^)
 ) else (
     where python >nul 2>&1
     if !errorlevel! equ 0 (
         set "PYTHON_EXE=python"
-        echo    -^> Sử dụng Python toàn cục (Global PATH)
+        echo    -^> Sử dụng Python toàn cục ^(Global PATH^)
     )
 )
 

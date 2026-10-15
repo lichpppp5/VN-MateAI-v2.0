@@ -46,7 +46,7 @@ const DevFleetUI = (() => {
 
   const MODE_HINT = {
     disabled: 'Tắt hẳn — không gọi mạng, các chức năng khác không bị ảnh hưởng.',
-    read_only: 'Chỉ xem: Master, Worknode, agent, tác vụ. Không giao / huỷ / chạy lại.',
+    read_only: 'Chỉ xem: Master, Mac mini, agent, tác vụ. Không giao / huỷ / chạy lại.',
     controlled: 'Được giao / huỷ / chạy lại — mọi thao tác vẫn qua cổng chính sách; rủi ro từ medium cần người duyệt.',
     autonomous: 'Hiện chạy như "Có điều khiển" (tự trị có giới hạn chưa được làm).',
   };
@@ -55,7 +55,7 @@ const DevFleetUI = (() => {
     return `
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
       <div>
-        <p class="text-xs text-slate-600 dark:text-slate-300">Giao việc phát triển cho cụm Worknode / OpenClaw qua Ubuntu Master (lập lịch, duyệt, kiểm chứng).
+        <p class="text-xs text-slate-600 dark:text-slate-300">Giao việc phát triển cho cụm Mac mini / OpenClaw qua Ubuntu Master (lập lịch, duyệt, kiểm chứng).
           Agent AI / MCP server khác của doanh nghiệp: tab <b>Cổng Agent</b>; hệ thống chỉ có API dữ liệu: tab <b>Tích hợp hệ thống</b>.</p>
       </div>
       <button type="button" data-df="refresh" class="${BTN} bg-primary-600 hover:bg-primary-700 text-white shrink-0">Làm mới</button>
@@ -88,14 +88,14 @@ const DevFleetUI = (() => {
       </div>
     </div>
 
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-      <div class="${CARD}"><h3 class="text-sm font-bold mb-2 text-slate-800 dark:text-slate-100">Worker (Worknode)</h3><div id="df-workers" class="overflow-x-auto"></div></div>
+    <div id="df-live" class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div class="${CARD}"><h3 class="text-sm font-bold mb-2 text-slate-800 dark:text-slate-100">Worker (Mac mini)</h3><div id="df-workers" class="overflow-x-auto"></div></div>
       <div class="${CARD}"><h3 class="text-sm font-bold mb-2 text-slate-800 dark:text-slate-100">Cần chú ý</h3><div id="df-brief" class="text-xs"></div>
         <h3 class="text-sm font-bold mt-4 mb-2 text-slate-800 dark:text-slate-100">Agent</h3><div id="df-agents" class="overflow-x-auto"></div></div>
     </div>
     <div class="${CARD}"><h3 class="text-sm font-bold mb-1 text-slate-800 dark:text-slate-100">Trạm tự báo nhịp tim</h3>
       <p class="text-[11px] text-slate-500 mb-2">Máy chạy <span class="font-mono">workers/remote_worker_daemon.py</span> tự gửi nhịp tim về máy chủ (không qua Master). <b>Chỉ theo dõi</b> —
-        giao việc cho Worknode / OpenClaw đi qua Master ở trên; việc trên máy trạm dùng agent máy trạm (tab Tích hợp → Máy trạm).</p>
+        giao việc cho Mac mini / OpenClaw đi qua Master ở trên; việc trên máy trạm dùng agent máy trạm (tab Tích hợp → Máy trạm).</p>
       <div id="df-heartbeat" class="overflow-x-auto"></div></div>
 
     <div class="${CARD}"><h3 class="text-sm font-bold mb-2 text-slate-800 dark:text-slate-100">Tác vụ Dev</h3><div id="df-tasks" class="overflow-x-auto"></div></div>
@@ -280,9 +280,11 @@ const DevFleetUI = (() => {
     renderStatus(st.data);
     if (!st.data.enabled || st.data.configured === false) {
       ['df-workers', 'df-agents', 'df-brief'].forEach((id) => { $(id).innerHTML = ''; });
+      $('df-live').classList?.add('hidden');
       const t = await api('/tasks'); if (t.ok) renderTasks(t.data);
       return;
     }
+    $('df-live').classList?.remove('hidden');
     const [w, a, b, t, ev] = await Promise.all([api('/workers'), api('/agents'), api('/briefing'), api('/tasks'), api('/events?limit=40')]);
     if (w.ok) renderWorkers(w.data); else $('df-workers').innerHTML = `<p class="text-rose-600 text-[11px]">${e(fail(w))}</p>`;
     if (a.ok) renderAgents(a.data);

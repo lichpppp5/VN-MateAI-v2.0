@@ -31,6 +31,21 @@ from mateai.interfaces.http import lifecycle
 
 #: Route thêm có chủ đích sau bản chụp (không đổi thứ tự route cũ).
 NEW_ROUTES = {"/api/v1/health/startup",
+              # thẩm định thương mại 14/10/2026: bắt đổi mật khẩu, báo cáo kiểm toán, dữ liệu cá nhân, bản quyền, báo cáo hiệu năng
+              "/api/v1/login/change-password", "/api/v1/security/audit-logs/export", "/api/v1/privacy/register",
+              "/api/v1/privacy/subject/lookup", "/api/v1/privacy/subject/erase", "/api/v1/license", "/api/v1/license/usage",
+              "/api/v1/reports/performance/monthly", "/api/v1/skills/catalog",
+              "/api/v1/reports/executive-summary",   # tổng quan cho giám đốc (#22)
+              "/api/v1/branding",                 # thương hiệu hiển thị (white-label)
+              # Lõi điều phối: phiếu giao việc + đội agent (docs/integrations/orchestration.md)
+              "/api/v1/orchestration/executors", "/api/v1/orchestration/capabilities", "/api/v1/orchestration/tools",
+              "/api/v1/orchestration/executors/{executor_id}", "/api/v1/orchestration/executors/{executor_id}/status",
+              "/api/v1/orchestration/orders/preview", "/api/v1/orchestration/orders", "/api/v1/orchestration/orders/{order_id}",
+              "/api/v1/orchestration/orders/{order_id}/cancel", "/api/v1/orchestration/orders/{order_id}/retry",
+              "/api/v1/orchestration/orders/{order_id}/confirm",
+              # quên mật khẩu qua quản trị viên
+              "/api/v1/login/forgot-password", "/api/v1/auth/password-reset/requests",
+              "/api/v1/auth/password-reset/requests/{request_id}/close",
               # prompt cuối: model registry §79, sự cố §88, mục tiêu §42, toàn vẹn audit §73
               "/api/v1/llm/model-registry", "/api/v1/ops/incidents", "/api/v1/ops/incidents/{task_id}/phase",
               "/api/v1/ops/goals", "/api/v1/security/audit-logs/verify",

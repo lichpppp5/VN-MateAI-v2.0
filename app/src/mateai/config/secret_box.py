@@ -48,6 +48,8 @@ SECRET_FIELD_NAMES = frozenset({
     "elevenlabs_api_key", "vbee_token",
     # Hạ tầng (prompt cuối §67): URL Redis chứa mật khẩu.
     "redis_url", "database_url",
+    # OAuth (Zalo OA…): token truy cập / làm mới + khoá ứng dụng — 14/10/2026 (trước đó access_token của kênh Zalo lưu chữ thường).
+    "access_token", "refresh_token", "app_secret", "secret_key",
 })
 
 _lock = threading.Lock()

@@ -22,7 +22,7 @@ EXPECTED = [
     ("VẬN HÀNH HẰNG NGÀY", ["infra-monitor", "tasks", "playbooks"]),
     ("KẾT NỐI DOANH NGHIỆP", ["system-integration", "agent-gateway", "dev-fleet"]),
     ("TRỢ LÝ AI & ROBOT", ["ai-manager", "skills", "voice"]),
-    ("BẢO MẬT & QUẢN TRỊ", ["security", "config", "logs"]),
+    ("BẢO MẬT & QUẢN TRỊ", ["security", "compliance", "config", "logs"]),
 ]
 
 

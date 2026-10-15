@@ -326,7 +326,7 @@ for path in web_files:
         )
 
 # Mọi màn hình phải dùng chung đúng một câu "chờ kết nối" và có CSS làm mờ.
-for name in ("app.js", "roi_dashboard.html", "hud.js"):
+for name in ("app.js", "roi_dashboard.js", "hud.js"):
     path = WEB_DIR / name
     if not path.exists():
         check(f"{name} tồn tại", False, "không tìm thấy file")

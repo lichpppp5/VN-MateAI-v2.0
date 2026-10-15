@@ -9,7 +9,8 @@
 | Sức khoẻ | `GET https://localhost/livez`, `/readyz`, `/startupz` |
 | Dừng máy chủ | `Get-CimInstance Win32_Process -Filter "Name='python.exe'" \| ? { $_.CommandLine -like '*main.py*' } \| % { Stop-Process -Id $_.ProcessId -Force }` |
 | Chạy máy chủ | `Start-Process .venv\Scripts\python.exe main.py -WindowStyle Hidden -RedirectStandardOutput logs\server.out.log -RedirectStandardError logs\server.err.log`, chờ ~35 s rồi kiểm `/readyz` |
-| Log | `logs\server.err.log` (log ứng dụng) |
+| Log | `logsnmateai.log` (log ứng dụng, xoay vòng 20 MB × 10, đã che bí mật — có cả khi chạy bằng Start.bat); Docker: `docker compose logs app` hoặc `/data/logs/vnmateai.log` |
+| Phiên bản CSDL | `python scripts/db_migrate.py status`; `/readyz` mục `schema` |
 | AI đang làm gì | Portal → Bảng điều khiển → "AI Supervisor"; `GET /api/v1/ops/overview` |
 | Dừng khẩn cấp AI | Portal → Trung tâm Bảo mật → "DỪNG KHẨN CẤP AI" (hoặc `PUT /api/v1/security/autonomy {"kill_switch": true, "reason": "..."}`) |
 | Sao lưu | `python scripts/backup.py create` (tự kiểm chứng) |
@@ -39,6 +40,13 @@
 - Kiểm tra: `python scripts/backup.py create` (chạy `integrity_check` trên bản chụp).
 - Xử lý: dừng máy chủ → `python scripts/backup.py restore backups\<bản gần nhất đạt> --yes` (tự lưu trạng thái hiện tại vào `backups\pre-restore-*`).
 - Xác minh: `python scripts/backup.py verify <thư mục>` = ĐẠT; `/readyz` = 200.
+
+## 5b. Nâng cấp CSDL khi lên bản mới (`schema_migrations`)
+- Máy chủ tự chạy bước nâng cấp có số thứ tự lúc khởi động; có bước thật trên CSDL đang có dữ liệu thì **sao lưu trước** (`backups\<thời điểm>`), sao lưu lỗi thì không nâng cấp.
+- Dấu hiệu lỗi: `/readyz` = 503 với `schema: error: …` hoặc `schema: newer_than_app: 00xx`; log `[Schema]`.
+- `error`: đọc dòng `[Schema]` trong `logsnmateai.log`; bước lỗi đã cuộn lại (dữ liệu không đổi). Sửa nguyên nhân → khởi động lại.
+- `newer_than_app`: đang chạy bản CŨ trên CSDL đã nâng cấp (vd quay lại bản trước). Chạy lại bản mới, hoặc khôi phục bản sao lưu tạo ngay trước lần nâng cấp (mục 5).
+- Xác minh: `python scripts/db_migrate.py status` → `pending: []`, `unknown: []`.
 
 ## 6. Redis / nhiều tiến trình
 Không áp dụng: hệ thống chạy một tiến trình, không dùng Redis (`docs/production/readiness-score.md`).

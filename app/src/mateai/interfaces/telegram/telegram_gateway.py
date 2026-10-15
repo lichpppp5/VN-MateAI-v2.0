@@ -118,9 +118,9 @@ class TelegramBotService:
     def _get_config(self) -> Optional[Any]:
         """Lazily load telegram config from settings, reloading if needed or falling back to config.json."""
         try:
-            from mateai.config.loader import settings, reload_settings
+            from mateai.config.loader import settings, reload_settings_if_changed
             try:
-                reload_settings()
+                reload_settings_if_changed()
             except Exception:
                 pass
             cfg = getattr(settings, "telegram", None)

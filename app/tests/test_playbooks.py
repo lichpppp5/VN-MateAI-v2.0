@@ -388,3 +388,15 @@ async def test_steps_really_go_through_the_policy_gate(monkeypatch, admin):
     assert run["steps"][0]["status"] == "ok"
     steps = ledger.get_task(run["task_id"])["steps"]
     assert steps and steps[0]["tool"] == "get_system_info" and steps[0]["decision"] == "allow"       # bước nằm trong Sổ tác vụ
+
+
+async def test_editors_are_recorded_and_cannot_approve_the_run_under_separation_of_duties(tools, admin, monkeypatch):
+    from mateai.application.security import zero_trust as zt
+    pb = make([{"id": "ghi", "tool": "write_file", "args": {"path": "C:/t"}}], pid="tach-nhiem-vu")
+    pb = E.save_playbook({**pb["definition"], "edited_by": []}, actor="nguoi-sua")   # không xoá được dấu vết bằng định nghĩa gửi lên
+    assert pb["definition"]["edited_by"] == ["nguoi-sua", "tester"]
+    monkeypatch.setattr(zt, "separation_of_duties", lambda: True)
+    out = await E.start("tach-nhiem-vu", {}, caller=admin)
+    assert hitl_manager.get_pending(out["approval_id"])["context"]["configured_by"] == ["nguoi-sua", "tester"]
+    res = await hitl_manager.approve_async(out["approval_id"], approved_by="nguoi-sua")
+    assert res["status"] == "error" and "người cấu hình" in res["message"] and tools.calls == []

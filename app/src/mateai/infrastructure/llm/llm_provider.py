@@ -83,7 +83,13 @@ MODEL_COOLDOWN_S = 120.0
 #: Bench 2026-10-03: lệnh vận hành p95 40,7 s — mọi model trong danh sách lần lượt
 #: chờ 5 s rồi mới tới câu "quá tải". Hết ngân sách thì dừng, tầng trên trả lời dự phòng.
 STREAM_FAILOVER_BUDGET_S = 12.0
-COMPLETE_FAILOVER_BUDGET_S = 16.0
+COMPLETE_FAILOVER_BUDGET_S = 24.0
+#: complete() (vòng agent): mỗi model được chờ tới ngần ấy giây, nhưng quá HEDGE_AFTER_S chưa xong thì gửi THÊM sang
+#: model kế tiếp (không huỷ model đang chạy) và lấy kết quả về trước. Đo thật 2026-10-15 với 93 công cụ: model tốt trả
+#: lời 2,5–9,5 s, model hết hạn mức treo tới 45 s — giới hạn cũ 8 s/model, 16 s/chuỗi cắt mất câu 9,5 s và để một model
+#: treo ăn nửa ngân sách (đánh giá 14/10: 22/128 lượt hỏng cả chuỗi).
+COMPLETE_MODEL_TIMEOUT_S = 20.0
+HEDGE_AFTER_S = 6.0
 #: Model nhà cung cấp báo "đã ngừng" không tự sống lại — xếp cuối lâu hơn để
 #: mỗi lượt không mất thêm một vòng gọi vô ích (đo được: 3 model ngừng + timeout
 #: làm một lượt REST mất 88 s). Vẫn thử lại sau đó phòng khi cấu hình đổi model.
@@ -113,12 +119,28 @@ def looks_like_retired_model_reply(text: str) -> bool:
 
 
 _QUOTA_RE = re.compile(r"RESOURCE_EXHAUSTED|QUOTA_EXHAUSTED|quota reached", re.IGNORECASE)
+#: Cổng báo lúc model dùng lại được, vd. 9Router "Unavailable (reset after 122h 12m 17s)" / "reset after 2m".
+_RESET_AFTER_RE = re.compile(r"reset(?:s)? (?:after|in) (?:(\d+)\s*h)?\s*(?:(\d+)\s*m)?\s*(?:(\d+)\s*s)?", re.IGNORECASE)
+#: Trần cho thời gian gác theo gợi ý của cổng — vẫn thử lại định kỳ phòng khi hạn mức được nâng / cấu hình đổi.
+MODEL_RESET_HINT_MAX_S = 6 * 3600.0
+
+
+def reset_hint_seconds(reason: Any) -> Optional[float]:
+    m = _RESET_AFTER_RE.search(str(reason))
+    if not m or not any(m.groups()):
+        return None
+    h, mi, se = (int(g or 0) for g in m.groups())
+    return float(h * 3600 + mi * 60 + se)
 
 
 def _mark_model_failed(model: str, reason: Any, cooldown_s: float = MODEL_COOLDOWN_S) -> None:
     # Hết quota (vd. "Resets in 101h") không tự khỏi sau 120 s: xếp cuối lâu như model đã ngừng.
     if _QUOTA_RE.search(str(reason)):
         cooldown_s = max(cooldown_s, MODEL_RETIRED_COOLDOWN_S)
+    # Cổng nói rõ khi nào dùng lại được: gác đúng chừng đó (đo 15/10: model chính hết hạn mức 122 h vẫn bị thử lại mỗi 2 phút).
+    hint = reset_hint_seconds(reason)
+    if hint is not None:
+        cooldown_s = max(cooldown_s, min(hint, MODEL_RESET_HINT_MAX_S))
     _model_down_until[model] = time.monotonic() + cooldown_s
     logger.warning("[LLMProvider] Tạm xếp cuối model '%s' trong %.0fs: %s", model, cooldown_s, reason)
 
@@ -257,6 +279,9 @@ class DirectLLMProvider(BaseLLMProvider):
     ) -> AsyncGenerator[LLMStreamChunk, None]:
         if model_status(self.model) == "BLOCKED":       # model registry §79
             raise RuntimeError(f"Model '{self.model}' bị BLOCKED trong model registry — không gọi.")
+        from mateai.config import edition
+        if not edition.model_allowed(self.model):
+            raise RuntimeError(f"Model '{self.model}' là model miễn phí — bản thương mại không gửi dữ liệu tới.")
         kwargs_api: Dict[str, Any] = {
             "model": self.model,
             "messages": messages,
@@ -327,6 +352,9 @@ class DirectLLMProvider(BaseLLMProvider):
     ) -> Any:
         if model_status(self.model) == "BLOCKED":       # model registry §79
             raise RuntimeError(f"Model '{self.model}' bị BLOCKED trong model registry — không gọi.")
+        from mateai.config import edition
+        if not edition.model_allowed(self.model):
+            raise RuntimeError(f"Model '{self.model}' là model miễn phí — bản thương mại không gửi dữ liệu tới.")
         kwargs_api: Dict[str, Any] = {
             "model": self.model,
             "messages": messages,
@@ -372,6 +400,11 @@ class NineRouterLLMProvider(BaseLLMProvider):
         if blocked:
             logger.warning("[ModelRegistry] Bỏ model BLOCKED khỏi danh sách thử: %s", blocked)
         ordered = [m for m in ordered if status[m] != "BLOCKED"]
+        from mateai.config import edition
+        free = [m for m in ordered if not edition.model_allowed(m)]
+        if free:                                    # bản thương mại: không gửi dữ liệu khách hàng tới model miễn phí
+            logger.warning("[Edition] Bỏ model miễn phí khỏi danh sách thử: %s", free)
+            ordered = [m for m in ordered if edition.model_allowed(m)]
         now = time.monotonic()
         healthy = [m for m in ordered if _model_down_until.get(m, 0.0) <= now and status[m] != "DEPRECATED"]
         cooling = [m for m in ordered if _model_down_until.get(m, 0.0) > now and status[m] != "DEPRECATED"]
@@ -535,19 +568,19 @@ class NineRouterLLMProvider(BaseLLMProvider):
         **kwargs: Any,
     ) -> Any:
         models = self._resolve_candidate_models(kwargs.get("model"))
-        # timeout / extra_body chỉnh được cho tác vụ dài (vd. chuyên gia phân tích sâu 180s);
-        # mặc định giữ hành vi cũ: 8s, tắt "thinking".
-        timeout_s = float(kwargs.get("timeout", 8.0))
+        if not models:
+            raise RuntimeError("Không có model nào được phép gọi (chưa cấu hình, hoặc đều BLOCKED trong model registry).")
+        # timeout / extra_body chỉnh được cho tác vụ dài (vd. chuyên gia phân tích sâu 180s) — khi đó thử LẦN LƯỢT
+        # (không gửi song song một tác vụ đắt). Mặc định: gửi song song có trễ (HEDGE_AFTER_S), tắt "thinking".
+        long_task = "timeout" in kwargs
+        timeout_s = float(kwargs["timeout"]) if long_task else COMPLETE_MODEL_TIMEOUT_S
+        hedge_after = timeout_s if long_task else HEDGE_AFTER_S
         extra_body = kwargs.get("extra_body", {"thinking": {"budget_tokens": 0}})
         budget_s = max(COMPLETE_FAILOVER_BUDGET_S, timeout_s)
         t0 = time.monotonic()
-        last_err = None
-        for model_name in models:
-            remaining = budget_s - (time.monotonic() - t0)
-            if remaining <= 0.5:
-                last_err = TimeoutError(f"hết {budget_s:.0f}s thử model dự phòng")
-                logger.warning("[NineRouterLLMProvider] Dừng thử model: %s", last_err)
-                break
+        last_err: Optional[BaseException] = None
+
+        async def attempt(model_name: str) -> Any:
             kwargs_api: Dict[str, Any] = {
                 "model": model_name,
                 "messages": messages,
@@ -560,35 +593,69 @@ class NineRouterLLMProvider(BaseLLMProvider):
             if tools:
                 kwargs_api["tools"] = tools
                 kwargs_api["tool_choice"] = "auto"
-            try:
-                from mateai.infrastructure.observability.tracing import set_attrs, span
-                with span("llm.complete", **{"llm.model": model_name, "llm.brain": brain_role}) as _sp:
+            remaining = budget_s - (time.monotonic() - t0)
+            from mateai.infrastructure.observability.tracing import set_attrs, span
+            with span("llm.complete", **{"llm.model": model_name, "llm.brain": brain_role}) as _sp:
+                try:
                     response = await asyncio.wait_for(
                         self.client.chat.completions.create(**kwargs_api),
-                        timeout=min(timeout_s, remaining),
+                        timeout=max(0.1, min(timeout_s, remaining)),
                     )
-                    _u = getattr(response, "usage", None)
-                    set_attrs(_sp, **{"llm.total_tokens": getattr(_u, "total_tokens", None)})
-                msg = response.choices[0].message if getattr(response, "choices", None) else None
-                content = getattr(msg, "content", "") or ""
-                if msg is not None and not getattr(msg, "tool_calls", None) \
-                        and looks_like_retired_model_reply(content):
-                    last_err = RuntimeError(f"Model {model_name} đã ngừng: {content[:120]}")
-                    _mark_model_failed(model_name, f"đã ngừng: {content[:120]}", MODEL_RETIRED_COOLDOWN_S)
+                except asyncio.TimeoutError:
+                    raise TimeoutError(f"Model {model_name} timed out after {timeout_s:.0f}s") from None
+                _u = getattr(response, "usage", None)
+                set_attrs(_sp, **{"llm.total_tokens": getattr(_u, "total_tokens", None)})
+            if not getattr(response, "choices", None):
+                # Cổng trả 200 nhưng không có câu trả lời (bộ lọc an toàn của nhà cung cấp…) — đánh giá 15/10: vòng agent
+                # chết vì `choices[0]` trên None. Coi như model lỗi, thử model khác.
+                raise RuntimeError(f"Model {model_name} trả về không có câu trả lời (choices rỗng)")
+            msg = response.choices[0].message
+            content = getattr(msg, "content", "") or ""
+            if msg is not None and not getattr(msg, "tool_calls", None) and looks_like_retired_model_reply(content):
+                raise _RetiredModel(f"Model {model_name} đã ngừng: {content[:120]}")
+            return response
+
+        queue = list(models)
+        running: Dict["asyncio.Task[Any]", str] = {}
+        try:
+            while queue or running:
+                remaining = budget_s - (time.monotonic() - t0)
+                if remaining <= 0.5:
+                    last_err = TimeoutError(f"hết {budget_s:.0f}s thử model dự phòng")
+                    logger.warning("[NineRouterLLMProvider] Dừng thử model: %s", last_err)
+                    break
+                if queue and not running:
+                    m = queue.pop(0)
+                    running[asyncio.ensure_future(attempt(m))] = m
+                done, _ = await asyncio.wait(running, timeout=min(hedge_after, remaining) if queue else remaining,
+                                             return_when=asyncio.FIRST_COMPLETED)
+                if not done:
+                    if queue:                    # model đang chạy chậm: gửi thêm sang model kế, vẫn chờ cả hai
+                        m = queue.pop(0)
+                        logger.info("[NineRouterLLMProvider] Quá %.0fs chưa xong — gửi song song thêm %s", hedge_after, m)
+                        running[asyncio.ensure_future(attempt(m))] = m
                     continue
-                _mark_model_ok(model_name)
-                return response
-            except asyncio.TimeoutError:
-                last_err = TimeoutError(f"Model {model_name} timed out after {timeout_s:.0f}s")
-                _mark_model_failed(model_name, f"timeout {timeout_s:.0f}s")
-                continue
-            except Exception as exc:
-                last_err = exc
-                _mark_model_failed(model_name, exc)
-                continue
-        if not models:
-            raise RuntimeError("Không có model nào được phép gọi (chưa cấu hình, hoặc đều BLOCKED trong model registry).")
+                for task in done:
+                    model_name = running.pop(task)
+                    exc = task.exception()
+                    if exc is None:
+                        _mark_model_ok(model_name)
+                        return task.result()
+                    last_err = exc
+                    if isinstance(exc, _RetiredModel):
+                        _mark_model_failed(model_name, str(exc).split(": ", 1)[-1], MODEL_RETIRED_COOLDOWN_S)
+                    elif isinstance(exc, TimeoutError):
+                        _mark_model_failed(model_name, f"timeout {timeout_s:.0f}s")
+                    else:
+                        _mark_model_failed(model_name, exc)
+        finally:
+            for task in running:                  # model thua / hết ngân sách: huỷ, không đánh dấu hỏng
+                task.cancel()
         raise RuntimeError(f"Tất cả model {models} đều thất bại: {last_err}")
+
+
+class _RetiredModel(RuntimeError):
+    """Cổng trả lời bình thường nhưng nội dung báo model đã ngừng."""
 
 
 def make_llm_client(

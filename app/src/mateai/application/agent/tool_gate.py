@@ -181,7 +181,7 @@ async def _run_tool_with_policy(
                  "policy_version": decision.policy_version, "args": fn_args}
 
     from mateai.application.tasks import ledger
-    from mateai.application.tasks.verification import verify
+    from mateai.application.tasks.verification import tool_outcome, verify
     op_task = ledger.CURRENT_TASK.get()
     audit_ctx["op_task_id"] = op_task
 
@@ -245,6 +245,14 @@ async def _run_tool_with_policy(
         security_engine.log_audit(str(caller), fn_name, str(decision.risk), "APPROVAL_REMEMBERED", audit_ctx)
 
     if target_client.lower() in _LOCAL_TARGETS:
+        from mateai.config import edition
+        _host = edition.server_exec_blocked_reason(fn_name)
+        if _host:
+            _res = {"status": "error", "success": False, "code": "SERVER_EXEC_BLOCKED", "error": _host, "message": _host}
+            ledger.record_step(op_task, tool=fn_name, target=target_client, args=fn_args, decision=decision, result=_res,
+                               verification={"level": "NONE", "status": "failed", "checks": [_host]})
+            security_engine.log_audit(str(caller), fn_name, str(decision.risk), "BLOCKED", {**audit_ctx, "reason": "SERVER_EXEC_BLOCKED"})
+            return _done(_res)
         _desk = _desktop_problem(fn_name)
         if _desk:
             logger.warning("[Desktop] Từ chối %s: %s", fn_name, _desk["desktop"].get("reason"))
@@ -286,7 +294,8 @@ async def _run_tool_with_policy(
         _result = await asyncio.to_thread(
             orchestrator.execute_on_client_sync, target_client, fn_name, fn_args, **_sync_kw)
 
-    _ok = _result.get("status") == "success" or _result.get("success") is True
+    _out = tool_outcome(_result)
+    _ok = _out["status"] in ("success", "done", "ok", "passed", "completed")
     # Kiểm chứng sau hành động (§29): "tool báo đã chạy" chưa phải "đã xong".
     _verification = verify(fn_name, fn_args, _result, decision.risk, target_client)
     if isinstance(_result, dict):

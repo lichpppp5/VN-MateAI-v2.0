@@ -16,9 +16,10 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, Response
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 
 from mateai.config.loader import settings
+from mateai.interfaces.http.csp import LEGACY_CSP
 
 logger = logging.getLogger(__name__)
 
@@ -46,8 +47,11 @@ def _asset_version(name: str) -> str:
 
 
 def _inject_asset_versions(html: str) -> str:
-    """Thay số phiên bản cứng trong thẻ script bằng mtime của file tương ứng."""
+    """Thay số phiên bản cứng trong thẻ script bằng mtime của file tương ứng; báo CSP chặt cho inline-handlers.js."""
     import re as _re
+
+    from mateai.interfaces.http.csp import mark_strict
+    html = mark_strict(html)
 
     def _sub(m: "re.Match[str]") -> str:
         # group(1) là phần sau `src="`. Phải trả lại CẢ `src="` và dấu `"` —
@@ -109,6 +113,7 @@ async def serve_admin_topology():
                     "Cache-Control": "no-cache, no-store, must-revalidate",
                     "Pragma": "no-cache",
                     "Expires": "0",
+                    "Content-Security-Policy": LEGACY_CSP,  # Next.js xuất tĩnh dùng script nội tuyến
                 },
             )
     raise HTTPException(status_code=404, detail="Topology build artifact not found. Please run 'npm run build' in admin/.")
@@ -131,6 +136,7 @@ async def serve_admin_computer_use():
                     "Cache-Control": "no-cache, no-store, must-revalidate",
                     "Pragma": "no-cache",
                     "Expires": "0",
+                    "Content-Security-Policy": LEGACY_CSP,  # Next.js xuất tĩnh dùng script nội tuyến
                 },
             )
     raise HTTPException(status_code=404, detail="Computer-Use build artifact not found. Please run 'npm run build' in admin/.")
@@ -182,9 +188,9 @@ async def get_vnmate_roi():
     roi_file = _WEB_DIR / "roi_dashboard.html"
     if not roi_file.exists():
         raise HTTPException(status_code=404, detail="web/roi_dashboard.html not found.")
-    return FileResponse(
-        str(roi_file),
-        media_type="text/html",
+    return HTMLResponse(
+        # Như serve_portal: phiên bản script theo mtime + meta CSP chặt.
+        _inject_asset_versions(roi_file.read_text(encoding="utf-8")),
         headers={
             "Cache-Control": "no-cache, no-store, must-revalidate",
             "Pragma": "no-cache",

@@ -63,7 +63,10 @@ class SelfHealingUIEngine:
         try:
             import redis
             import os
-            redis_url = (os.environ.get("VNMATEAI_REDIS_URL") or os.environ.get("REDIS_URL")
+            # Cùng nguồn với kho dùng chung (shared_state): biến môi trường (Docker) rồi REDIS_URL trong cấu hình
+            # (chạy Start.bat: Redis có mật khẩu — URL không mật khẩu bị từ chối "HELLO must be called… authenticated").
+            from mateai.infrastructure.cache.shared_state import _configured_url
+            redis_url = (os.environ.get("VNMATEAI_REDIS_URL") or _configured_url() or os.environ.get("REDIS_URL")
                          or "redis://localhost:6379/0")
             self.redis = redis.Redis.from_url(redis_url, decode_responses=True, socket_timeout=2)
             # Test ping nhẹ

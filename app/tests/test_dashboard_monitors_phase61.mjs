@@ -570,7 +570,7 @@ const _httpDir = join(HERE, '..', 'src', 'mateai', 'interfaces', 'http');
 const py = [join(_httpDir, 'server.py'), ...readdirSync(join(_httpDir, 'routers')).filter((f) => f.endsWith('.py')).map((f) => join(_httpDir, 'routers', f))]
   .map((f) => readFileSync(f, 'utf-8')).join('\n\n').replace(/\r\n/g, '\n');
 // Thân hàm: từ `def` tới decorator kế tiếp (hoặc hết tệp router health.py).
-const _epStart = py.indexOf('async def health_dashboard_endpoint()');
+const _epStart = py.indexOf('async def health_dashboard_endpoint(');   // có tham số Depends(get_current_user): cần đăng nhập
 const _epNext = py.slice(_epStart).search(/\n@(?:app|router)\.|\n\n\n(?=\S)/);
 const ep = py.slice(_epStart, _epNext < 0 ? undefined : _epStart + _epNext);
 check('giữ nguyên 4 dòng inject gốc',

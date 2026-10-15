@@ -55,6 +55,14 @@ def test_recovery_codes_are_single_use_and_stored_hashed():
     assert mfa.consume_recovery(stored, "SAISAI-SAISAI")[0] is False
 
 
+def test_qr_encodes_the_otpauth_uri_and_degrades_without_segno(monkeypatch):
+    import sys
+    uri = mfa.otpauth_uri("ABCDEF234567", "an@congty.vn")
+    assert mfa.qr_data_uri(uri).startswith("data:image/svg+xml")
+    monkeypatch.setitem(sys.modules, "segno", None)                                                    # thiếu thư viện -> chỉ còn khoá nhập tay
+    assert mfa.qr_data_uri(uri) is None
+
+
 def test_otpauth_uri_has_everything_an_authenticator_app_needs():
     uri = mfa.otpauth_uri("ABCDEF234567", "an@congty.vn")
     assert uri.startswith("otpauth://totp/VN-MateAI:an%40congty.vn?secret=ABCDEF234567") and "issuer=VN-MateAI" in uri and "period=30" in uri
@@ -131,6 +139,7 @@ def test_setup_needs_a_valid_first_code_and_shows_secrets_once(client):
     assert st["enabled"] is False and st["pending_setup"] is False
     setup = client.post("/api/v1/auth/mfa/setup", headers=bearer(tok)).json()
     assert setup["otpauth_uri"].startswith("otpauth://totp/") and setup["secret"] in setup["otpauth_uri"]
+    assert setup["qr_svg"].startswith("data:image/svg+xml")                                            # quét được thay vì gõ khoá
     wrong = client.post("/api/v1/auth/mfa/enable", headers=bearer(tok), json={"code": "000000"})
     assert wrong.status_code == 400
     assert client.get("/api/v1/auth/mfa/status", headers=bearer(tok)).json()["enabled"] is False        # chưa bật khi chưa chứng minh

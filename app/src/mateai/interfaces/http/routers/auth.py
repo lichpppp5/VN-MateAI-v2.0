@@ -103,6 +103,17 @@ async def login_endpoint(payload: LoginRequest, request: Request) -> Dict[str, A
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Tên đăng nhập hoặc mật khẩu không chính xác.",
         )
+    # Mật khẩu ban đầu / vừa được admin đặt lại / mật khẩu dev công khai: chỉ được đổi mật khẩu (token 15 phút, scope pwd_change).
+    if user.get("must_change_password") and (user.get("auth_source") or "local") != "sso":
+        _login_audit(user["username"], ip, "LOGIN_PASSWORD_OK_CHANGE_REQUIRED")
+        return {"status": "password_change_required", "change_token": auth_manager.create_access_token(
+            data={"sub": user["username"], "scope": "pwd_change"}, expires_delta=timedelta(minutes=15)),
+            "detail": "Bạn cần đặt mật khẩu mới trước khi vào hệ thống."}
+    return _after_password(user, ip, keys)
+
+
+def _after_password(user: Dict[str, Any], ip: str, keys) -> Dict[str, Any]:
+    """Phần đăng nhập sau khi mật khẩu đã đúng (và đã đổi nếu bị bắt đổi): MFA → cài MFA bắt buộc → cấp token."""
     # Bước 2 (MFA): đúng mật khẩu CHƯA phải đăng nhập — chỉ cấp token trung gian 5 phút (scope `mfa`, không dùng làm token truy cập).
     if user.get("mfa_enabled"):
         _login_audit(user["username"], ip, "LOGIN_PASSWORD_OK_MFA_PENDING")
@@ -135,9 +146,86 @@ async def login_endpoint(payload: LoginRequest, request: Request) -> Dict[str, A
     }
 
 
+class PasswordChangeLoginRequest(BaseModel):
+    change_token: str = Field(..., min_length=10)
+    new_password: str = Field(..., min_length=1, max_length=256)
+
+
+@router.post("/api/v1/login/change-password", summary="Đăng nhập: đặt mật khẩu mới khi bị bắt đổi", tags=["Authentication"])
+async def login_change_password_endpoint(payload: PasswordChangeLoginRequest, request: Request) -> Dict[str, Any]:
+    ip = request.client.host if request.client else "?"
+    data = auth_manager.decode_access_token(payload.change_token, allow_scopes=("pwd_change",))
+    if not data or data.get("scope") != "pwd_change" or not data.get("sub"):
+        raise HTTPException(status_code=401, detail="Phiên đổi mật khẩu đã hết hạn — hãy đăng nhập lại.")
+    user = auth_manager.get_user(str(data["sub"]))
+    if not user:
+        raise HTTPException(status_code=401, detail="Tài khoản không còn tồn tại.")
+    problem = auth_manager.password_problem(payload.new_password, user["username"], user.get("password_hash") or "")
+    if problem:
+        raise HTTPException(status_code=400, detail=problem)
+    await run_blocking(partial(auth_manager.change_user_password, user["id"], payload.new_password, False))
+    _login_audit(user["username"], ip, "PASSWORD_CHANGED_AT_LOGIN")
+    keys = (f"ip:{ip}", f"user:{user['username'].strip().lower()}")
+    return _after_password(auth_manager.get_user(user["username"]) or user, ip, keys)
+
+
 class MfaLoginRequest(BaseModel):
     mfa_token: str = Field(..., min_length=10)
     code: str = Field(..., min_length=6, max_length=16, description="Mã 6 số của ứng dụng xác thực, hoặc một mã khôi phục")
+
+
+# ── Quên mật khẩu (qua quản trị viên) — mateai/application/security/password_reset.py ─────────────────────────────
+PWRESET_MAX_PER_IP = 5
+PWRESET_WINDOW_S = 3600.0
+
+
+class ForgotPasswordRequest(BaseModel):
+    username: str = Field(..., min_length=1, max_length=80)
+    note: str = Field(default="", max_length=300, description="Số điện thoại / phòng ban để quản trị viên liên hệ xác minh")
+
+
+@router.post("/api/v1/login/forgot-password", summary="Quên mật khẩu: gửi yêu cầu tới quản trị viên", tags=["Authentication"])
+async def forgot_password(payload: ForgotPasswordRequest, request: Request) -> Dict[str, Any]:
+    """Luôn trả cùng một câu (không lộ tài khoản có tồn tại hay không). Giới hạn `PWRESET_MAX_PER_IP` lần / giờ / IP."""
+    from mateai.application.security import password_reset
+    ip = request.client.host if request.client else "?"
+    now = time.time()
+    if len(_store().events_since("pwreset:ip:" + ip, now - PWRESET_WINDOW_S)) >= PWRESET_MAX_PER_IP:
+        raise HTTPException(status_code=429, detail="Gửi yêu cầu quá nhiều lần. Thử lại sau một giờ hoặc liên hệ trực tiếp quản trị viên.")
+    _store().events_add("pwreset:ip:" + ip, now)
+    res = await run_blocking(partial(password_reset.submit, payload.username, payload.note, ip))
+    if res.get("created"):
+        try:
+            from mateai.application.operations import alert_dispatcher
+            await alert_dispatcher.dispatch(
+                f"Yêu cầu quên mật khẩu: {res['username']}",
+                f"Tài khoản '{res['username']}' báo quên mật khẩu (IP {ip}). Ghi chú: {payload.note.strip() or '—'}. "
+                "Hãy xác minh đúng người rồi cấp mật khẩu tạm trong portal (Hộp thư trên thanh header).",
+                severity="warning", category=f"password_reset:{res['username']}", source="Đăng nhập")
+        except Exception:  # noqa: BLE001 — không báo được vẫn lưu yêu cầu, admin thấy trong hộp thư
+            logger.warning("Không gửi được thông báo yêu cầu quên mật khẩu của %s", res.get("username"))
+    return {"status": "success", "message": res["message"]}
+
+
+@router.get("/api/v1/auth/password-reset/requests", summary="Yêu cầu quên mật khẩu đang chờ (admin)", tags=["Authentication"])
+async def password_reset_requests(admin: Dict[str, Any] = Depends(require_roles(["admin"]))) -> Dict[str, Any]:
+    from mateai.application.security import password_reset
+    return {"status": "success", "requests": await run_blocking(password_reset.list_open)}
+
+
+class PasswordResetClose(BaseModel):
+    status: str = Field(..., pattern="^(done|rejected)$")
+
+
+@router.post("/api/v1/auth/password-reset/requests/{request_id}/close", summary="Đóng yêu cầu quên mật khẩu (admin)",
+             tags=["Authentication"])
+async def password_reset_close(request_id: int, payload: PasswordResetClose,
+                               admin: Dict[str, Any] = Depends(require_roles(["admin"]))) -> Dict[str, Any]:
+    from mateai.application.security import password_reset
+    ok = await run_blocking(partial(password_reset.close, request_id, str(admin.get("username") or "admin"), payload.status))
+    if not ok:
+        raise HTTPException(status_code=404, detail="Không có yêu cầu đang mở với mã này.")
+    return {"status": "success"}
 
 
 @router.post("/api/v1/login/mfa", summary="Đăng nhập bước 2: nhập mã MFA (TOTP hoặc mã khôi phục)", tags=["Authentication"])

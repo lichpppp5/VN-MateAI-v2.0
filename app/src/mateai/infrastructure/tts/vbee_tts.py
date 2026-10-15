@@ -144,7 +144,7 @@ _realtime_blocked_until = 0.0
 #: Lý do lỗi gần nhất (nút "Nghe thử" hiện cho người dùng).
 last_error = ""
 #: Batch: trần thời gian một câu — quá thì engine dùng 9Router / Edge (hàng đợi TTS cho mỗi câu tối đa 14 s).
-BATCH_BUDGET_S = 12.0
+BATCH_BUDGET_S = 6.5
 #: Batch bắt buộc có webhookUrl. Trỏ về CHÍNH máy chủ này (Vbee không tới được) — không gửi link audio cho bên thứ ba;
 #: kết quả lấy bằng cách hỏi GET /v1/tts/requests/{requestId}.
 BATCH_WEBHOOK = "https://localhost/api/v1/tts/vbee/callback"

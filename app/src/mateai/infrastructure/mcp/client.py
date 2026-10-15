@@ -122,6 +122,24 @@ def _pick_sse(text: str, want_id: Any) -> Dict[str, Any]:
 
 # ── stdio ───────────────────────────────────────────────────────────────────
 
+#: Biến môi trường được chuyển cho tiến trình MCP stdio. KHÔNG chuyển cả môi trường của máy chủ: trong đó có mật khẩu mặc định, khoá
+#: LLM, chuỗi kết nối CSDL (VNMATEAI_*, VNMATE_*…). Chỉ những gì một chương trình cần để chạy + proxy / chứng chỉ; còn lại admin khai
+#: báo riêng trong `env` của server (được mã hoá khi lưu).
+SAFE_ENV_KEYS = (
+    "PATH", "PATHEXT", "SYSTEMROOT", "SystemRoot", "WINDIR", "COMSPEC", "SYSTEMDRIVE", "PROGRAMDATA", "PROGRAMFILES", "TEMP", "TMP",
+    "TMPDIR", "HOME", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "USERNAME", "USER", "LANG", "LC_ALL", "LC_CTYPE", "TZ",
+    "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "ALL_PROXY", "http_proxy", "https_proxy", "no_proxy", "all_proxy",
+    "SSL_CERT_FILE", "SSL_CERT_DIR", "REQUESTS_CA_BUNDLE", "PYTHONIOENCODING", "PYTHONUTF8",
+)
+
+
+def child_env(extra: Optional[Dict[str, str]] = None) -> Dict[str, str]:
+    env = {k: os.environ[k] for k in SAFE_ENV_KEYS if k in os.environ}
+    env.setdefault("PYTHONIOENCODING", "utf-8")
+    env.update(extra or {})
+    return env
+
+
 class StdioTransport:
     def __init__(self, command: str, args: Optional[List[str]] = None, env: Optional[Dict[str, str]] = None,
                  cwd: Optional[str] = None, timeout: float = 30.0) -> None:
@@ -134,7 +152,7 @@ class StdioTransport:
         if self.proc and self.proc.returncode is None:
             return
         self.proc = await asyncio.create_subprocess_exec(
-            self.command, *self.args, cwd=self.cwd or None, env={**os.environ, **self.env},
+            self.command, *self.args, cwd=self.cwd or None, env=child_env(self.env),
             stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, limit=_MAX_LINE)
         self._stderr_task = asyncio.get_running_loop().create_task(self._drain_stderr())
 

@@ -356,6 +356,22 @@ class _TracingSink(VoiceSink):
         await self._inner.on_audio(seq, audio, text, kind, **info)
 
 
+#: Kênh có màn hình hiển thị câu trả lời đầy đủ (giới hạn số câu đọc to chỉ áp ở đây).
+SCREEN_CHANNELS = frozenset({"hud", "web", "portal"})
+SCREEN_HINT = "Chi tiết em đã hiện trên màn hình."
+
+
+def spoken_sentence_limit(source_device: Optional[str]) -> int:
+    """Số câu tối đa ĐỌC TO cho kênh này (0 = không giới hạn). `voice.max_spoken_sentences`, mặc định 4."""
+    if str(source_device or "").strip().lower() not in SCREEN_CHANNELS:
+        return 0
+    try:
+        from mateai.config.loader import get_config_section
+        return max(0, int(get_config_section("voice").get("max_spoken_sentences", 4)))
+    except (TypeError, ValueError):
+        return 4
+
+
 async def process_voice_turn(
     query: str,
     *,
@@ -524,9 +540,11 @@ async def _run_voice_turn(
     # trong từng câu trước khi đọc / hiện / gửi — phòng dữ liệu tới AI theo đường khác công cụ (lịch sử, người dùng nói ra).
     from mateai.application.security.pii_guard import can_view_pii, mask_text
     _full_pii = can_view_pii(caller or source_device)
+    _max_spoken = spoken_sentence_limit(source_device)
 
     async def _produce() -> None:
         seq = 0
+        spoken = 0
         try:
             async for sentence in llm_engine.stream_voice_response(
                 query=query,
@@ -555,13 +573,22 @@ async def _run_voice_turn(
                     if turn.get("display_text"):
                         turn["display_text"] = display
                 await sink.on_sentence(seq, sentence, display)
+                # Kênh có màn hình: chỉ ĐỌC vài câu đầu, phần còn lại chỉ hiện chữ — 16 câu đọc nối tiếp từng kéo
+                # một lượt tới 31 s (thẩm định 14/10/2026 §5.1). Robot (không màn hình) đọc đủ.
+                # Số thứ tự TTS liên tục (pipeline phát theo thứ tự, chờ đủ 1..n) — trước giới hạn trùng `seq`.
+                if _max_spoken and spoken >= _max_spoken:
+                    if spoken == _max_spoken:
+                        spoken += 1
+                        await pipeline.push_sentence(sequence=spoken, text=SCREEN_HINT, request_id=session_id)
+                    continue
+                spoken += 1
                 # Câu dài (thường là kết quả vòng agent) được rút gọn khi ĐỌC —
                 # chữ hiển thị vẫn đầy đủ. Trước Phase 3 chỉ ESP32/HUD làm vậy.
                 await pipeline.push_sentence(
-                    sequence=seq, text=shorten_for_speech(sentence), request_id=session_id,
+                    sequence=spoken, text=shorten_for_speech(sentence), request_id=session_id,
                 )
         finally:
-            await pipeline.mark_complete(seq)
+            await pipeline.mark_complete(spoken)
 
     async def _consume() -> None:
         async for item in pipeline.iterate_audio_results():

@@ -7,6 +7,8 @@ Sức khoẻ hệ thống: /health, bảng sức khoẻ tổng hợp, danh sách
 """
 from __future__ import annotations
 
+from mateai import __version__
+
 import asyncio
 import json
 import logging
@@ -90,7 +92,7 @@ async def health_check() -> HealthResponse:
     model_name = getattr(getattr(settings, "llm", None), "model_name", settings.MODEL_NAME)
     return HealthResponse(
         status="running",
-        version="2.0.0",
+        version=__version__,
         skill_count=plugin_manager.get_skill_count(),
         skill_names=plugin_manager.get_skill_names(),
         model=model_name,
@@ -107,7 +109,7 @@ async def health_check() -> HealthResponse:
     summary="Phase 24.5: Zero-Overhead Observability Dashboard — System Health Snapshot",
     tags=["System"],
 )
-async def health_dashboard_endpoint() -> Dict[str, Any]:
+async def health_dashboard_endpoint(_user: Dict[str, Any] = Depends(get_current_user)) -> Dict[str, Any]:
     """
     Zero-Overhead Health Snapshot (O(1) in-memory lookup).
     Contains no computational logic or network requests.

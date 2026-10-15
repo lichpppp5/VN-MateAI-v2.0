@@ -42,7 +42,9 @@ def _sha256(value: str) -> str:
 
 
 def create_enroll_code(created_by: str, label: str = "", ttl_days: int = CODE_TTL_DAYS) -> Tuple[str, Dict[str, Any]]:
-    """Sinh mã dùng một lần. Trả (mã — chỉ hiện MỘT lần, thông tin lưu)."""
+    """Sinh mã dùng một lần. Trả (mã — chỉ hiện MỘT lần, thông tin lưu). Bản thương mại: không vượt hạn mức máy trạm."""
+    from mateai.application.licensing import ensure_can_add
+    ensure_can_add("workstations")
     code = "VNM-" + secrets.token_urlsafe(24)
     expires = (datetime.utcnow() + timedelta(days=max(1, min(int(ttl_days), 90)))).isoformat()
     db_manager.add_worker_enroll_code(_sha256(code), (label or "")[:80], created_by, expires)

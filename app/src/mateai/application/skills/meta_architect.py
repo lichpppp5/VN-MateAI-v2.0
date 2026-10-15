@@ -487,6 +487,9 @@ def _unique_path(directory: Path, stem: str) -> Path:
 
 
 def _auto_install_enabled() -> bool:
+    from mateai.config import edition
+    if not edition.auto_execute_allowed():          # bản thương mại: không bao giờ tự cài mã AI sinh
+        return False
     return bool(getattr(settings, "auto_execute", False) or getattr(settings, "AUTO_EXECUTE_UNVERIFIED_CODE", False))
 
 

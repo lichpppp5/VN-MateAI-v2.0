@@ -172,11 +172,28 @@ class AuthManager:
         logger.info("Đã xóa người dùng khỏi hệ thống: %s", user_id)
         return True
 
-    def change_user_password(self, user_id: str, new_password: str) -> bool:
-        """Mã hoá và lưu mật khẩu mới."""
-        db_manager.change_user_password(user_id, new_password)
+    def change_user_password(self, user_id: str, new_password: str, must_change: bool = False) -> bool:
+        """Mã hoá và lưu mật khẩu mới (`must_change`: người dùng phải đổi lại ở lần đăng nhập tới)."""
+        db_manager.change_user_password(user_id, new_password, must_change=must_change)
         logger.info("Đã đổi mật khẩu cho người dùng: %s", user_id)
         return True
+
+    @staticmethod
+    def password_problem(new_password: str, username: str = "", old_hash: str = "") -> str:
+        """Chính sách mật khẩu khi người dùng TỰ đặt ("" = đạt): ≥ 10 ký tự, có chữ và số, khác tên đăng nhập, khác mật khẩu cũ,
+        không phải mật khẩu dev công khai."""
+        pwd = str(new_password or "")
+        if len(pwd) < 10:
+            return "Mật khẩu mới phải có ít nhất 10 ký tự."
+        if not any(c.isalpha() for c in pwd) or not any(c.isdigit() for c in pwd):
+            return "Mật khẩu mới phải có cả chữ và số."
+        if username and username.strip().lower() in pwd.lower():
+            return "Mật khẩu mới không được chứa tên đăng nhập."
+        if pwd.lower() in {"admin123", "manager123", "viewer123", "password123", "1234567890", "qwerty12345"}:
+            return "Mật khẩu này quá phổ biến — chọn mật khẩu khác."
+        if old_hash and AuthManager.verify_password(pwd, old_hash):
+            return "Mật khẩu mới phải khác mật khẩu hiện tại."
+        return ""
 
     @staticmethod
     def create_access_token(

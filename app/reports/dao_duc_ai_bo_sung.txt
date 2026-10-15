@@ -1,0 +1,63 @@
+====================================================
+BÁO CÁO: ĐÁNH GIÁ ĐẠO ĐỨC AI & ĐỀ XUẤT BỔ SUNG
+Ngày: 12/10/2026 - 21:12
+Hệ thống: VN-MateAI (Ly Ly)
+====================================================
+
+I. NHỮNG GÌ HỆ THỐNG ĐÃ ĐÁP ỨNG ĐƯỢC:
+-------------------------------------------------
+1. Không Hallucination (Zero Hallucination)
+   - Mọi tác vụ đều phải qua Tool/Function Calling
+   - Không trả lời "đã hoàn thành" khi chưa có kết quả thực tế
+
+2. Minh bạch & Truy vết
+   - Mọi hành động đều có log và báo cáo rõ ràng
+   - Người dùng biết hệ thống đang làm gì
+
+3. Phân quyền rõ ràng
+   - Phân biệt Admin / User / Thiết bị
+   - Chỉ thực thi lệnh từ nguồn được ủy quyền
+
+4. Bảo vệ dữ liệu cá nhân (GDPR / Nghị định 13)
+   - Dữ liệu nhạy cảm chỉ tồn tại trong bộ nhớ đệm 15-30 phút
+   - Không gửi dữ liệu nội bộ ra ngoài khi không được yêu cầu
+
+5. Ranh giới tin cậy
+   - Không làm theo lệnh nằm trong dữ liệu/file/email
+   - Chỉ làm theo yêu cầu trực tiếp từ người dùng hợp lệ
+
+II. CÁC ĐIỂM CẦN BỔ SUNG ĐỂ HOÀN THIỆN ĐẠO ĐỨC AI:
+-------------------------------------------------
+1. Kiểm soát đầu ra nhạy cảm (Output Filtering)
+   - Cần cơ chế lọc tự động khi kết quả chứa dữ liệu cá nhân
+   - Ẩn/mã hóa một phần thông tin nhạy cảm trước khi hiển thị
+
+2. Giải thích quyết định (Explainability / XAI)
+   - Khi AI đưa ra khuyến nghị quan trọng, cần ghi rõ lý do
+   - Người dùng có quyền biết TẠI SAO hệ thống làm vậy
+
+3. Cơ chế từ chối có lý do (Graceful Refusal)
+   - Khi lệnh vi phạm đạo đức hoặc pháp luật, cần từ chối rõ ràng
+   - Ghi log lại lý do từ chối để kiểm tra sau
+
+4. Kiểm soát thiên kiến (Bias Monitoring)
+   - Định kỳ đánh giá xem hệ thống có phân biệt đối xử không
+   - Đặc biệt khi xử lý dữ liệu nhân sự, tuyển dụng
+
+5. Giám sát con người (Human-in-the-Loop)
+   - Với các tác vụ có rủi ro cao (xóa dữ liệu lớn, thay đổi hệ thống)
+   - Nên có bước xác nhận từ người có thẩm quyền
+
+6. Nhật ký kiểm toán (Audit Log)
+   - Ghi lại toàn bộ hành động AI thực hiện
+   - Có thể truy vết khi xảy ra sự cố
+
+7. Giới hạn tự chủ (Autonomy Boundary)
+   - Xác định rõ ngưỡng AI được tự quyết định
+   - Ngưỡng nào cần leo thang lên con người phê duyệt
+
+====================================================
+Kết luận: Hệ thống VN-MateAI đã có nền tảng đạo đức AI
+khá tốt. Cần bổ sung thêm 7 điểm trên để đạt chuẩn
+Enterprise AI Ethics đầy đủ.
+====================================================

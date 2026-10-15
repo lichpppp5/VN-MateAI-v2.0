@@ -9,7 +9,7 @@
  * Cấu hình theme dưới đây chép NGUYÊN từ khối `tailwind.config` cũ trong index.html.
  */
 module.exports = {
-  content: ['../index.html', '../app.js', '../voice-audio-queue.js', '../dev-fleet.js', '../header-inbox.js', '../infra-monitor.js', '../playbooks.js', '../llmops.js', '../agent-gateway.js', '../agent-directory.js', '../auth-mfa.js', '../auth-sso.js'],
+  content: ['../index.html', '../app.js', '../voice-audio-queue.js', '../dev-fleet.js', '../header-inbox.js', '../exec-summary.js', '../infra-monitor.js', '../playbooks.js', '../llmops.js', '../agent-gateway.js', '../agent-directory.js', '../orchestration.js', '../auth-mfa.js', '../auth-sso.js'],
   darkMode: 'class',
   theme: {
     extend: {

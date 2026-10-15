@@ -42,6 +42,8 @@ os.environ["VNMATEAI_HR_DB_PATH"] = str(_TEST_DATA_DIR / "hr_kpi.db")
 os.environ["VNMATEAI_TELEGRAM_OUTBOUND"] = "off"
 # Không gửi trace của bộ test tới OTel collector thật (config.json có thể đặt otlp).
 os.environ["VNMATEAI_OTEL_EXPORTER"] = "none"
+# Không ghi log của bộ test vào logs/vnmateai.log của máy chủ đang chạy.
+os.environ["VNMATEAI_LOG_FILE"] = "none"
 # Nguồn đọc trả phí (Vbee / ElevenLabs trong config.json thật): test không được gọi — tốn điểm API thật, chậm, và kết
 # quả phụ thuộc mạng. Tắt = engine dùng đường 9Router / Edge như mặc định (test nào cần thì tự giả lập).
 os.environ["VNMATEAI_TTS_PAID_PROVIDERS"] = "off"
@@ -199,6 +201,23 @@ def _protect_real_config_files():
                 path.unlink()
         shutil.rmtree(backup_dir, ignore_errors=True)
         shutil.rmtree(_TEST_DATA_DIR, ignore_errors=True)
+
+
+@pytest.fixture(autouse=True)
+def _neutral_login_policy(monkeypatch):
+    """Chính sách đăng nhập của config.json thật (vd `require_mfa_roles: ["admin"]` khi vận hành) không áp lên test:
+    test đăng nhập admin bằng mật khẩu sẽ nhận `mfa_setup_required` thay vì token. Test cần MFA tự bật (test_mfa.py)."""
+    from mateai.config.loader import settings
+    monkeypatch.setattr(settings.security, "require_mfa_roles", [])
+
+
+@pytest.fixture(autouse=True)
+def _all_sources_ready(monkeypatch):
+    """Máy chạy test không có Prometheus / AWS / eInvoice…: không để `tool_readiness` ẩn công cụ hay chặn kịch bản của mọi
+    test. Test của chính tính năng này (test_tool_readiness.py) tự bật lại kiểm tra thật."""
+    from mateai.application.skills import tool_readiness
+    monkeypatch.setattr(tool_readiness, "REQUIREMENTS", {})
+    tool_readiness.clear_cache()
 
 
 @pytest.fixture(autouse=True)

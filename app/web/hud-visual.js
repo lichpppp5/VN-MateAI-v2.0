@@ -759,7 +759,7 @@
   }
   let seq = -1, live = false;
   async function pollFast() {
-    try { applyHealth(await fetch('/api/v1/health-dashboard').then((r) => r.json())); } catch (_) { /* bỏ qua */ }
+    try { applyHealth(await api('/api/v1/health-dashboard')); } catch (_) { /* bỏ qua — chưa đăng nhập: endpoint cần token */ }
     if (!live) return;
     try {
       const ev = await api(`/api/v1/system/topology/events?since=${Math.max(seq, 0)}&limit=${seq < 0 ? 60 : 100}`);

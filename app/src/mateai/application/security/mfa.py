@@ -4,7 +4,8 @@
 mateai/application/security/mfa.py
 ==================================
 Xác thực hai lớp (MFA) bằng TOTP (RFC 6238 / RFC 4226: HMAC-SHA1, bước 30 s, 6 chữ số) — dùng được với Google Authenticator,
-Microsoft Authenticator, Authy, 1Password… Tự cài bằng thư viện chuẩn (hmac, hashlib) nên không thêm phụ thuộc.
+Microsoft Authenticator, Authy, 1Password… Tự cài bằng thư viện chuẩn (hmac, hashlib); ảnh QR để quét khi cài đặt
+dùng `segno` (thuần Python) — thiếu thư viện thì chỉ bỏ ảnh QR, khoá nhập tay vẫn dùng được.
 
 An toàn:
   - mã bí mật mã hoá khi lưu (secret_box) và KHÔNG bao giờ trả lại sau lần cài đặt đầu;
@@ -73,6 +74,15 @@ def verify(secret: str, code: str, *, at: Optional[float] = None, window: int = 
 def otpauth_uri(secret: str, account: str, issuer: str = ISSUER) -> str:
     return (f"otpauth://totp/{quote(issuer)}:{quote(account)}?secret={secret}&issuer={quote(issuer)}"
             f"&algorithm=SHA1&digits={DIGITS}&period={STEP}")
+
+
+def qr_data_uri(uri: str) -> Optional[str]:
+    """Ảnh QR (SVG, dạng data: URI) của liên kết otpauth để ứng dụng xác thực quét; None nếu thiếu `segno`."""
+    try:
+        import segno
+    except ImportError:
+        return None
+    return segno.make(uri, error="m").svg_data_uri(scale=5, border=2, dark="#000", light="#fff")
 
 
 def group(secret: str) -> str:
@@ -160,7 +170,8 @@ def begin_setup(username: str) -> Dict[str, Any]:
         raise MfaError("MFA đã bật — hãy tắt trước khi cài lại")
     secret = new_secret()
     _db().user_security_set(user["id"], mfa_secret=seal(secret), mfa_enabled=0, mfa_recovery=None, mfa_last_step=None)
-    return {"secret": secret, "secret_grouped": group(secret), "otpauth_uri": otpauth_uri(secret, user["username"])}
+    uri = otpauth_uri(secret, user["username"])
+    return {"secret": secret, "secret_grouped": group(secret), "otpauth_uri": uri, "qr_svg": qr_data_uri(uri)}
 
 
 def confirm_enable(username: str, code: str) -> List[str]:

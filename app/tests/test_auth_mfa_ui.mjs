@@ -68,6 +68,15 @@ routes['/api/v1/auth/mfa/setup'] = { status: 200, body: { secret: 'ABCDEFGHIJKLM
 await LoginMfa.promptSetup('SETUP.TOKEN');
 ok(calls[0][0] === '/api/v1/auth/mfa/setup' && calls[0][1] === 'Bearer SETUP.TOKEN', 'gọi setup bằng token cài MFA');
 ok(/ABCD EFGH IJKL MNOP/.test(panel().innerHTML) && /bắt buộc/.test(panel().innerHTML), 'hiện khoá thủ công + lý do bắt buộc');
+ok(!/<img/.test(panel().innerHTML) && /nhập khoá thủ công/.test(panel().innerHTML), 'không có QR: chỉ hướng dẫn nhập khoá');
+routes['/api/v1/auth/mfa/setup'].body.qr_svg = 'data:image/svg+xml;charset=utf-8,%3Csvg%3E';
+await LoginMfa.promptSetup('SETUP.TOKEN');
+ok(/<img src="data:image\/svg\+xml/.test(panel().innerHTML) && /quét mã QR/.test(panel().innerHTML), 'có QR: hiện ảnh để quét');
+routes['/api/v1/auth/mfa/setup'].body.qr_svg = 'javascript:alert(1)';
+await LoginMfa.promptSetup('SETUP.TOKEN');
+ok(!/<img/.test(panel().innerHTML), 'QR không phải ảnh SVG: bỏ qua');
+calls.length = 0;
+await LoginMfa.promptSetup('SETUP.TOKEN');
 el('login-mfa-code').value = '000000';
 routes['/api/v1/auth/mfa/enable'] = { status: 400, body: { detail: 'Mã không đúng hoặc đã hết hạn' } };
 await el('login-mfa-submit').listeners.click(); await flush();

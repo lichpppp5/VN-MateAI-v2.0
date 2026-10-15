@@ -36,7 +36,7 @@ class FakeClient:
                 delta = SimpleNamespace(content="ok", tool_calls=None, reasoning=None, reasoning_content=None)
                 yield SimpleNamespace(choices=[SimpleNamespace(delta=delta, finish_reason="stop")])
             return gen()
-        return SimpleNamespace(model=kw["model"])
+        return SimpleNamespace(model=kw["model"], choices=[SimpleNamespace(message=SimpleNamespace(content="ok", tool_calls=None))])
 
 
 @pytest.fixture(autouse=True)
@@ -165,9 +165,35 @@ async def test_quota_exhausted_model_parked_for_long():
             self.calls.append(kw["model"])
             if kw["model"] == "poor":
                 raise RuntimeError("Error code: 503 - RESOURCE_EXHAUSTED Individual quota reached. Resets in 101h")
-            return SimpleNamespace(model=kw["model"])
+            return SimpleNamespace(model=kw["model"], choices=[SimpleNamespace(message=SimpleNamespace(content="ok", tool_calls=None))])
 
     client = QuotaClient(bad=set())
     p = lp.NineRouterLLMProvider(client, "poor", ["rich"])
     await p.complete(messages=[])
     assert lp.model_health()["poor"] > lp.MODEL_COOLDOWN_S
+
+
+def test_gateway_reset_hint_sets_the_cooldown():
+    """9Router: "Unavailable (reset after 122h 12m 17s)" — đo 15/10 model chính hết hạn mức vẫn bị thử lại mỗi 2 phút."""
+    assert lp.reset_hint_seconds("[antigravity/x] Unavailable (reset after 122h 12m 17s)") == 122 * 3600 + 12 * 60 + 17
+    assert lp.reset_hint_seconds("Unavailable (reset after 2m)") == 120
+    assert lp.reset_hint_seconds("Error code: 500") is None
+    lp._mark_model_failed("het-han-muc", "Unavailable (reset after 122h 12m 17s)")
+    assert lp.model_health()["het-han-muc"] == pytest.approx(lp.MODEL_RESET_HINT_MAX_S, abs=2)   # có trần, vẫn thử lại định kỳ
+    lp._mark_model_failed("sap-xong", "Unavailable (reset after 9s)")
+    assert lp.model_health()["sap-xong"] == pytest.approx(lp.MODEL_COOLDOWN_S, abs=2)          # không ngắn hơn mặc định
+
+
+async def test_reply_without_choices_fails_over_to_next_model():
+    """Cổng trả 200 nhưng không có `choices` (bộ lọc an toàn) — trước đây vòng agent chết vì `choices[0]` trên None."""
+    class EmptyThenGood(FakeClient):
+        async def _create(self, **kw):
+            if kw["model"] == "rong":
+                self.calls.append("rong")
+                return SimpleNamespace(model="rong", choices=None)
+            return await super()._create(**kw)
+
+    client = EmptyThenGood(bad=set())
+    p = lp.NineRouterLLMProvider(client, "rong", ["good"])
+    resp = await p.complete(messages=[])
+    assert resp.model == "good" and client.calls == ["rong", "good"] and "rong" in lp.model_health()

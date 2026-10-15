@@ -2,7 +2,7 @@
 # Copyright (c) 2026 Dương Thanh Lịch — VN-MateAI. See LICENSE and NOTICE.
 #
 # Image ứng dụng VN-MateAI cho máy chủ Linux / Docker (bản chuyển giao). Ngữ cảnh build = thư mục gốc mã nguồn:
-#   docker build -f deploy/docker/Dockerfile -t vnmateai/app:1.0.0 .
+#   docker build -f deploy/docker/Dockerfile -t vnmateai/app:2.0.1 .
 # Gói sẵn model nhận dạng giọng nói (faster-whisper tiny + small) và model embedding của kho tri thức — khởi động không cần
 # tải gì thêm. Chức năng chỉ có trên Windows (điều khiển màn hình / COM / micro máy chủ / khay hệ thống) không có trong
 # container; máy trạm Windows vẫn điều khiển được qua Agent máy trạm (client_agent).
@@ -44,6 +44,12 @@ RUN python -c "from faster_whisper import WhisperModel; [WhisperModel(m, device=
 USER root
 
 COPY --chown=vnmate:vnmate . .
+# MCP server tham chiếu chính thức đã rà soát (vendor/mcp-servers: time, fetch; git không cài — container không có mã nguồn
+# Git lẫn chương trình git) — môi trường Python RIÊNG: thư viện `mcp` kéo
+# starlette / uvicorn bản khác, không lẫn vào môi trường ứng dụng (fastapi / starlette ghim). Đăng ký lúc khởi động (entrypoint).
+RUN python -m venv /opt/mcp-venv \
+ && /opt/mcp-venv/bin/pip install --no-cache-dir -c vendor/mcp-servers/constraints.txt \
+      vendor/mcp-servers/time vendor/mcp-servers/fetch
 RUN pip install --no-deps -e . \
  && chmod +x deploy/docker/entrypoint.sh \
  && cp -a skills /app/skills.dist

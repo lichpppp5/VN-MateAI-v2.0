@@ -7,7 +7,7 @@ Seed Skill — Lean Micro-Tasking & KPI Tracking Automation.
 
 Provides:
   - send_task_to_client: Dispatch an urgent task or reminder popup to a specific LAN client.
-  - summarize_monthly_kpi: Read logs/kpi_logs.csv and aggregate monthly completion metrics.
+  - summarize_monthly_kpi: aggregate monthly completion metrics from the tasks table.
 
 Both functions are decorated with @export_skill for auto-discovery by PluginManager.
 """
@@ -96,7 +96,7 @@ def send_task_to_client(
 
 @export_skill(
     name="summarize_monthly_kpi",
-    description="Đọc file nhật ký kpi_logs.csv để đếm tổng số lượng công việc đã hoàn thành hoặc vướng mắc của nhân viên theo tháng.",
+    description="Đếm số việc giao máy trạm đã hoàn thành hoặc vướng mắc theo tháng (từ sổ giao việc trong CSDL).",
     parameters_schema={
         "type": "object",
         "properties": {
@@ -116,7 +116,7 @@ def summarize_monthly_kpi(
     month: Optional[str] = None,
 ) -> str:
     """
-    Đọc dữ liệu nhật ký công việc từ file kpi_logs.csv và tổng hợp báo cáo KPI dạng văn bản súc tích.
+    Tổng hợp việc giao máy trạm theo tháng (bảng tasks) thành báo cáo KPI văn bản súc tích.
     """
     from mateai.application.devices.task_manager import task_manager
 

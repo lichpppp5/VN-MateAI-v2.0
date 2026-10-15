@@ -1,66 +1,120 @@
-# Kiến trúc bảo mật
+# Kiến trúc an ninh
 
-> Phase 0 — 2026-10-05, commit `128c87d`. Tài liệu **kiến trúc + khoảng trống**. Hướng dẫn vận hành từng kiểm soát (kênh, xác thực, HITL, audit) vẫn ở `docs/production/security.md` — không lặp lại ở đây.
+> Cập nhật 2026-10-15 (thẩm định thương mại #26). Bản đầu: Phase 0, 2026-10-05, commit `128c87d`.
+> Tài liệu này mô tả **kiến trúc, kiểm soát và khoảng trống còn lại**. Hướng dẫn vận hành từng kiểm soát nằm ở
+> `docs/production/security.md`; mô hình mối đe doạ ở `threat-model.md`; MFA ở `mfa.md`; quyền đọc kho tri thức ở
+> `rag-permissions.md`.
 
 ## 1. Ranh giới tin cậy
 
 ```
 Người dùng (portal / HUD / Telegram)   Thiết bị (robot ESP32, máy trạm)   Hệ thống ngoài (email, webhook, connector, LLM, TTS)
-        │ JWT 24 h                              │ token riêng / enrollment         │ chữ ký webhook; email = KHÔNG xác thực
+        │ mật khẩu + MFA (TOTP) / SSO OIDC     │ token riêng từng thiết bị         │ chữ ký webhook; email = KHÔNG xác thực
+        │ JWT 24 h, CSP chặt                    │ (chỉ lưu SHA-256)                │ nội dung ngoài = DỮ LIỆU, không là chỉ dẫn
         ▼                                        ▼                                  ▼
-  interfaces (204 HTTP, 9 WS) ── auth_dependencies.require_roles / ws_auth
+  interfaces (HTTP + WS) ── auth_dependencies.require_roles / ws_auth ── giới hạn tần suất (rate_limit)
         ▼
-  application ── vòng agent (LLM = KHÔNG TIN CẬY: chỉ đề xuất)
+  application ── vòng agent (LLM = KHÔNG TIN CẬY: chỉ đề xuất; PII bị che trước khi gửi ra ngoài)
         ▼
-  CỔNG TOOL tool_gate ── rủi ro (zero_trust) → HITL → RBAC (security_guard) → thực thi → audit_logs (INSERT-only)
-        ▼
-  skill (máy chủ) · tool registry (connector, computer-use) · máy trạm (/ws/client)
+  CỔNG TOOL DUY NHẤT tool_gate
+        ├─ policy_engine: kill switch · tác nhân / tool bị tắt · từ khoá cấm (Portal) · L5 = DENY cho mọi vai trò
+        ├─ RBAC + ABAC (vai trò, phòng ban, cấp bảo mật dữ liệu) — chạy TRƯỚC khi tạo yêu cầu duyệt
+        ├─ HITL (zero_trust): mức rủi ro → duyệt; tuỳ chọn duyệt hai người, tách nhiệm vụ
+        ├─ thực thi (skill máy chủ · connector · computer-use · máy trạm /ws/client)
+        └─ audit_logs: chỉ INSERT, chuỗi băm, neo ra ngoài sau mỗi lần sao lưu
 ```
 
-## 2. Kiểm soát hiện có (đã kiểm bằng test)
+## 2. Kiểm soát hiện có
+
+Mỗi dòng có test chạy trong bộ `pytest` (hơn 1.500 test, chạy trước mỗi commit; CI trên GitHub đang khoá vì thanh toán).
+
+### 2.1 Danh tính và xác thực
 
 | Kiểm soát | Nơi | Test |
 |---|---|---|
-| JWT bắt buộc cho REST và WS | `auth_dependencies`, `ws_auth` | `test_public_endpoints_locked`, `test_websockets_require_login` |
-| Khoá ký JWT từ biến môi trường hoặc tệp tự sinh (không cài cứng) | `auth_manager.py:38–65` | — |
-| Token riêng từng thiết bị (chỉ lưu SHA-256) | `db_manager` | `test_per_device_tokens` |
-| Bí mật cấu hình mã hoá Fernet `enc:v1:` | `config/secret_box.py` | test secret_box |
-| RBAC fail-closed (danh tính lạ → viewer) | `security_guard.py:119,267–350` | `test_role_resolution_order` |
-| HITL bền, không tự cho phép khi hết hạn | `zero_trust.py` | `test_confirm_action_endpoint`, `test_pending_action_lookup` |
-| Cờ `confirmed` trong tham số tool bị bỏ | `tool_gate.py` | `test_tool_policy_gate` |
-| `read_file` từ chối tệp bí mật | `file_system.py:53–70` | `test_fs_routes_policy` |
-| Audit một kho, chỉ INSERT | `erp_database.py:882` | `test_audit_single_store` |
-| Che dữ liệu trước khi gửi LLM | `safety_guard.mask_sensitive_data` (5 chỗ trong `llm_engine`) | — |
-| Kiểm mã Python do AI sinh (AST) | `safety_guard.inspect_generated_code` | — |
-| Mọi lời gọi HTTP ra ngoài có timeout | — | `test_http_timeouts` |
-| Chỉ admin xem audit / hàng duyệt / metrics thoại | routers | nhiều test `*_is_admin_only` |
-| Khoá TLS, khoá JWT, CSDL không nằm trong git | `.gitignore` | `git ls-files certs *.key *.pem *.db` = rỗng (kiểm 2026-10-05) |
+| JWT bắt buộc cho REST và WebSocket; khoá ký từ biến môi trường hoặc tệp tự sinh | `auth_dependencies`, `ws_auth`, `auth_manager` | `test_public_endpoints_locked`, `test_websockets_require_login` |
+| MFA TOTP (RFC 6238), bắt buộc theo vai trò (`security.require_mfa_roles`), mã khôi phục băm, chống phát lại; cài bằng QR | `application/security/mfa.py` | `test_mfa.py`, `test_auth_mfa_ui.mjs` |
+| SSO OIDC; tài khoản SSO dùng MFA của IdP | `application/security/sso.py` | `test_sso.py` |
+| Giới hạn đăng nhập sai theo IP **và** tài khoản → 429 | `routers/auth.py` | `test_adversarial_security.py` |
+| Bắt đổi mật khẩu: tài khoản mặc định, mật khẩu admin vừa đặt lại, mật khẩu dev công khai; ≥ 10 ký tự, có chữ và số | `routers/auth.py` | `test_forced_password_change.py` |
+| Quên mật khẩu qua quản trị viên (trả lời trung lập, 5 lần / giờ / IP); `scripts/reset_password.py` khi admin bị khoá | `routers/auth.py` | `test_password_reset.py` |
+| Token riêng từng thiết bị; tiền tố tên thiết bị (`esp32`, `robot`, `hud`…) **không** còn nâng quyền | `security_guard.py`, `db_manager` | `test_device_auth_requires_token.py`, `test_device_access.py` |
+| Danh tính tác nhân AI theo kênh do máy chủ gán (thoại / Telegram / sentinel / email) ghi vào audit | `policy_engine.agent_id_for` | `test_policy_engine.py::test_agent_identity_from_server_assigned_channel` |
 
-## 3. Khoảng trống (xếp theo mức nghiêm trọng)
+### 2.2 Phân quyền và cổng tool
 
-| # | Khoảng trống | Mức | Bằng chứng | Hướng xử lý (phase) |
-|---|---|---|---|---|
-| S1 | Danh sách cấm / bắt duyệt sửa trên Portal **không được áp dụng** ở cổng tool | Cao | `safety_guard.py:257` chỉ được gọi ở `routers/security.py:166` | nối vào control plane (P2) |
-| S2 | Không có DENY theo rủi ro; admin ra lệnh qua AI chạy được tool mức 5 không cần duyệt | Cao | `zero_trust.py:781`, `tool_gate.py:128` | mức L5 (P2, quyết định A1) |
-| S3 | 3 đường phân quyền tool + đa tác nhân gọi hàm thẳng | Cao | `routers/skills.py:233`, `plugin_registry.py:441`, `agent_orchestrator.py:252,264` | gộp về một cổng (P2–P3) |
-| S4 | Prompt injection bền: `identity_core.md` đọc thẳng vào system prompt và ghi được bằng tool `write_file` (mức 3; admin không cần duyệt) | Cao | `llm_engine.py:230`, `file_system.py` (không có danh sách tệp cấm ghi) | danh sách tệp bảo vệ ghi; tách chỉ thị hệ thống khỏi dữ liệu (P11) |
-| S5 | Kết quả tool / RAG / email đi vào hội thoại không được đánh dấu là dữ liệu không tin cậy | TB | `llm_engine.py:1173` | bọc nhãn + chỉ dẫn hệ thống (P11) |
-| S6 | Không giới hạn số lần đăng nhập sai | Cao | `routers/auth.py:41–45` không có bộ đếm | rate limit theo IP + tài khoản (P11) |
-| S7 | Máy chủ đang chạy vẫn nhận mật khẩu mặc định `admin / admin123` | Cao (vận hành) | đăng nhập thành công 2026-10-05 | chủ dự án đổi mật khẩu; cảnh báo trên Portal khi còn mặc định |
-| S8 | Email gateway tạo việc + tự trả lời ra ngoài cho người gửi bất kỳ | TB | `email_gateway.py:143–246` | chính sách giao tiếp ngoài (A2) |
-| S9 | Không kill switch | Cao (khi tăng tự trị) | — | P3 |
-| S10 | Không phân vùng dữ liệu theo phòng ban; viewer đọc được `query_organization_data` toàn công ty | TB | `security_guard.py:80–95` | ABAC theo `department_id` (P2) |
-| S11 | Kiểm quyền (RBAC) chạy sau bước tạo yêu cầu duyệt | Thấp | `tool_gate.py:127–186` | đổi thứ tự (P2) |
-| S12 | `shell=True` (lệnh hằng số) | Thấp | `domain_sync.py:101,193` | đổi sang danh sách đối số (P11) |
-| S13 | Hai mô hình vai trò (portal ↔ RBAC) | Thấp | `security_guard.py:123–130` | quyết định D3 |
-| S14 | Thiết bị dùng token chung / id có tiền tố `esp32`… được coi là admin | TB | `security_guard.py:146–167,342` | quyết định của chủ dự án (f389bbe); khuyến nghị bật `require_per_device_token` |
-
-## 4. Danh tính (§11–§12) — hiện trạng
-
-| Loại | Có? | Ở đâu |
+| Kiểm soát | Nơi | Test |
 |---|---|---|
-| Người | có | bảng `users` (bcrypt), JWT |
-| Thiết bị | có | `device:<id>` (token riêng), `approval_grants` |
-| Dịch vụ | có | `SERVICE_PRINCIPAL_ROLES` (so khớp chính xác) |
-| Phiên | một phần | `session_id` theo kênh; không có bảng phiên chung |
-| Tác nhân AI | **không** | hành động ghi theo người/thiết bị gọi; không biết tác nhân nào (thoại / Telegram / sentinel / email) thực hiện |
+| Một cổng cho mọi đường gọi tool (agent, Portal, đa tác nhân, connector, MCP) | `agent/tool_gate.py` | `test_tool_policy_gate`, `test_golden_scenarios.py` |
+| L5 (vd. xoá CSDL) bị DENY kể cả admin, kể cả đã duyệt | `policy_engine.py` | `test_policy_engine.py::test_delete_database_is_denied_for_admin_even_when_approved` |
+| Từ khoá cấm / danh sách bắt duyệt sửa trên Portal được áp ở cổng | `policy_engine.py` | `test_portal_forbidden_keywords_are_enforced_at_the_gate` |
+| RBAC chạy trước khi tạo yêu cầu duyệt | `tool_gate.py` | `test_rbac_runs_before_any_approval_request` |
+| ABAC: phòng ban + cấp bảo mật; viewer phòng A không đọc dữ liệu CONFIDENTIAL phòng B | `security_guard.py` | `test_abac_department.py`, `test_g13_cross_department_confidential_data_is_denied` |
+| Kill switch (giữ giám sát chỉ đọc), tắt từng tác nhân / tool, ngân sách thời gian / số lần gọi mỗi lượt | `policy_engine.py`, `config.autonomy` | `test_kill_switch_keeps_read_only_monitoring`, `test_g11_kill_switch_mid_operation` |
+| HITL bền, không tự cho phép khi hết hạn; cờ `confirmed` trong tham số bị bỏ | `zero_trust.py`, `tool_gate.py` | `test_confirm_action_endpoint`, `test_execute_with_hitl_has_no_substring_bypass` |
+| Duyệt hai người cho rủi ro ≥ `security.dual_approval_min_risk` (mặc định tắt) | `zero_trust.py` | `test_dual_approval_and_audit_export.py` |
+| Tách nhiệm vụ `security.separation_of_duties` (mặc định tắt): người yêu cầu và người soạn / sửa kịch bản không tự duyệt | `zero_trust.py`, `playbooks/engine.py` | `test_dual_approval_and_audit_export.py`, `test_playbooks.py` |
+| Tệp dự án được bảo vệ (mã nguồn, `identity_core.md`, cấu hình) không ghi / xoá được qua tool | `file_system.py` | `test_file_write_protection.py` |
+| Mã Python do AI sinh bị kiểm AST (cấm `os.system`, `shell=True`, `ctypes`…); bản thương mại tắt hẳn sinh mã | `safety_guard.py`, `config/edition.py` | `test_edition_commercial.py` |
+
+### 2.3 Dữ liệu và LLM
+
+| Kiểm soát | Nơi | Test |
+|---|---|---|
+| Bí mật cấu hình mã hoá Fernet (`enc:v1:`), kể cả `DATABASE_URL`, token OAuth Zalo | `config/secret_box.py` | `test_config_governance.py`, `test_phase80_secret_masking.py` |
+| Che PII (tên, số điện thoại, tài khoản ngân hàng, lương…) trước khi gửi LLM ngoài; chặn model `:free` ở bản thương mại | `pii_guard.py`, `safety_guard.mask_sensitive_data` | `test_pii_guard.py` |
+| Nội dung ngoài là dữ liệu: quy tắc 7 trong prompt hệ thống + lớp chặn thật ở cổng tool | `llm_engine.py`, `tool_gate.py` | `test_system_prompt_identity.py`, `test_g9b_prompt_injection_in_tool_output_cannot_trigger_destruction` |
+| `read_file` từ chối tệp bí mật | `file_system.py` | `test_fs_routes_policy` |
+| Sổ xử lý dữ liệu cá nhân, tra cứu / xoá theo chủ thể (audit chỉ lưu mã băm), mẫu DPIA | `routers/privacy.py`, `docs/compliance/` | `test_privacy_compliance.py` |
+| Mọi lời gọi HTTP ra ngoài có timeout | — | `test_http_timeouts` |
+
+### 2.4 Kiểm toán
+
+| Kiểm soát | Nơi | Test |
+|---|---|---|
+| Một kho audit, chỉ INSERT; API xoá trả 405 | `erp_database.py` | `test_audit_single_store.py` |
+| Chuỗi băm: sửa / xoá một dòng lộ đúng id (`/api/v1/security/audit-logs/verify`) | `erp_database.verify_audit_chain` | `test_audit_integrity.py` |
+| Neo đầu chuỗi ra ổ khác và S3 sau mỗi lần sao lưu — tính lại cả chuỗi vẫn lộ | `audit_anchor.py` | `test_audit_anchor.py` |
+| Xuất báo cáo kiểm toán CSV / HTML in được, kèm kết quả kiểm chuỗi, che PII, chỉ admin | `routers/security.py` | `test_dual_approval_and_audit_export.py` |
+
+### 2.5 Giao diện web và phát hành
+
+| Kiểm soát | Nơi | Test |
+|---|---|---|
+| CSP `script-src 'self'` (không inline script / `on*`), header bảo mật, tắt `/docs`, health tối giản | `interfaces/http/csp.py` | `test_csp_strict.py` |
+| Menu và khối dữ liệu theo vai trò (viewer / manager / admin) | `web/app.js` (`ROLE_HIDDEN_TABS`, `data-min-role`) | test giao diện portal |
+| Gói phát hành ký Ed25519 (`SHA256SUMS.txt`), `install.sh` tự kiểm; SBOM CycloneDX; gói chặn mọi tệp `.key` / `.pem` | `scripts/build_release.py`, `verify_release.py` | `test_release_signing.py` |
+| Kiểm thử nâng cấp N → N+1 thật trên Docker (dữ liệu, mật khẩu, chuỗi audit, schema) | `scripts/upgrade_test.py` | chạy tay trước mỗi phát hành |
+| Khoá TLS, khoá JWT, khoá ký nhà cung cấp, CSDL không nằm trong git | `.gitignore` | `git ls-files certs *.key *.pem *.db` = rỗng |
+
+## 3. Khoảng trống của bản đầu (2026-10-05) — trạng thái
+
+| # | Khoảng trống | Trạng thái 2026-10-15 |
+|---|---|---|
+| S1 | Danh sách cấm trên Portal không được áp ở cổng | **Đã đóng** — `policy_engine` |
+| S2 | Admin chạy được tool mức 5 không cần duyệt | **Đã đóng** — L5 = DENY mọi vai trò |
+| S3 | Ba đường phân quyền tool | **Đã đóng** — một cổng `tool_gate` |
+| S4 | `identity_core.md` ghi được bằng tool | **Đã đóng** — tệp bảo vệ ghi |
+| S5 | Nội dung ngoài không được đánh dấu là dữ liệu | **Giảm** — quy tắc 7 + cổng tool chặn hành động; nhãn trên từng kết quả tool chưa có |
+| S6 | Không giới hạn đăng nhập sai | **Đã đóng** |
+| S7 | Máy chủ còn mật khẩu mặc định | **Đã đóng** — bắt đổi mật khẩu, MFA admin |
+| S8 | Email tự trả lời cho người gửi bất kỳ | **Đã đóng** — `autonomy.email_auto_reply` mặc định tắt, giới hạn theo tên miền |
+| S9 | Không kill switch | **Đã đóng** |
+| S10 | Không phân vùng theo phòng ban | **Đã đóng** — ABAC |
+| S11 | RBAC chạy sau bước tạo yêu cầu duyệt | **Đã đóng** |
+| S12 | `shell=True` | **Đã đóng** — không còn trong mã máy chủ |
+| S13 | Hai mô hình vai trò (portal ↔ RBAC) | Còn — chờ quyết định D3 |
+| S14 | Tiền tố id thiết bị được coi là admin | **Đã đóng** — chỉ token riêng |
+
+## 4. Khoảng trống còn lại
+
+| Khoảng trống | Vì sao còn | Hướng |
+|---|---|---|
+| Kiểm thử xâm nhập độc lập | Cần đơn vị ngoài | Trước khi bán cho khách hàng *Regulated* |
+| Multi-tenant (`tenant_id`, RLS, khoá theo tenant) | Phụ thuộc phân khúc đầu tiên | Bước nâng cấp CSDL có số thứ tự đã sẵn (`schema_migrations`) |
+| Sandbox kỹ năng (gVisor / Firecracker) | Cần thiết kế riêng; bản thương mại đã không chạy kỹ năng mạnh trên máy chủ | Đợt 3 |
+| Chính sách khai báo OPA / Cedar | Chính sách hiện ở mã + cấu hình | Đợt 3 |
+| Định tuyến LLM theo mức phân loại (CONFIDENTIAL chỉ đi model tự host) | Chờ quyết định nhà cung cấp có DPA | Sau quyết định §6 của phản hồi thẩm định |
+| SAML, vai trò tuỳ biến | Đã có OIDC; chưa có khách cần SAML | Theo yêu cầu khách hàng |
+| WORM thật cho audit | Neo S3 đã có; Object Lock là cấu hình bucket | Bật Object Lock ở bucket khi triển khai |
+| Nhãn "dữ liệu không tin cậy" trên từng kết quả tool | Quy tắc 7 + cổng tool đang chặn hành động | Đo lại bằng bộ đánh giá trước khi đổi định dạng tin nhắn tool |

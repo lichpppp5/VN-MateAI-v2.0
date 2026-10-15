@@ -123,10 +123,12 @@ async def _stream_edge_tts(
     cache_key: Optional[str] = None,
 ) -> AsyncGenerator[bytes, None]:
     """
-    Stream raw MP3 bytes từ Edge-TTS Microsoft (dự phòng sau 9Router).
+    Stream raw MP3 bytes từ Edge-TTS Microsoft (dự phòng sau 9Router). Bản thương mại: không dùng (_edge_allowed).
     Đo trên máy chủ này 2026-10-03 (bench_voice --tts-providers): byte đầu p50
     2,7 s (câu 7 từ) – 4,6 s (28 từ), chậm hơn 9Router (1,3 – 2,2 s cả câu).
     """
+    if not _edge_allowed():
+        return
     try:
         import edge_tts  # type: ignore
     except ImportError:
@@ -175,8 +177,17 @@ async def _stream_edge_tts(
 _ROUTER_TTS_TIMEOUT_S = 6.0
 
 
+def _edge_allowed() -> bool:
+    """Giọng Microsoft Edge (trực tiếp hoặc qua 9Router `edge-tts/…`) không có hợp đồng dùng thương mại — bản thương
+    mại không dùng (thẩm định 14/10/2026 P0-6); cần Vbee / ElevenLabs (hoặc TTS có giấy phép) trong Voice Studio."""
+    from mateai.config import edition
+    return not edition.is_commercial()
+
+
 async def _synthesise_9router(text: str, voice: str) -> Optional[bytes]:
     """Tổng hợp cả câu qua 9Router (OpenAI-compatible /audio/speech)."""
+    if not _edge_allowed():
+        return None
     try:
         from mateai.config.loader import settings
         from mateai.infrastructure.http.connection_pool import get_tts_http_client

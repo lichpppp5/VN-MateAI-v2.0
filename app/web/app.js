@@ -245,6 +245,16 @@ let pendingEmergencyAction = null;
 // Mục cho tab đã gộp ('command-center' → dashboard, 'devices' → tích hợp,
 // 'users' → bảo mật) phải bị gỡ: tra ra vẫn thấy tiêu đề của một tab không
 // còn tồn tại, dễ khiến người đọc code tưởng những tab đó vẫn còn.
+/** Đặt tiêu đề trang: "Tên — mô tả" → tiêu đề ngắn ở h1, mô tả ở dòng nhỏ bên dưới (không đẩy cụm nút xuống hàng). */
+function setHeaderTitle(text) {
+  const full = text || 'Bảng Điều Khiển';
+  const i = full.indexOf(' — ');
+  const titleEl = document.getElementById('header-title');
+  const subEl = document.getElementById('header-subtitle');
+  if (titleEl) titleEl.textContent = i > 0 ? full.slice(0, i) : full;
+  if (subEl) subEl.textContent = i > 0 ? full.slice(i + 3) : '';
+}
+
 const TAB_TITLES = {
   dashboard: 'Bảng Điều Khiển',
   'system-integration': 'Tích Hợp Hệ Thống — API dữ liệu · Webhook · Máy trạm · Phòng ban',
@@ -258,6 +268,7 @@ const TAB_TITLES = {
   'dev-fleet': 'Dev Fleet — Cụm Master - WorkNode',
   'infra-monitor': 'Giám Sát Hạ Tầng — Prometheus · Grafana',
   'playbooks': 'Kịch Bản Vận Hành — chạy thử, duyệt, hoàn tác, kiểm chứng',
+  'compliance': 'Thương Mại & Tuân Thủ — bản quyền, hiệu năng, dữ liệu cá nhân, kỹ năng',
   'agent-gateway': 'Cổng Agent — nối MCP server / agent có sẵn của doanh nghiệp',
 };
 
@@ -750,7 +761,41 @@ async function apiConfirmAction(clientId, skillName, args, approved) {
 // sau đó 'command-center' cũng gộp vào 'dashboard'.
 // Danh sách chỉ còn tab thật sự tồn tại; link cũ #users / #devices /
 // #command-center sẽ tự rơi về dashboard thay vì mở một tab không có.
-const VALID_TABS = ['dashboard', 'infra-monitor', 'playbooks', 'agent-gateway', 'dev-fleet', 'system-integration', 'ai-manager', 'skills', 'voice', 'config', 'security', 'tasks', 'logs'];
+/**
+ * Tab ẩn theo vai trò (một nguồn cho menu + điều hướng). Máy chủ vẫn là nơi chặn quyền thật; đây là để người dùng không
+ * mở vào tab chỉ có thông báo "không có quyền" / lỗi 403. Viewer = nhân viên xem: Bảng điều khiển, Nhật ký công việc,
+ * Tích hợp, Kho kỹ năng, Nhật ký. Manager = trưởng bộ phận: mọi tab trừ Cấu hình và Bảo mật.
+ */
+const ROLE_HIDDEN_TABS = {
+  admin: [],
+  manager: ['config', 'security'],
+  viewer: ['config', 'security', 'voice', 'ai-manager', 'infra-monitor', 'playbooks', 'dev-fleet', 'agent-gateway', 'compliance'],
+};
+const ROLE_RANK = { viewer: 0, manager: 1, admin: 2 };
+
+function currentRoleName() {
+  const u = (typeof currentUser !== 'undefined' && currentUser) || getStoredUser();
+  const r = String((u && u.role) || 'viewer').toLowerCase();
+  return r in ROLE_RANK ? r : 'viewer';
+}
+
+function tabAllowedForRole(tabId, role) {
+  return !(ROLE_HIDDEN_TABS[role] || ROLE_HIDDEN_TABS.viewer).includes(tabId);
+}
+
+/** Ẩn tab không dành cho vai trò + khối có data-min-role cao hơn vai trò (vd khối kỹ thuật trên Bảng điều khiển). */
+function applyRoleVisibility(role) {
+  VALID_TABS.forEach((t) => {
+    const nav = document.getElementById(`nav-${t}`);
+    if (nav) nav.classList.toggle('hidden', !tabAllowedForRole(t, role));
+  });
+  const rank = ROLE_RANK[role] ?? 0;
+  document.querySelectorAll('[data-min-role]').forEach((el) => {
+    el.classList.toggle('hidden', rank < (ROLE_RANK[el.dataset.minRole] ?? 2));
+  });
+}
+
+const VALID_TABS = ['dashboard', 'infra-monitor', 'playbooks', 'compliance', 'agent-gateway', 'dev-fleet', 'system-integration', 'ai-manager', 'skills', 'voice', 'config', 'security', 'tasks', 'logs'];
 
 function getSavedTab() {
   const hash = (window.location.hash || '').replace('#', '').trim();
@@ -831,6 +876,9 @@ function switchTab(tabId) {
   if (!VALID_TABS.includes(tabId)) {
     tabId = 'dashboard';
   }
+  if (getAuthToken() && !tabAllowedForRole(tabId, currentRoleName())) {
+    tabId = 'dashboard';
+  }
   // Topology is served as a standalone Next.js page — open in new tab
   // to keep the portal session intact (same pattern as the sidebar link).
   if (tabId === 'topology') {
@@ -872,8 +920,7 @@ function switchTab(tabId) {
   const activePane = document.getElementById(`tab-${tabId}`);
   if (activePane) activePane.classList.add('active');
 
-  const titleEl = document.getElementById('header-title');
-  if (titleEl) titleEl.textContent = TAB_TITLES[tabId] || 'Bảng Điều Khiển';
+  setHeaderTitle(TAB_TITLES[tabId]);
 
   // Lưu trạng thái tab hiện tại vào localStorage và cập nhật URL hash để khi F5 giữ nguyên vị trí
   try {
@@ -892,6 +939,7 @@ function switchTab(tabId) {
   if (tabId === 'dashboard') {
     loadDashboard();
     loadSupervisorOverview();
+    if (typeof ExecSummary !== 'undefined') ExecSummary.onEnter();   // tổng quan cho giám đốc
     // Phase 79: nội dung C.E.O gộp vào Bảng Điều Khiển nên `onEnter` bám theo
     // tab này. Thiếu dòng này thì phần điều hành AI, biểu đồ và cảnh báo an
     // ninh không bao giờ có dữ liệu.
@@ -907,7 +955,10 @@ function switchTab(tabId) {
   if (tabId === 'dev-fleet' && typeof DevFleetUI !== 'undefined') DevFleetUI.onEnter();
   if (tabId === 'infra-monitor' && typeof InfraMonitorUI !== 'undefined') InfraMonitorUI.onEnter();
   if (tabId === 'playbooks' && typeof PlaybooksUI !== 'undefined') PlaybooksUI.onEnter();
+  if (tabId === 'compliance' && typeof ComplianceUI !== 'undefined') ComplianceUI.onEnter();
+  if (tabId === 'config' && typeof Branding !== 'undefined') Branding.renderAdmin();
   if (tabId === 'agent-gateway' && typeof AgentDirectoryUI !== 'undefined') AgentDirectoryUI.onEnter();
+  if (tabId === 'agent-gateway' && typeof OrchestrationUI !== 'undefined') OrchestrationUI.onEnter();   // đội agent + phiếu việc
   if (tabId === 'agent-gateway' && typeof AgentGatewayUI !== 'undefined') AgentGatewayUI.onEnter();
   if (tabId === 'system-integration') loadSystemIntegration();
   if (tabId === 'ai-manager') { loadAIManagerConfig(); initAISubTabs(); }
@@ -6085,11 +6136,15 @@ function updateAIManagerTelemetry() {
 
   const rawVoice = document.getElementById('ai-tts-voice')?.value || currentConfig?.audio?.tts_voice || currentConfig?.TTS_VOICE || 'vi-VN-HoaiMyNeural';
   let friendlyVoice = rawVoice;
-  if (rawVoice.includes('HoaiMy')) friendlyVoice = 'Hoài My (Nữ)';
+  if (rawVoice.includes('ngochuyen')) friendlyVoice = 'Ngọc Huyền (Nữ)';
+  else if (rawVoice.includes('HoaiMy')) friendlyVoice = 'Hoài My (Nữ)';
   else if (rawVoice.includes('NamMinh')) friendlyVoice = 'Nam Minh (Nam)';
   else if (rawVoice.includes('Jenny')) friendlyVoice = 'Jenny (US)';
   else if (rawVoice.includes('Guy')) friendlyVoice = 'Guy (US)';
   if (voiceEl) voiceEl.textContent = friendlyVoice;
+  const ttsBadge = document.getElementById('ai-status-tts-badge');
+  const engine = document.getElementById('ai-tts-engine')?.value || currentConfig?.audio?.tts_engine || 'edge-tts';
+  if (ttsBadge) ttsBadge.textContent = ({ vbee: 'VBEE', elevenlabs: 'ELEVENLABS', 'edge-tts': '9ROUTER · EDGE' })[engine] || String(engine).toUpperCase();
 
   const curWake = document.getElementById('ai-persona-wake')?.value?.trim() || currentConfig?.persona?.wake_word || currentConfig?.WAKE_WORD || 'Hey Ly Ly';
   if (wakeEl) wakeEl.textContent = curWake;
@@ -6196,7 +6251,7 @@ function updatePromptStats() {
 }
 
 async function previewAITTS() {
-  const btn = document.getElementById('btn-preview-tts') || document.querySelector('#tab-ai-manager button[onclick="previewAITTS()"]');
+  const btn = document.getElementById('btn-preview-tts') || document.querySelector('#tab-ai-manager button[onclick="previewAITTS()"], #tab-ai-manager button[data-vn-onclick="previewAITTS()"]');
   const voice = document.getElementById('ai-tts-voice')?.value || 'vi-VN-HoaiMyNeural';
   const rateNum = parseInt(document.getElementById('ai-speech-rate')?.value || '15');
   const rate = (rateNum >= 0 ? '+' : '') + rateNum + '%';
@@ -7858,6 +7913,66 @@ function exportAuditLogsJson() {
   showToast('✅ Đã xuất tệp nhật ký kiểm toán thành công!', 'success');
 }
 
+/** Admin gỡ MFA của một tài khoản (mất điện thoại xác thực). Người đó cài lại ở lần đăng nhập sau nếu vai trò bắt buộc MFA. */
+async function resetUserMfa(userId, username) {
+  if (!confirm(`Gỡ xác thực hai lớp của "${username}"?
+
+Chỉ làm khi đã xác minh đúng người (gọi điện / gặp trực tiếp). Họ sẽ cài lại ở lần đăng nhập sau.`)) return;
+  try {
+    const res = await apiFetch(`${API_BASE}/api/v1/users/${encodeURIComponent(userId)}/mfa/reset`, { method: 'POST' });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(apiErrorText(data, res.status));
+    showToast(`Đã gỡ xác thực hai lớp của ${username}`, 'success');
+  } catch (err) {
+    showToast(`Không gỡ được MFA: ${err.message}`, 'error');
+  }
+}
+
+/** Kiểm tra toàn vẹn chuỗi audit (tính lại chuỗi băm + so với các điểm neo đã lưu ra ngoài). */
+async function verifyAuditChain() {
+  try {
+    const res = await apiFetch(`${API_BASE}/api/v1/security/audit-logs/verify`);
+    const d = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(apiErrorText(d, res.status));
+    const anchors = d.anchors || {};
+    const anchorBad = anchors.ok === false;
+    if (d.ok && !anchorBad) {
+      showToast(`Nhật ký kiểm toán nguyên vẹn: ${Number(d.verified || 0).toLocaleString('vi-VN')} dòng khớp chuỗi băm`
+        + (anchors.anchors_checked ? `, ${anchors.anchors_checked} điểm neo khớp` : ''), 'success');
+    } else if (!d.ok) {
+      showToast(`CẢNH BÁO: chuỗi audit bị sửa / xoá từ dòng #${d.first_broken_id}. Báo ngay cho người phụ trách an ninh.`, 'error');
+    } else {
+      showToast(`CẢNH BÁO: chuỗi audit không khớp ${(anchors.broken || []).length} điểm neo đã lưu ngoài — có người đã sửa rồi tính lại cả chuỗi.`, 'error');
+    }
+  } catch (err) {
+    showToast(`Không kiểm tra được: ${err.message}`, 'error');
+  }
+}
+
+/** Báo cáo kiểm toán "AI đã làm gì, ai duyệt" (thẩm định thương mại #17): CSV tải về, HTML mở tab mới để In → Lưu PDF. */
+async function exportAuditReport(fmt) {
+  try {
+    const res = await apiFetch(`${API_BASE}/api/v1/security/audit-logs/export?format=${fmt === 'html' ? 'html' : 'csv'}`);
+    if (!res.ok) { showToast(`Không xuất được báo cáo (HTTP ${res.status})`, 'error'); return; }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    if (fmt === 'html') {
+      window.open(url, '_blank', 'noopener');
+    } else {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `bao_cao_kiem_toan_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    showToast('Đã xuất báo cáo kiểm toán', 'success');
+  } catch (err) {
+    showToast(`Lỗi xuất báo cáo: ${err.message}`, 'error');
+  }
+}
+
 function filterAuditLogs() {
   const filterEl = document.getElementById('filter-audit-risk');
   const level = filterEl ? filterEl.value : 'ALL';
@@ -8070,6 +8185,8 @@ async function handleLoginSubmit(event) {
     LoginMfa.promptCode(res.mfa_token);                    // đúng mật khẩu nhưng CHƯA đăng nhập: cần mã xác thực hai lớp
   } else if (res && res.status === 'mfa_setup_required' && res.setup_token) {
     LoginMfa.promptSetup(res.setup_token);                 // vai trò bắt buộc MFA: chỉ được cài MFA
+  } else if (res && res.status === 'password_change_required' && res.change_token) {
+    LoginMfa.promptPasswordChange(res.change_token, res.detail);   // mật khẩu ban đầu / vừa đặt lại: đổi trước khi vào
   } else {
     if (errBox && errText) {
       errText.textContent = res.detail || 'Tên đăng nhập hoặc mật khẩu không chính xác.';
@@ -8135,7 +8252,7 @@ function applyRolePermissions(role, user) {
   const navUsers = document.getElementById('nav-users');
   const quickModelSelect = document.getElementById('quick-model');
   const btnQuickSave = document.getElementById('btn-quick-save');
-  const btnAddSkill = document.querySelector('[onclick="openAddSkillModal()"]');
+  const btnAddSkill = document.querySelector('[onclick="openAddSkillModal()"], [data-vn-onclick="openAddSkillModal()"]');
 
   if (roleName === 'admin') {
     if (navConfig) navConfig.classList.remove('hidden');
@@ -8174,9 +8291,11 @@ function applyRolePermissions(role, user) {
     }
   }
 
-  // Nếu người dùng không phải admin mà đang ở tab Quản lý tài khoản -> tự động chuyển về Dashboard
+  // Tab / khối không dành cho vai trò này: ẩn; đang đứng ở tab bị ẩn → về Bảng điều khiển
+  applyRoleVisibility(roleName in ROLE_RANK ? roleName : 'viewer');
   const activePane = document.querySelector('.tab-pane.active');
-  if (roleName !== 'admin' && activePane && activePane.id === 'tab-users') {
+  const activeTab = activePane ? activePane.id.replace(/^tab-/, '') : 'dashboard';
+  if (!tabAllowedForRole(activeTab, roleName in ROLE_RANK ? roleName : 'viewer')) {
     switchTab('dashboard');
   }
 }
@@ -9933,6 +10052,10 @@ function renderUsersTable(users) {
             <button onclick="openChangePasswordModal('${escapeHtml(u.id)}', '${escapeHtml(u.username)}')" title="Cấp lại mật khẩu mới" class="w-8 h-8 rounded-lg bg-purple-500/10 hover:bg-purple-500/25 border border-purple-500/20 hover:border-purple-400/50 text-purple-300 flex items-center justify-center transition shadow-sm">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
             </button>
+            <!-- Gỡ MFA (mất điện thoại xác thực) -->
+            <button onclick="resetUserMfa('${escapeHtml(u.id)}', '${escapeHtml(u.username)}')" title="Gỡ xác thực hai lớp (người dùng mất điện thoại) — họ cài lại ở lần đăng nhập sau" class="w-8 h-8 rounded-lg bg-amber-500/10 hover:bg-amber-500/25 border border-amber-500/20 hover:border-amber-400/50 text-amber-400 flex items-center justify-center transition shadow-sm">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+            </button>
             <!-- Xóa (Icon Thùng rác đỏ) -->
             ${isCurrent
         ? `<button disabled title="Không thể xóa tài khoản của chính bạn đang đăng nhập" class="w-8 h-8 rounded-lg bg-slate-500/10 border border-slate-500/20 text-slate-500 flex items-center justify-center cursor-not-allowed opacity-40">
@@ -10977,7 +11100,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (devHint) {
     const host = window.location.hostname;
     const isLocal = host === 'localhost' || host === '127.0.0.1' || host === '::1' || host.endsWith('.local');
-    if (isLocal) devHint.classList.remove('hidden');
+    const devMode = new URLSearchParams(window.location.search).has('dev');
+    if (isLocal && devMode) devHint.classList.remove('hidden');
   }
 
   // Pre-activate saved tab visually so there's zero layout shift on F5
@@ -10990,8 +11114,7 @@ document.addEventListener('DOMContentLoaded', () => {
       preNav.classList.add('active');
       document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
       prePane.classList.add('active');
-      const titleEl = document.getElementById('header-title');
-      if (titleEl && TAB_TITLES[preTab]) titleEl.textContent = TAB_TITLES[preTab];
+      if (TAB_TITLES[preTab]) setHeaderTitle(TAB_TITLES[preTab]);
     }
   }
 

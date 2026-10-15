@@ -35,9 +35,14 @@ def test_startup_and_ready_follow_lifecycle(monkeypatch):
     from core.plugin_manager import plugin_manager
     monkeypatch.setattr(plugin_manager, "get_skill_count", lambda: 3)
     assert client.get("/startupz").status_code == 200
+    from mateai.infrastructure.database import migrations
+    monkeypatch.setattr(migrations, "_STATE", {"status": "not_run", "detail": ""})
+    r = client.get("/readyz")
+    assert r.status_code == 503 and r.json()["checks"]["schema"].startswith("pending")   # chưa chạy bước nâng cấp CSDL
+    migrations.migrate(migrations.main_db_connect, backup=None)                            # bước "schema_migrations"
     r = client.get("/readyz")
     assert r.status_code == 200, r.json()
-    assert r.json()["checks"] == {"startup": "ok", "database": "ok", "skills": "ok"}
+    assert r.json()["checks"] == {"startup": "ok", "database": "ok", "schema": "ok", "skills": "ok"}
 
 
 def test_ready_reports_database_failure(monkeypatch):

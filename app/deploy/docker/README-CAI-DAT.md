@@ -13,7 +13,18 @@ Bộ cài **bản sạch**: không kèm dữ liệu, tài khoản, token hay kho
   API key, tên model.
 - Mở cổng **443** (Portal / HUD) và **8000** (robot) trên tường lửa nếu người dùng / robot ở máy khác.
 
-## 2. Cài
+## 2. Kiểm gói trước khi cài
+
+Gói được nhà cung cấp ký số (`SHA256SUMS.txt.sig`, Ed25519). `install.sh` tự kiểm chữ ký nếu máy có OpenSSL 3, và kiểm băm từng tệp; sai thì dừng, không cài.
+
+- **Kiểm tay:** `python scripts/verify_release.py <thư mục gói>`, hoặc chạy lệnh:
+  ```bash
+  openssl pkeyutl -verify -pubin -inkey vendor_signing.pub -rawin -in SHA256SUMS.txt -sigfile SHA256SUMS.txt.sig
+  ```
+- **So dấu vân tay khoá:** trình cài in ra dấu vân tay khoá. **So dấu vân tay này với dấu vân tay nhà cung cấp công bố qua kênh riêng** (website, email, hợp đồng). Khoá nằm trong gói chỉ chứng minh gói không bị sửa so với chính khoá đó.
+- **SBOM:** `sbom.json` (CycloneDX 1.5) liệt kê mọi thư viện trong image để rà lỗ hổng.
+
+## 3. Cài
 
 **Linux**
 
@@ -58,7 +69,7 @@ docker compose cp server.key app:/data/certs/server.key
 docker compose restart app
 ```
 
-## 3. Cấu hình sau khi cài (Portal → Quản Lý Trợ Lý AI)
+## 4. Cấu hình sau khi cài (Portal → Quản Lý Trợ Lý AI)
 
 - **Bộ não (LLM):** URL / key / model của gateway AI (nếu chưa nhập lúc cài). Bấm "Kiểm tra kết nối".
 - **Âm thanh:** giọng đọc (Edge-TTS mặc định, cần Internet; hoặc Vbee / ElevenLabs với key riêng).
@@ -68,7 +79,24 @@ docker compose restart app
 
 Mọi khoá bí mật nhập trên Portal được **mã hoá** trong `config.json`, khoá giải mã nằm ở `certs/config_secret.key` của máy này.
 
-## 4. Vận hành hằng ngày
+## Bản quyền
+
+Bản thương mại (`VNMATE_EDITION=commercial`) chạy ngoại tuyến với tệp bản quyền do nhà cung cấp ký.
+
+- **Nạp bản quyền:** Portal, hoặc `PUT /api/v1/license` với nội dung tệp `license.json`.
+- **Xem trạng thái và hạn mức:** `GET /api/v1/license` và `GET /api/v1/license/usage`.
+- **Chưa có bản quyền, sai chữ ký hoặc hết hạn:** chế độ dùng thử, tối đa 5 người dùng và 5 máy trạm. Không khoá đăng nhập, không xoá dữ liệu; chỉ chặn tạo thêm người dùng hoặc máy trạm vượt hạn mức.
+
+## Dữ liệu cá nhân và kiểm toán
+
+- **Sổ hoạt động xử lý:** `GET /api/v1/privacy/register`.
+- **Tra cứu dữ liệu của một người:** `POST /api/v1/privacy/subject/lookup`.
+- **Xoá theo yêu cầu:** `POST /api/v1/privacy/subject/erase`. Nhật ký kiểm toán được giữ lại, vì đó là nghĩa vụ an toàn thông tin.
+- **Báo cáo kiểm toán:** Trung tâm Bảo mật → "Báo cáo kiểm toán CSV" / "In báo cáo kiểm toán".
+- **Neo chuỗi băm:** mỗi lần sao lưu, chuỗi băm audit được neo ra ổ khác và S3. Kiểm bằng `python scripts/audit_anchor.py verify <bản neo ở ổ khác>`.
+- **Mẫu đánh giá tác động (DPIA):** `app/docs/compliance/mau-danh-gia-tac-dong.md`.
+
+## 5. Vận hành hằng ngày
 
 | Việc | Lệnh (trong thư mục gói) |
 |---|---|
@@ -88,15 +116,17 @@ docker compose down
 docker volume rm vnmateai_pgdata vnmateai_appdata
 docker compose up -d postgres && sleep 10
 gunzip -c backups/db-<thời điểm>.sql.gz | docker compose exec -T postgres psql -U vnmate -d vnmate
-docker run --rm --user 0 --entrypoint tar -v vnmateai_appdata:/data -v "$PWD/backups:/b" vnmateai/app:1.0.0 \
+docker run --rm --user 0 --entrypoint tar -v vnmateai_appdata:/data -v "$PWD/backups:/b" vnmateai/app:2.0.1 \
   xzf /b/appdata-<thời điểm>.tgz -C /data
 docker compose up -d
 ```
 
 **Cập nhật lên bản mới:** chép gói mới đè lên (giữ nguyên `.env`), rồi chạy lại `./install.sh`. Dữ liệu trong volume được giữ
-nguyên. Kỹ năng có sẵn được cập nhật; kỹ năng AI tự tạo vẫn còn.
+nguyên. Kỹ năng có sẵn được cập nhật; kỹ năng AI tự tạo vẫn còn. Lần khởi động đầu của bản mới tự **sao lưu rồi nâng cấp
+cấu trúc CSDL** nếu cần; kiểm tra: `docker compose exec app python scripts/db_migrate.py status` và `/readyz` (mục `schema`).
+Log ứng dụng: `docker compose logs app` hoặc tệp `/data/logs/vnmateai.log` trong volume.
 
-## 5. Khác biệt so với bản chạy trên máy Windows
+## 6. Khác biệt so với bản chạy trên máy Windows
 
 Trong container **không có** các chức năng cần màn hình hay phần cứng của chính máy chủ: điều khiển màn hình / cửa sổ, COM
 (Office), micro và loa gắn vào máy chủ, phím media, khay hệ thống. Các việc đó vẫn làm được **trên máy trạm Windows** qua
@@ -118,11 +148,11 @@ kịch bản vận hành, kho tri thức, giám sát, phê duyệt đều chạy
 Tải Agent: mở Portal bằng **địa chỉ LAN của máy chủ** (vd `https://192.168.1.10/`, không dùng `localhost`) rồi bấm
 "Tải Agent" — gói ghi địa chỉ máy chủ theo địa chỉ bạn đang mở. Mỗi gói dùng cho **một** máy. Mở cổng 443 trên máy chủ.
 
-## 6. Thành phần
+## 7. Thành phần
 
 | Thành phần | Image | Dữ liệu (volume) |
 |---|---|---|
-| Ứng dụng VN-MateAI | `vnmateai/app:1.0.0` (Python 3.11, model giọng nói + embedding offline) | `vnmateai_appdata` → `/data` |
+| Ứng dụng VN-MateAI | `vnmateai/app:2.0.1` (Python 3.11, model giọng nói + embedding offline) | `vnmateai_appdata` → `/data` |
 | CSDL | `postgres:16-alpine` (chỉ mạng nội bộ) | `vnmateai_pgdata` |
 | Redis | `redis:7-alpine` (chỉ mạng nội bộ, không lưu đĩa) | — |
 

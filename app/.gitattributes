@@ -1,2 +1,6 @@
 # Script chạy trên macOS / Linux: luôn LF (CRLF làm bash báo lỗi "\r: command not found")
 *.sh text eol=lf
+
+# Script Windows: luôn CRLF (cmd.exe đọc sai tệp .bat chỉ có LF — khối lệnh trong ngoặc + tiếng Việt UTF-8 bị bỏ qua)
+*.bat text eol=crlf
+*.cmd text eol=crlf

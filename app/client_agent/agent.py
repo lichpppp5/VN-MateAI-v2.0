@@ -171,7 +171,7 @@ logger = logging.getLogger("client_agent")
 
 #: Phiên bản Agent — gửi lên máy chủ khi đăng ký + mỗi nhịp tim. Máy chủ so với
 #: bản đang phát hành (cùng file này) để báo máy trạm nào cần tải lại Agent.
-AGENT_VERSION = "2.3.0"
+AGENT_VERSION = "2.3.1"
 HEARTBEAT_INTERVAL_S = 30
 import re as _re  # noqa: E402 — không sửa khối import / bí danh `core` ở đầu file
 _SKILL_FILE_RE = _re.compile(r"^[A-Za-z0-9_]{1,64}\.py$")

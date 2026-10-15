@@ -40,7 +40,7 @@ _ROUTERS_AFTER_PAGES = (
     "config", "auth", "users", "health", "system", "voice", "memory", "tts", "logs",
     "skills", "pairing", "websockets", "workers", "clients", "agent_devices", "robots",
     "hud", "xiaozhi", "sentinel", "security", "files", "tasks", "wake_word", "domain",
-    "telegram", "report_templates", "itsm", "analytics", "enterprise", "computer_use", "dev_fleet", "monitoring", "sso", "playbooks", "llmops", "agent_gateway", "agent_directory",
+    "telegram", "report_templates", "itsm", "analytics", "enterprise", "computer_use", "dev_fleet", "monitoring", "sso", "playbooks", "llmops", "agent_gateway", "agent_directory", "privacy", "reports", "license", "branding", "orchestration",
 )
 
 

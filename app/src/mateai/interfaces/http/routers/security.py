@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import logging
 import re
+from functools import partial
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
@@ -406,11 +407,38 @@ async def confirm_action_endpoint(
         raise HTTPException(status_code=exc.status_code, detail=exc.detail)
 
 
+@router.get("/api/v1/security/audit-logs/export", summary="Xuất báo cáo kiểm toán CSV / HTML in được (chỉ admin)")
+async def export_audit_logs(
+    format: str = Query(default="csv", pattern="^(csv|html)$"),
+    date_from: Optional[str] = Query(default=None, pattern=r"^\d{4}-\d{2}-\d{2}$"),
+    date_to: Optional[str] = Query(default=None, pattern=r"^\d{4}-\d{2}-\d{2}$"),
+    user: dict = Depends(require_roles(["admin"])),
+):
+    """"AI đã làm gì, ai duyệt" cho kiểm toán viên (thẩm định thương mại #17). Việc xuất cũng được ghi audit."""
+    from fastapi.responses import HTMLResponse, Response
+    from mateai.application.security import audit_export
+    from mateai.infrastructure.database.erp_database import erp_db
+    rows = await run_blocking(partial(audit_export.fetch, date_from, date_to))
+    who = str(user.get("username") or "admin")
+    erp_db.log_audit_action(action_type="AUDIT_EXPORT", employee_id=who, status="success",
+                            payload=f'{{"format": "{format}", "from": "{date_from or ""}", "to": "{date_to or ""}", "rows": {len(rows)}}}')
+    stamp = f"{date_from or 'dau'}_{date_to or 'nay'}"
+    if format == "csv":
+        return Response(audit_export.to_csv(rows), media_type="text/csv; charset=utf-8",
+                        headers={"Content-Disposition": f'attachment; filename="audit_{stamp}.csv"'})
+    chain = await run_blocking(erp_db.verify_audit_chain)
+    return HTMLResponse(audit_export.to_html(rows, chain=chain, exported_by=who, date_from=date_from, date_to=date_to))
+
+
 @router.get("/api/v1/security/audit-logs/verify", summary="Kiểm tra toàn vẹn chuỗi audit (chỉ admin)")
 async def verify_audit_logs(user: dict = Depends(require_roles(["admin"]))) -> Dict[str, Any]:
-    """Tính lại chuỗi băm của audit_logs (prompt cuối §73): sửa / xoá một dòng là lộ đúng id."""
+    """Tính lại chuỗi băm của audit_logs (prompt cuối §73): sửa / xoá một dòng là lộ đúng id. Kèm kiểm các NEO đã ghi ra
+    ngoài (audit_anchor): sửa rồi tính lại cả chuỗi vẫn lộ vì neo cũ không còn khớp."""
+    from mateai.application.security import audit_anchor
     from mateai.infrastructure.database.erp_database import erp_db
-    return await run_blocking(erp_db.verify_audit_chain)
+    out = await run_blocking(erp_db.verify_audit_chain)
+    out["anchors"] = await run_blocking(audit_anchor.verify)
+    return out
 
 
 # ── Kiểm soát tự trị: kill switch, tắt tác nhân / tool, L5, ngân sách ──────────

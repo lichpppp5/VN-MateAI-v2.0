@@ -234,6 +234,10 @@ def authorize(
     # 2. Cấm tuyệt đối / từ khoá cấm (mọi trường hợp) · L5 (với AI).
     if name in GLOBALLY_FORBIDDEN_TOOLS:
         return deny("forbidden_tool", f"Tool '{name}' bị cấm vĩnh viễn trên toàn hệ thống.", "L5")
+    from mateai.config import edition
+    _ed = edition.blocked_reason(name)
+    if _ed:                                       # bản thương mại: sinh / cài mã, kỹ năng demo — mọi người gọi
+        return deny("edition", _ed, "L5")
     kw = _forbidden_keyword(name, args)
     if kw:
         return deny("forbidden_keyword", f"Tác vụ '{name}' chứa từ khoá bị cấm theo chính sách: '{kw}'.")

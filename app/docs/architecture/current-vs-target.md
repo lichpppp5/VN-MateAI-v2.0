@@ -20,7 +20,7 @@
 | Bộ nạp skill | `core/plugin_manager.py` | 498 dòng | Quét `skills/*.py`, decorator `@export_skill` (102 skill) |
 | Skill | `skills/*.py` | 33 file | 12 file là lớp chuyển tiếp ≤ 36 dòng sang `application/skills/builtin`; còn lại là skill thật |
 | Worker phụ | `workers/` | 4 file | Computer-use (self-healing UI, vault phiên trình duyệt, OS driver, daemon từ xa) |
-| Agent máy trạm | `client_agent/` | — | Agent 2.3.0 (Windows .exe, macOS), giao thức `/ws/client` |
+| Agent máy trạm | `client_agent/` | — | Agent 2.3.1 (Windows .exe, macOS), giao thức `/ws/client` |
 | Firmware robot | `esp32_firmware/src/main.cpp` | — | ESP32-S3, giao thức `/api/v1/xiaozhi/ws` |
 | Frontend | `web/` (portal `app.js`, HUD `hud.html`/`hud.js`), `admin/` (Next.js) | — | Portal quản trị, HUD thoại |
 | Test | `tests/` | 106 file pytest + 14 file `.mjs` | **664 pass** (lần chạy 2026-10-05) |

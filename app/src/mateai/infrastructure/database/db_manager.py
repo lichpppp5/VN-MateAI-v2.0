@@ -87,8 +87,11 @@ class DatabaseManager:
                     if "clearance_level" not in _ucols:
                         cursor.execute("ALTER TABLE users ADD COLUMN clearance_level INTEGER;")
                     # Đăng nhập an toàn: MFA (TOTP) + nguồn tài khoản (local | sso). Mã bí mật MFA mã hoá khi lưu.
+                    # must_change_password: bắt đổi mật khẩu ở lần đăng nhập tới (tài khoản mặc định, admin vừa đặt lại,
+                    # mật khẩu dev công khai) — thẩm định thương mại 14/10/2026 P0-10.
                     for _col, _ddl in (("mfa_secret", "TEXT"), ("mfa_enabled", "INTEGER NOT NULL DEFAULT 0"), ("mfa_recovery", "TEXT"),
-                                       ("mfa_last_step", "INTEGER"), ("auth_source", "TEXT")):
+                                       ("mfa_last_step", "INTEGER"), ("auth_source", "TEXT"),
+                                       ("must_change_password", "INTEGER NOT NULL DEFAULT 0")):
                         if _col not in _ucols:
                             cursor.execute(f"ALTER TABLE users ADD COLUMN {_col} {_ddl};")
 
@@ -157,6 +160,22 @@ class DatabaseManager:
                             note TEXT,
                             changes_json TEXT NOT NULL,
                             snapshot_json TEXT NOT NULL
+                        );
+                        """
+                    )
+
+                    # 6b. Yêu cầu quên mật khẩu (màn đăng nhập): admin xác minh người thật rồi cấp mật khẩu tạm.
+                    cursor.execute(
+                        """
+                        CREATE TABLE IF NOT EXISTS password_reset_requests (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            username TEXT NOT NULL,
+                            note TEXT,
+                            source_ip TEXT,
+                            created_at TEXT NOT NULL,
+                            status TEXT NOT NULL DEFAULT 'open',
+                            handled_by TEXT,
+                            handled_at TEXT
                         );
                         """
                     )
@@ -359,6 +378,47 @@ class DatabaseManager:
                             created_by TEXT,
                             created_at TEXT NOT NULL
                         );
+                        CREATE TABLE IF NOT EXISTS orch_executors (
+                            executor_id TEXT PRIMARY KEY,
+                            kind TEXT NOT NULL,
+                            name TEXT NOT NULL,
+                            description TEXT,
+                            capabilities_json TEXT NOT NULL,
+                            tools_json TEXT,
+                            ref TEXT,
+                            max_risk INTEGER NOT NULL DEFAULT 2,
+                            max_concurrent INTEGER NOT NULL DEFAULT 2,
+                            status TEXT NOT NULL,
+                            version INTEGER NOT NULL DEFAULT 1,
+                            created_by TEXT,
+                            created_at TEXT NOT NULL,
+                            updated_at TEXT NOT NULL
+                        );
+                        CREATE TABLE IF NOT EXISTS orch_orders (
+                            order_id TEXT PRIMARY KEY,
+                            task_id TEXT,
+                            executor_id TEXT,
+                            capability TEXT NOT NULL,
+                            status TEXT NOT NULL,
+                            attempt INTEGER NOT NULL DEFAULT 0,
+                            risk INTEGER NOT NULL DEFAULT 2,
+                            requested_by TEXT NOT NULL,
+                            channel TEXT,
+                            idempotency_key TEXT UNIQUE,
+                            approval_id TEXT,
+                            spec_json TEXT NOT NULL,
+                            routing_json TEXT,
+                            report_json TEXT,
+                            verification_json TEXT,
+                            history_json TEXT,
+                            error TEXT,
+                            created_at TEXT NOT NULL,
+                            updated_at TEXT NOT NULL,
+                            dispatched_at TEXT,
+                            finished_at TEXT
+                        );
+                        CREATE INDEX IF NOT EXISTS idx_orch_orders_status ON orch_orders(status);
+                        CREATE INDEX IF NOT EXISTS idx_orch_orders_executor ON orch_orders(executor_id);
                         CREATE TABLE IF NOT EXISTS agent_directory (
                             agent_id TEXT PRIMARY KEY,
                             kind TEXT NOT NULL,
@@ -442,6 +502,25 @@ class DatabaseManager:
         with self._get_connection() as conn:
             return conn.execute("SELECT COUNT(*) FROM users;").fetchone()[0]
 
+    #: Mật khẩu dev công khai (README / mã nguồn) — tài khoản còn dùng thì bị bắt đổi.
+    _KNOWN_DEV_PASSWORDS = {"admin": "admin123", "manager": "manager123", "viewer": "viewer123"}
+
+    def flag_known_dev_passwords(self) -> List[str]:
+        """Đánh dấu bắt đổi mật khẩu cho tài khoản mặc định còn dùng mật khẩu dev công khai. Trả tên đã đánh dấu."""
+        from mateai.application.security.auth_manager import AuthManager
+        flagged = []
+        for username, pwd in self._KNOWN_DEV_PASSWORDS.items():
+            u = self.get_user_by_username_or_id(username)
+            if u and not u.get("must_change_password") and AuthManager.verify_password(pwd, u.get("password_hash") or ""):
+                with self._lock:
+                    with self._get_connection() as conn:
+                        conn.execute("UPDATE users SET must_change_password = 1 WHERE id = ?;", (u["id"],))
+                        conn.commit()
+                flagged.append(username)
+        if flagged:
+            logger.warning("Tài khoản còn dùng mật khẩu dev công khai — bắt đổi ở lần đăng nhập tới: %s", ", ".join(flagged))
+        return flagged
+
     def _seed_default_users(self) -> None:
         """
         Tạo 3 tài khoản mặc định khi bảng users rỗng.
@@ -463,10 +542,11 @@ class DatabaseManager:
                 used_fallback.append(role)
             rows.append((f"usr_{role}", role, names[role], role, self.hash_password(pwd), now_str, now_str))
         with self._get_connection() as conn:
+            # Mật khẩu ban đầu (kể cả mật khẩu ngẫu nhiên bộ cài in ra màn hình) phải đổi ở lần đăng nhập đầu.
             conn.executemany(
                 """
-                INSERT INTO users (id, username, full_name, role, password_hash, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?);
+                INSERT INTO users (id, username, full_name, role, password_hash, created_at, updated_at, must_change_password)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 1);
                 """,
                 rows,
             )
@@ -547,7 +627,7 @@ class DatabaseManager:
                 cursor.execute(
                     """
                     SELECT id, username, full_name, role, department, clearance_level, password_hash,
-                           mfa_enabled, auth_source, created_at, updated_at
+                           mfa_enabled, auth_source, must_change_password, created_at, updated_at
                     FROM users
                     WHERE LOWER(username) = ? OR LOWER(id) = ?;
                     """,
@@ -577,7 +657,9 @@ class DatabaseManager:
                 conn.commit()
 
     def create_user(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Tạo người dùng mới trong SQLite."""
+        """Tạo người dùng mới trong SQLite. Bản thương mại: không vượt hạn mức người dùng của bản quyền (licensing)."""
+        from mateai.application.licensing import ensure_can_add
+        ensure_can_add("users")
         username = str(data.get("username", "")).strip().lower()
         if not username or len(username) < 3:
             raise ValueError("Tên đăng nhập phải có ít nhất 3 ký tự.")
@@ -690,8 +772,9 @@ class DatabaseManager:
                 conn.commit()
         logger.info("Đã xóa tài khoản user id: %s (%s)", existing["id"], existing["username"])
 
-    def change_user_password(self, user_id: str, new_password: str) -> None:
-        """Cấp lại mật khẩu mới cho người dùng."""
+    def change_user_password(self, user_id: str, new_password: str, must_change: bool = False) -> None:
+        """Cấp lại mật khẩu mới cho người dùng. `must_change=True` (admin đặt lại cho người khác): người đó phải đổi
+        ở lần đăng nhập tới; người tự đổi thì cờ được xoá."""
         if not new_password or len(new_password) < 6:
             raise ValueError("Mật khẩu mới phải có tối thiểu 6 ký tự.")
 
@@ -706,8 +789,8 @@ class DatabaseManager:
             with self._get_connection() as conn:
                 cursor = conn.cursor()
                 cursor.execute(
-                    "UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?;",
-                    (hashed, now_str, existing["id"]),
+                    "UPDATE users SET password_hash = ?, updated_at = ?, must_change_password = ? WHERE id = ?;",
+                    (hashed, now_str, 1 if must_change else 0, existing["id"]),
                 )
                 conn.commit()
         logger.info("Đã đặt lại mật khẩu cho user: %s", existing["username"])
@@ -1167,7 +1250,8 @@ class DatabaseManager:
     _DEV_TABLES = {"dev_projects": "project_id", "dev_runs": "run_id", "dev_events": "event_id",
                    "pb_playbooks": "playbook_id", "pb_runs": "run_id", "rag_doc_acl": "doc_name",
                    "llm_usage": "usage_id", "ai_eval_sets": "set_id", "ai_eval_runs": "run_id",
-                   "agent_directory": "agent_id", "pb_webhook_tokens": "playbook_id"}
+                   "agent_directory": "agent_id", "pb_webhook_tokens": "playbook_id",
+                   "orch_executors": "executor_id", "orch_orders": "order_id"}
 
     def dev_insert(self, table: str, row: Dict[str, Any]) -> None:
         if table not in self._DEV_TABLES:
@@ -1304,7 +1388,15 @@ class DatabaseManager:
 
     # ── Trace thoại bền (trước: chỉ RAM, mất sau mỗi lần khởi động lại) ──
 
-    def add_voice_trace(self, data: Dict[str, Any], retention_days: int = 30) -> None:
+    def add_voice_trace(self, data: Dict[str, Any], retention_days: Optional[int] = None) -> None:
+        """Hạn lưu: `observability.voice_trace_retention_days`, mặc định 400 ngày (~13 tháng — đủ so sánh cùng kỳ năm
+        trước cho báo cáo SLA; thẩm định 14/10/2026 P1-15). Trước: 30 ngày."""
+        if retention_days is None:
+            from mateai.config.loader import get_config_section
+            try:
+                retention_days = max(1, int(get_config_section("observability").get("voice_trace_retention_days", 400)))
+            except (TypeError, ValueError):
+                retention_days = 400
         now = datetime.now()
         with self._lock:
             with self._get_connection() as conn:
@@ -1361,6 +1453,13 @@ class DatabaseManager:
                 "AND status NOT IN ('COMPLETED', 'FAILED', 'CANCELLED') ORDER BY created_at DESC LIMIT 1;",
                 (source,)).fetchone()
             return dict(row) if row else None
+
+    def task_responses_in_month(self, month_prefix: str) -> List[Dict[str, Any]]:
+        """Việc giao máy trạm đã có phản hồi trong tháng `YYYY-MM` (thay logs/kpi_logs.csv): client_id, status, responded_at."""
+        with self._get_connection() as conn:
+            rows = conn.execute("SELECT client_id, status, responded_at FROM tasks "
+                                "WHERE responded_at IS NOT NULL AND responded_at LIKE ?;", (f"{month_prefix}%",)).fetchall()
+        return [dict(r) for r in rows]
 
     def count_tasks(self) -> Dict[str, int]:
         """Thống kê tổng số task theo trạng thái."""

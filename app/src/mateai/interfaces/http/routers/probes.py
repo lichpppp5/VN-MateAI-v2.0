@@ -50,6 +50,10 @@ async def readyz() -> JSONResponse:
         checks["database"] = "ok"
     except Exception as exc:  # pylint: disable=broad-except
         checks["database"] = f"error: {type(exc).__name__}"
+    if lifecycle.STATE.complete:
+        # Phiên bản cấu trúc CSDL (migrations.py): bước nâng cấp lỗi / CSDL mới hơn ứng dụng → chưa sẵn sàng.
+        from mateai.infrastructure.database import migrations
+        checks["schema"] = migrations.readiness()
     try:
         from core.plugin_manager import plugin_manager
         checks["skills"] = "ok" if plugin_manager.get_skill_count() > 0 else "none loaded"

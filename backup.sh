@@ -8,7 +8,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 ts="$(date +%Y%m%d-%H%M%S)"; mkdir -p backups
-ver="$(grep -E '^VNMATE_VERSION=' .env | cut -d= -f2)"; ver="${ver:-1.0.0}"
+ver="$(grep -E '^VNMATE_VERSION=' .env | cut -d= -f2)"; ver="${ver:-2.0.1}"
 docker compose exec -T postgres pg_dump -U vnmate -d vnmate --no-owner | gzip > "backups/db-$ts.sql.gz"
 docker run --rm --user 0 --entrypoint tar -v vnmateai_appdata:/data:ro -v "$PWD/backups:/b" "vnmateai/app:$ver" \
   czf "/b/appdata-$ts.tgz" -C /data .

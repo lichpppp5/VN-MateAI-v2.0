@@ -269,6 +269,33 @@
     },
     "enabled": true
   },
+  "open_text_file_notepad": {
+    "module": "skills.auto_open_notepad_file",
+    "attr": "open_text_file_notepad",
+    "meta": {
+      "name": "open_text_file_notepad",
+      "description": "Mở file văn bản trên Desktop bằng Notepad của Windows. Tìm file văn bản trên màn hình desktop rồi mở bằng Notepad. Hỗ trợ nhiều định dạng: txt, log, csv, md, json, xml, py, html, v.v. Người dùng có thể nói: 1) 'mở file văn bản trên desktop bằng notepad' 2) 'mở file txt trên màn hình desktop' 3) 'dùng notepad mở file trên desktop' 4) 'open text file on desktop with notepad' 5) 'mở notepad với file trên desktop' Ví dụ yêu cầu: «Mở file văn bản trên màn hình desktop bằng phần mềm Notepad của Windows».",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string",
+            "description": "Tên file cụ thể cần mở (tuỳ chọn). Nếu không truyền, sẽ tìm và mở file văn bản đầu tiên trên Desktop."
+          }
+        },
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": true
+      }
+    },
+    "enabled": true
+  },
   "open_youtube": {
     "module": "skills.auto_open_youtube",
     "attr": "open_youtube",
@@ -1186,6 +1213,28 @@
         "required": [
           "query"
         ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_hr_fairness_report": {
+    "module": "skills.ethics_tools",
+    "attr": "get_hr_fairness_report",
+    "meta": {
+      "name": "get_hr_fairness_report",
+      "description": "Báo cáo công bằng khi giao việc / đánh giá nhân viên: so khối lượng việc và tỉ lệ hoàn thành theo phòng ban, chức danh; chỉ ra người bị dồn việc (kể cả việc do AI giao), người bị bỏ sót, nhóm chênh lệch lớn — để NGƯỜI QUẢN LÝ xem lại, không kết luận thay. Người dùng thường nói: 'báo cáo công bằng', 'kiểm tra thiên kiến giao việc', 'có ai bị dồn việc không', 'đánh giá phân việc có công bằng không'. English: fairness report, bias check, workload.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
       },
       "contract": {
         "data_classification": "INTERNAL",
@@ -2260,7 +2309,7 @@
     "attr": "summarize_monthly_kpi",
     "meta": {
       "name": "summarize_monthly_kpi",
-      "description": "Đọc file nhật ký kpi_logs.csv để đếm tổng số lượng công việc đã hoàn thành hoặc vướng mắc của nhân viên theo tháng.",
+      "description": "Đếm số việc giao máy trạm đã hoàn thành hoặc vướng mắc theo tháng (từ sổ giao việc trong CSDL).",
       "parameters": {
         "type": "object",
         "properties": {
@@ -2959,6 +3008,118 @@
     },
     "enabled": true
   },
+  "dispatch_work_order": {
+    "module": "skills.orchestration_tools",
+    "attr": "dispatch_work_order",
+    "meta": {
+      "name": "dispatch_work_order",
+      "description": "GIAO VIỆC cho agent khác bằng phiếu chuẩn (chỉ quản lý / quản trị viên). Cần: mục tiêu cụ thể, năng lực, sản phẩm phải nộp, tiêu chí 'thế nào là xong'. VN-MateAI tự thẩm định kết quả — agent báo xong chưa phải là xong. Kết quả `WAITING_APPROVAL` = CHƯA giao, nói người dùng duyệt phiếu. Dùng get_work_order_status để theo dõi.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "objective": {
+            "type": "string",
+            "description": "Mục tiêu cụ thể, đủ để agent không thấy hội thoại vẫn làm đúng (≥ 10 ký tự)"
+          },
+          "capability": {
+            "type": "string",
+            "description": "Năng lực cần (lấy từ list_agent_capabilities)"
+          },
+          "deliverables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Sản phẩm phải nộp"
+          },
+          "done_criteria": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Thế nào là xong — mỗi tiêu chí kiểm được"
+          },
+          "context": {
+            "type": "string",
+            "description": "Ngữ cảnh tối thiểu agent cần biết"
+          },
+          "risk": {
+            "type": "integer",
+            "description": "1–4: 1–2 chỉ đọc / soạn thảo; 3 trở lên có thay đổi hệ thống (cần duyệt)"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "description": "Chống giao trùng khi gọi lại"
+          }
+        },
+        "required": [
+          "objective",
+          "capability",
+          "deliverables",
+          "done_criteria"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "get_work_order_status": {
+    "module": "skills.orchestration_tools",
+    "attr": "get_work_order_status",
+    "meta": {
+      "name": "get_work_order_status",
+      "description": "Xem phiếu giao việc: trạng thái, agent nào làm, kết quả thẩm định từng tiêu chí. COMPLETED = đã thẩm định đạt; NEEDS_CONFIRMATION = cần người xác nhận; FAILED / BLOCKED = chưa xong — đừng báo là xong.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "order_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_id"
+        ]
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
+  "list_agent_capabilities": {
+    "module": "skills.orchestration_tools",
+    "attr": "list_agent_capabilities",
+    "meta": {
+      "name": "list_agent_capabilities",
+      "description": "Liệt kê NĂNG LỰC mà đội agent đang nhận việc được (vd dba, sysadmin, ba, dev) và agent nào nhận — gọi TRƯỚC khi dispatch_work_order để chọn đúng `capability`.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "contract": {
+        "data_classification": "INTERNAL",
+        "reversible": null,
+        "output_schema": null,
+        "data_scope": null,
+        "verification_required": null,
+        "needs_desktop": false
+      }
+    },
+    "enabled": true
+  },
   "get_clipboard": {
     "module": "skills.pc_control_skills",
     "attr": "get_clipboard",
@@ -3639,39 +3800,6 @@
       },
       "contract": {
         "data_classification": "CONFIDENTIAL",
-        "reversible": null,
-        "output_schema": null,
-        "data_scope": null,
-        "verification_required": null,
-        "needs_desktop": false
-      }
-    },
-    "enabled": true
-  },
-  "thong_ke_lo_xsmb": {
-    "module": "skills.thong_ke_lo_xsmb",
-    "attr": "thong_ke_lo_xsmb",
-    "meta": {
-      "name": "thong_ke_lo_xsmb",
-      "description": "Crawl kết quả XSMB trong 14 ngày gần nhất, bóc tách 2 chữ số cuối (lô tô), thống kê tần suất, lô gan và xuất báo cáo markdown.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "days_count": {
-            "type": "integer",
-            "description": "Số ngày cần thống kê tính từ hôm qua (mặc định là 14).",
-            "default": 14
-          },
-          "output_path": {
-            "type": "string",
-            "description": "Đường dẫn lưu file báo cáo markdown.",
-            "default": "reports/thong_ke_lo_xsmb.md"
-          }
-        },
-        "required": []
-      },
-      "contract": {
-        "data_classification": "INTERNAL",
         "reversible": null,
         "output_schema": null,
         "data_scope": null,

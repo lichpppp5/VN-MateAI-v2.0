@@ -79,6 +79,12 @@ def main() -> None:
     out += ["## Tài nguyên giao diện được đóng kèm (`web/`)", "", "| Thành phần | Giấy phép | Vị trí | Nguồn |", "|---|---|---|---|"]
     out += [f"| {a} | {b} | `{c}` | {d} |" for a, b, c, d in WEB_ASSETS]
     out += ["", "Font theo SIL Open Font License 1.1: được dùng, đóng kèm và phân phối cùng phần mềm; không được bán riêng font.", "",
+            "## MCP server tham chiếu chính thức (`vendor/mcp-servers/`)", "",
+            "`mcp-server-time`, `mcp-server-fetch`, `mcp-server-git` 2026.10.10 của dự án Model Context Protocol "
+            "(https://github.com/modelcontextprotocol/servers), đóng kèm nguyên mã đã rà soát. Giấy phép: MIT, đang chuyển dần sang "
+            "Apache-2.0 — xem `vendor/mcp-servers/LICENSE` và LICENSE trong từng thư mục. Chạy trong môi trường Python riêng "
+            "(`.mcp-venv` / `/opt/mcp-venv`) với các thư viện ghim ở `vendor/mcp-servers/constraints.txt` (mcp, httpx, GitPython, "
+            "readabilipy, markdownify, protego…), mỗi thư viện theo giấy phép riêng.", "",
             "## Ứng dụng quản trị Next.js (`admin/`)", "",
             "Dùng các gói npm (Next.js, React, React Flow…) theo giấy phép của từng gói (chủ yếu MIT); danh sách đầy đủ nằm ở "
             "`admin/package.json` / `package-lock.json`.", "",

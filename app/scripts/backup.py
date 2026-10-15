@@ -53,6 +53,7 @@ ITEMS: List[tuple] = [
     ("certs/worker_secret.key", "file"),
     ("certs/server.key", "file"),
     ("certs/server.crt", "file"),
+    ("certs/vendor_signing.key", "file"),  # khoá ký bản quyền / bản phát hành (chỉ máy nhà cung cấp) — mất là không cấp lại được
     ("storage/vector_db", "dir"),
     ("skills/registry.json", "file"),
     ("identity_core.md", "file"),
@@ -253,6 +254,19 @@ def restore(dest: Path, root: Path = ROOT) -> Path:
                     side.unlink()
             shutil.copy2(src, target)
     return safety
+
+
+def _anchor_audit() -> None:
+    """Neo đầu chuỗi băm audit ra ổ khác + object storage (mateai.application.security.audit_anchor). Lỗi chỉ báo."""
+    try:
+        sys.path.insert(0, str(ROOT / "src"))
+        from mateai.application.security import audit_anchor
+        res = audit_anchor.anchor()
+        a = res.get("anchor") or {}
+        print(f"Neo audit: dòng {a.get('id')} → {len(res.get('written') or [])} nơi" +
+              (f"; lỗi: {'; '.join(res['errors'])}" if res.get("errors") else ""))
+    except Exception as exc:  # noqa: BLE001
+        print(f"NEO AUDIT LỖI: {type(exc).__name__}: {exc}")
 
 
 def _store(store=None):
@@ -470,6 +484,7 @@ def main() -> int:
         rc = _report_replicas(dest)
         if rc and not args.no_alert:
             _notify_failure(f"Đã tạo {dest.name} nhưng chép sang ổ / thư mục dự phòng (backup.offsite_dirs) lỗi")
+        _anchor_audit()
         return rc
     if args.cmd == "replicate":
         return _report_replicas(Path(args.path))

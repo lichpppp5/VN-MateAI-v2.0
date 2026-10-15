@@ -13,7 +13,7 @@ const HeaderInbox = (() => {
   let timer = null;
   let openKind = null;
   const state = {
-    mail: { pending: null, attention: null, denied: false, error: '' },
+    mail: { pending: null, attention: null, resets: null, denied: false, error: '' },
     bell: { incidents: null, alerts: null, infra: null, denied: false, error: '' },
   };
 
@@ -40,6 +40,11 @@ const HeaderInbox = (() => {
           .filter((t) => t.kind !== 'incident' && ['ESCALATED', 'FAILED'].includes(t.status));
       } else m.attention = null;
       if (!p.ok && !o.ok && o.status !== 403) m.error = `Không tải được (HTTP ${p.status}/${o.status})`;
+      // Yêu cầu quên mật khẩu (chỉ admin cấp lại được)
+      if (role() === 'admin') {
+        const r = await getJson('/api/v1/auth/password-reset/requests');
+        m.resets = r.ok && Array.isArray(r.data.requests) ? r.data.requests : null;
+      } else m.resets = null;
     } catch (err) { m.error = friendlyErrorText(err); }
   }
 
@@ -63,7 +68,7 @@ const HeaderInbox = (() => {
   function counts() {
     const m = state.mail, b = state.bell;
     return {
-      mail: (m.pending ? m.pending.length : 0) + (m.attention ? m.attention.length : 0),
+      mail: (m.pending ? m.pending.length : 0) + (m.attention ? m.attention.length : 0) + (m.resets ? m.resets.length : 0),
       bell: (b.incidents ? b.incidents.length : 0) + unseenAlerts().length,
     };
   }
@@ -109,8 +114,19 @@ const HeaderInbox = (() => {
         <p class="text-xs font-semibold text-slate-800 dark:text-slate-100 mt-1">${e(t.title)}</p>
         ${t.result_summary ? `<p class="text-[11px] text-slate-500 dark:text-slate-400">${e(t.result_summary)}</p>` : ''}
       </div>`).join('');
+    const resets = (m.resets || []).map((r) => `
+      <div class="mx-3 mb-2 rounded-xl border border-sky-500/30 bg-sky-500/5 dark:bg-sky-500/10 p-2.5">
+        <div class="flex justify-between gap-2"><span class="text-xs font-bold text-slate-800 dark:text-slate-100">${e(r.username)}${r.full_name ? ` · ${e(r.full_name)}` : ''}</span>
+          <span class="text-[11px] text-slate-500">${e(String(r.created_at || '').replace('T', ' '))}</span></div>
+        <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-1">Liên hệ: ${e(r.note || '—')} · IP ${e(r.source_ip || '?')}</p>
+        <p class="text-[11px] text-slate-500 mt-1">Gọi / gặp đúng người rồi mới cấp mật khẩu tạm.</p>
+        <div class="flex gap-1.5 mt-2">
+          <button type="button" data-hi="pw-grant" data-id="${e(r.user_id)}" data-name="${e(r.username)}" class="flex-1 px-2 py-1.5 text-xs font-bold rounded-lg bg-primary-600 text-white">Cấp mật khẩu tạm</button>
+          <button type="button" data-hi="pw-reject" data-rid="${e(r.id)}" class="flex-1 px-2 py-1.5 text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200">Bỏ qua</button></div>
+      </div>`).join('');
     let body = '';
-    const hasItems = !!((m.pending && m.pending.length) || (m.attention && m.attention.length));
+    if (m.resets && m.resets.length) body += section(`Yêu cầu quên mật khẩu (${m.resets.length})`, resets);
+    const hasItems = !!((m.pending && m.pending.length) || (m.attention && m.attention.length) || (m.resets && m.resets.length));
     if (m.pending && m.pending.length) body += section(`Chờ bạn duyệt (${m.pending.length})`, pend);
     if (m.attention && m.attention.length) body += section(`Cần xử lý / xác nhận (${m.attention.length})`, att + `<div class="px-4 pb-1">${link('Mở Bảng điều khiển để xác nhận →', 'dashboard')}</div>`);
     if (!hasItems) body = empty('Không có chỉ thị nào đang chờ bạn.');
@@ -200,6 +216,19 @@ const HeaderInbox = (() => {
     if (act === 'dashboard') { closeAll(); switchTab('dashboard'); return; }
     if (act === 'integration') { closeAll(); switchTab('system-integration'); return; }
     if (act === 'infra') { closeAll(); switchTab('infra-monitor'); return; }
+    if (act === 'pw-grant') {
+      closeAll();
+      if (typeof openChangePasswordModal === 'function') openChangePasswordModal(t.dataset.id, t.dataset.name);
+      return;
+    }
+    if (act === 'pw-reject') {
+      t.disabled = true;
+      try {
+        await apiFetch(`${API_BASE}/api/v1/auth/password-reset/requests/${encodeURIComponent(t.dataset.rid)}/close`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'rejected' }) });
+      } finally { await refresh(); if (openKind) render(openKind); }
+      return;
+    }
     if (act === 'approve' || act === 'reject') {
       t.disabled = true;
       try { await CommandCenter.decide(t.dataset.id, act === 'approve'); } finally { await refresh(); if (openKind) render(openKind); }

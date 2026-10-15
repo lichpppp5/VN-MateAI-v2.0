@@ -38,12 +38,39 @@ def tool_outcome(result: Any) -> Dict[str, Any]:
     "error": "..."}} — lớp ngoài chỉ nói "đã gọi được skill". Đọc lớp TRONG."""
     res = result if isinstance(result, dict) else {}
     inner = res.get("data")
-    if isinstance(inner, dict) and ("success" in inner or "error" in inner or "status" in inner):
-        res = {**res, **inner}
-    status = str(res.get("status") or ("success" if res.get("success") is True else
-                                        "error" if (res.get("error") or res.get("success") is False) else "done"))
-    return {"status": status, "message": str(res.get("message") or res.get("error") or "")[:300],
-            "approval_id": res.get("approval_id")}
+    if isinstance(inner, dict):
+        if "error" in inner and inner["error"]:
+            res = {**res, "error": inner["error"], "success": False}
+        elif inner.get("success") is False:
+            res = {**res, "success": False, "error": inner.get("error") or inner.get("message")}
+        elif inner.get("status") in ("error", "failed", "need_confirm", "awaiting_approval", "budget_exceeded"):
+            res = {**res, "status": inner["status"], "error": inner.get("error") or inner.get("message")}
+        elif inner.get("success") is True and not res.get("error"):
+            res = {**res, "success": True}
+
+    raw_status = res.get("status")
+    if not isinstance(raw_status, str):
+        raw_status = None
+
+    if raw_status:
+        st_lower = raw_status.strip().lower()
+        if st_lower in ("need_confirm", "awaiting_approval", "pending"):
+            status = st_lower
+        elif st_lower in ("error", "failed", "failure", "timeout", "budget_exceeded", "repeated_failure"):
+            status = "error"
+        elif st_lower in ("success", "done", "ok", "passed", "completed"):
+            status = "success"
+        elif res.get("error") or res.get("success") is False:
+            status = "error"
+        else:
+            status = "success" if res.get("success") is True or not res.get("error") else "error"
+    elif res.get("error") or res.get("success") is False:
+        status = "error"
+    else:
+        status = "success" if res.get("success") is True else "done"
+
+    message = str(res.get("message") or res.get("error") or "")[:300]
+    return {"status": status, "message": message, "approval_id": res.get("approval_id")}
 
 
 def level_for(risk: int) -> str:
@@ -91,9 +118,9 @@ def verify(tool: str, args: Dict[str, Any], result: Any, risk: int, target: str 
     level = level_for(risk)
     out = tool_outcome(result)
     st = out["status"]
-    if st in ("need_confirm", "awaiting_approval"):
+    if st in ("need_confirm", "awaiting_approval", "pending"):
         return {"level": level, "status": PENDING, "checks": ["chờ phê duyệt — chưa thực thi"], "summary": "chờ duyệt"}
-    if st not in ("success", "done", "ok"):
+    if st not in ("success", "done", "ok", "passed", "completed"):
         return {"level": level, "status": FAILED, "checks": [f"tool báo: {st} {out['message']}".strip()],
                 "summary": out["message"] or st}
     if level in (NONE, BASIC):

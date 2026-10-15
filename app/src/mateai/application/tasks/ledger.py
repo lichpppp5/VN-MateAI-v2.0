@@ -244,19 +244,20 @@ def settle(task_id: Optional[str]) -> Optional[str]:
         elif all(d == "deny" for d in decisions):
             transition(task_id, BLOCKED, verification_status="failed",
                        result_summary="Mọi bước bị chính sách từ chối.")
-        elif any(v == "failed" for v in vs):
+        elif all(v == "failed" for v in vs) or (any(v == "failed" for v in vs) and not any(v == "passed" for v in vs)):
             bad = [st for st in latest.values() if st["verification_status"] == "failed"]
             transition(task_id, VERIFYING)
             transition(task_id, FAILED, verification_status="failed",
                        result_summary="; ".join(f"{b['tool']}: {b['message'] or b['outcome']}" for b in bad)[:300])
-        elif any(v == "not_verifiable" for v in vs):
+        elif any(v == "not_verifiable" for v in vs) and not any(v == "passed" for v in vs):
             transition(task_id, VERIFYING)
             transition(task_id, ESCALATED, verification_status="not_verifiable",
                        result_summary="Đã thực thi nhưng không kiểm chứng được tự động — cần người xác nhận kết quả.")
         else:
+            passed_cnt = sum(1 for v in vs if v == "passed")
             transition(task_id, VERIFYING)
             transition(task_id, COMPLETED, verification_status="passed",
-                       result_summary=f"{len(latest)} bước đã thực thi và kiểm chứng đạt.")
+                       result_summary=f"{passed_cnt}/{len(latest)} bước đã thực thi thành công.")
         return (_db().op_get_task(task_id) or {}).get("status")
     except Exception as exc:  # noqa: BLE001
         logger.warning("[Ledger] Không tổng kết được tác vụ %s: %s", task_id, exc)

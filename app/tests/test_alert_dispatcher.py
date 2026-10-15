@@ -214,7 +214,7 @@ def test_webhook_urls_are_masked_when_config_is_read():
 def test_portal_catalog_offers_every_channel_as_waiting(cfg):
     from mateai.application.enterprise.integrations import _alert_channel_catalog
     cat = _alert_channel_catalog()
-    assert set(cat) == {"alert_rules", "alert_teams", "alert_email", "alert_outlook", "alert_slack", "alert_webhook"}
+    assert set(cat) == {"alert_rules", "alert_teams", "alert_email", "alert_outlook", "alert_slack", "alert_webhook", "alert_zalo"}
     teams = cat["alert_teams"]
     assert teams["configured"] is False and teams["config_schema"]["properties"]["webhook_url"]["format"] == "secret"
     assert teams["config_schema"]["required"] == ["webhook_url"]
@@ -238,3 +238,69 @@ def test_api_roles(cfg):
     assert _client("admin").post("/api/v1/system/notifications/test", json={"channel": "zalo"}).status_code == 400
     res = _client("admin").post("/api/v1/system/notifications/test", json={"channel": "alert_teams"}).json()
     assert res["status"] == "no_channel"          # chưa kết nối -> nói thẳng, không "đã gửi"
+
+
+async def test_zalo_channel_reads_error_field_not_http_status(monkeypatch):
+    """Zalo OA trả HTTP 200 cả khi lỗi (token hết hạn…) — kênh phải đọc trường `error`, không báo 'đã gửi' sai."""
+    import httpx
+    from mateai.infrastructure.notifications import channels as chn
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        uid = __import__("json").loads(request.content)["recipient"]["user_id"]
+        if uid == "ok1":
+            return httpx.Response(200, json={"error": 0, "message": "Success"})
+        return httpx.Response(200, json={"error": -216, "message": "Access token is invalid"})
+
+    real = httpx.AsyncClient
+    monkeypatch.setattr(chn.httpx, "AsyncClient", lambda **kw: real(transport=httpx.MockTransport(handler), **kw))
+    alert = {"title": "Ổ đĩa đầy", "message": "C: còn 2%", "severity": "critical", "time": 0}
+    ok, detail = await chn._send_zalo({"access_token": "t", "user_ids": "ok1, bad2"}, alert)
+    assert ok and "đã gửi 1" in detail and "invalid" in detail
+    assert calls[0].headers["access_token"] == "t" and calls[0].url == chn.ZALO_MESSAGE_URL
+    ok2, _ = await chn._send_zalo({"access_token": "t", "user_ids": "bad2"}, alert)
+    assert ok2 is False
+    assert chn.missing_fields("alert_zalo", {"access_token": "", "user_ids": ""}) == ["access_token", "user_ids"]
+
+
+async def test_zalo_refreshes_expired_token_once_and_saves_it(monkeypatch):
+    import json as _json
+    import httpx
+    from mateai.infrastructure.notifications import channels as chn
+    import mateai.config.loader as loader
+    saved = {}
+    monkeypatch.setattr(loader, "update_config_section", lambda name, upd: saved.setdefault(name, {}).update(upd) or saved)
+    seen = []
+
+    def handler(request):
+        if str(request.url) == chn.ZALO_TOKEN_URL:
+            seen.append(("refresh", request.headers.get("secret_key"), request.content.decode()))
+            return httpx.Response(200, json={"access_token": "moi", "refresh_token": "rt2", "expires_in": "90000"})
+        tok = request.headers["access_token"]
+        seen.append(("send", tok))
+        return httpx.Response(200, json={"error": 0} if tok == "moi" else {"error": -216, "message": "Access token is invalid"})
+
+    real = httpx.AsyncClient
+    monkeypatch.setattr(chn.httpx, "AsyncClient", lambda **kw: real(transport=httpx.MockTransport(handler), **kw))
+    s = {"access_token": "cu", "user_ids": "u1", "app_id": "123", "app_secret": "bimat", "refresh_token": "rt1"}
+    ok, detail = await chn._send_zalo(s, {"title": "CPU cao", "message": "97%", "severity": "critical", "time": 0})
+    assert ok and "đã làm mới token" in detail
+    assert [x[0] for x in seen] == ["send", "refresh", "send"] and seen[1][1] == "bimat" and "rt1" in seen[1][2]
+    assert saved["alert_zalo"] == {"access_token": "moi", "refresh_token": "rt2"}      # refresh token dùng 1 lần: lưu ngay
+
+
+async def test_zalo_without_refresh_credentials_says_why(monkeypatch):
+    import httpx
+    from mateai.infrastructure.notifications import channels as chn
+    real = httpx.AsyncClient
+    monkeypatch.setattr(chn.httpx, "AsyncClient", lambda **kw: real(transport=httpx.MockTransport(
+        lambda r: httpx.Response(200, json={"error": -216, "message": "Access token is invalid"})), **kw))
+    ok, detail = await chn._send_zalo({"access_token": "cu", "user_ids": "u1"}, {"title": "x", "message": "y", "time": 0})
+    assert not ok and "Refresh token" in detail
+
+
+def test_oauth_tokens_are_encrypted_in_config():
+    from mateai.config import secret_box
+    for name in ("access_token", "refresh_token", "app_secret", "secret_key"):
+        assert secret_box.is_secret(name), name

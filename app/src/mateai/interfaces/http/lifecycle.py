@@ -229,6 +229,14 @@ def _playbooks(ctx: StepContext) -> str:
     return f"{n} lượt chạy bị gián đoạn được đánh dấu" if n else "ok"
 
 
+def _orchestration(ctx: StepContext) -> str:
+    """Lõi điều phối: phiếu đang giao dở khi máy chủ chết -> INTERRUPTED; vòng nền đối soát duyệt + giao hàng đợi."""
+    from mateai.application.orchestration import service
+    n = service.recover_interrupted()
+    spawn(service.background_loop(), "orchestration-pump")
+    return f"{n} phiếu việc bị gián đoạn được đánh dấu" if n else "ok"
+
+
 def _acoustic_ack(ctx: StepContext) -> None:
     from mateai.application.commands.fast_command_router import STATIC_REPLIES
     from mateai.infrastructure.tts.acoustic_ack import warmup_acoustic_ack_cache
@@ -279,6 +287,23 @@ def _desktop_session(ctx: StepContext) -> str:
     return f"có màn hình ({st.get('reason')})"
 
 
+def _default_passwords(ctx: StepContext) -> str:
+    """Tài khoản mặc định còn dùng mật khẩu dev công khai (admin123…) → bắt đổi ở lần đăng nhập tới."""
+    from mateai.infrastructure.database.db_manager import db_manager
+    flagged = db_manager.flag_known_dev_passwords()
+    return f"bắt đổi mật khẩu: {', '.join(flagged)}" if flagged else "không còn mật khẩu dev"
+
+
+def _schema_migrations(ctx: StepContext) -> str:
+    """Bước nâng cấp CSDL có số thứ tự (migrations.py) — sao lưu trước khi chạy bước thật trên CSDL có dữ liệu."""
+    from mateai.infrastructure.database import migrations
+    res = migrations.migrate(migrations.main_db_connect)
+    if res.get("unknown"):
+        return f"CSDL mới hơn ứng dụng ({res['unknown'][-1]}) — /readyz báo lỗi"
+    ran = res.get("ran") or []
+    return f"phiên bản {res.get('current')}" + (f", vừa chạy {', '.join(ran)}" if ran else "") +         (f", sao lưu {res['backup']}" if res.get("backup") else "")
+
+
 def _background_workers(ctx: StepContext) -> None:
     from mateai.application.operations.background_workers import background_worker_manager
     spawn(background_worker_manager.start(), "background-workers")
@@ -304,6 +329,8 @@ def _email_gateway(ctx: StepContext) -> str:
 def default_steps() -> List[Step]:
     return [
         Step("core", _core, critical=True),
+        Step("schema_migrations", _schema_migrations),
+        Step("default_passwords", _default_passwords),
         Step("tracing", _tracing),
         Step("ephemeral_sweeper", _ephemeral_sweeper),
         Step("telegram", _telegram),
@@ -324,6 +351,7 @@ def default_steps() -> List[Step]:
         Step("dev_fleet", _dev_fleet),
         Step("infra_monitor", _infra_monitor),
         Step("playbooks", _playbooks),
+        Step("orchestration", _orchestration),
         Step("computer_use_tool", _computer_use),
         Step("desktop_session", _desktop_session),
         Step("mcp_gateway", _mcp_gateway),

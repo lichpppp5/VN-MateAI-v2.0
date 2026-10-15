@@ -152,6 +152,12 @@ def export_skill(
 _DESKTOP_CALLS = re.compile(r"webbrowser\.|pyautogui|pynput|os\.startfile|ImageGrab|pyperclip|win32clipboard|win32gui|mss|Start-Process")
 
 
+def _edition_blocked(name: str) -> str:
+    """Lý do kỹ năng bị chặn ở phiên bản hiện tại (mateai.config.edition) — "" nếu dùng được."""
+    from mateai.config import edition
+    return edition.blocked_reason(name)
+
+
 def _uses_desktop(func: Callable) -> bool:
     """Skill không khai `needs_desktop` (vd skill AI tự sinh): suy ra từ mã của chính hàm."""
     try:
@@ -366,7 +372,7 @@ class PluginManager:
                     },
                 }
                 for entry in self._registry.values()
-                if entry.get("enabled", True)
+                if entry.get("enabled", True) and not _edition_blocked(entry["meta"]["name"])
             ]
 
     def get_tools_for_query(
@@ -427,6 +433,9 @@ class PluginManager:
                 "data": None,
                 "error": f"Kỹ năng '{skill_name}' hiện đang bị tạm tắt trong cấu hình.",
             }
+        _blocked = _edition_blocked(skill_name)
+        if _blocked:
+            return {"success": False, "data": None, "error": _blocked}
 
         func: Callable = entry["func"]
         try:
