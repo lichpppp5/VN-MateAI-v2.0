@@ -61,7 +61,7 @@
   'toggleCfgDirectKeyVisibility', 'toggleDeptAccordion', 'toggleDevicesGuide', 'toggleErpAdImport',
   'toggleFullscreen', 'toggleHudAudio', 'toggleHudMic', 'toggleHudThinking', 'toggleHudWake', 'toggleKeyVisibility',
   'toggleKillSwitch', 'toggleLocalWorkerNode', 'toggleLogAutoScroll', 'toggleLogPause', 'toggleMicHardware',
-  'toggleMonitorAutoRefresh', 'toggleOpTask', 'togglePasswordVisibility', 'togglePinHudDisplay', 'toggleSidebar',
+  'toggleMonitorAutoRefresh', 'toggleOpTask', 'togglePasswordVisibility', 'togglePinHudDisplay', 'toggleExpandHudDisplay', 'toggleSidebar',
   'toggleSupAttn', 'toggleTemplateView', 'toggleTheme', 'triggerEnterpriseCrossReport', 'triggerVisualOverlay',
   'updatePromptStats', 'updateSandboxPlaceholder', 'updateTaskTargetCount', 'updateVoiceTelemetry',
   'verifyAuditChain',

@@ -537,6 +537,8 @@
       warn.textContent = '⚠ Câu này không có tiếng — máy chủ không sinh được audio (TTS lỗi hoặc quá thời gian chờ).';
     }
 
+    const attEl = document.getElementById('p-attention');
+    if (attEl) attEl.classList.add('hidden');
     cardEl.classList.remove('hidden');
 
     hudCardDurationMs = Math.min(HUD_CARD_MAX_MS, Math.max(HUD_CARD_MIN_MS, displayText.length * 60));
@@ -615,10 +617,31 @@
 
   function hideHudDisplayCard() {
     const cardEl = document.getElementById('hud-display-card');
+    const attEl = document.getElementById('p-attention');
+    const expBtn = document.getElementById('hud-display-expand-btn');
     if (cardEl) {
       cardEl.classList.add('hidden');
+      cardEl.classList.remove('expanded');
+    }
+    if (expBtn) {
+      expBtn.textContent = '⤢';
+      expBtn.title = 'Mở rộng khung';
+    }
+    if (attEl) {
+      attEl.classList.remove('hidden');
     }
     clearHudCardTimers();
+  }
+
+  function toggleExpandHudDisplay() {
+    const cardEl = document.getElementById('hud-display-card');
+    const expBtn = document.getElementById('hud-display-expand-btn');
+    if (!cardEl) return;
+    const isExpanded = cardEl.classList.toggle('expanded');
+    if (expBtn) {
+      expBtn.textContent = isExpanded ? '⤡' : '⤢';
+      expBtn.title = isExpanded ? 'Thu nhỏ vào khung' : 'Mở rộng khung';
+    }
   }
 
   function togglePinHudDisplay() {
@@ -674,6 +697,7 @@
   window.hideHudDisplayCard = hideHudDisplayCard;
   window.copyHudDisplayContent = copyHudDisplayContent;
   window.togglePinHudDisplay = togglePinHudDisplay;
+  window.toggleExpandHudDisplay = toggleExpandHudDisplay;
   window.hudShowToast = hudShowToast;
 
   /**
