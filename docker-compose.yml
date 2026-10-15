@@ -52,6 +52,8 @@ services:
       - appdata:/data
       - ./app/src:/app/src
       - ./app/web:/app/web
+      - ./app/identity_core.md:/app/identity_core.md:ro
+      - ./app/main.py:/app/main.py
       - ./app/deploy/docker/entrypoint.sh:/app/deploy/docker/entrypoint.sh
     restart: unless-stopped
 
