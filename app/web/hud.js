@@ -1259,8 +1259,8 @@ let hudReplyDeadline = 0;
 let hudReplyTimer = null;
 let hudMicOpenTimer = null;
 
-/** Chờ phản hồi bao lâu (ms, tính từ lúc trợ lý hỏi xong) rồi chào và đóng. */
-const HUD_REPLY_WAIT_MS = 30000;
+/** Chờ phản hồi bao lâu (ms, tính từ lúc trợ lý hỏi xong) rồi chào và đóng. Mặc định 60s cho người dùng đọc thẻ kết quả. */
+const HUD_REPLY_WAIT_MS = 60000;
 const HUD_SESSION_ID = 'hud';
 
 /** Câu "không còn yêu cầu" — cùng quy tắc với `is_stop_reply` phía máy chủ. */
@@ -1350,19 +1350,23 @@ function hudExpectReply(question) {
   hudOpenMicWhenQuiet();
 }
 
-/** Mở mic khi trợ lý đã đọc xong; 30 giây chờ tính từ lúc đó. */
+/** Mở mic khi trợ lý đã đọc xong; 60 giây chờ tính từ lúc đó. */
 function hudOpenMicWhenQuiet() {
   if (hudMicOpenTimer) { clearTimeout(hudMicOpenTimer); hudMicOpenTimer = null; }
   if (!hudAwaitingReply) return;
-  if (hudIsSpeaking()) {
-    hudMicOpenTimer = setTimeout(hudOpenMicWhenQuiet, 250);
+  // Nếu AI vẫn đang phát âm thanh, đang xử lý tác vụ hoặc đang chờ câu trả lời: hoãn mở mic
+  if (hudIsSpeaking() || currentState === STATES.PROCESSING || hudAwaitingAnswer) {
+    hudMicOpenTimer = setTimeout(hudOpenMicWhenQuiet, 300);
     return;
   }
   // Một nhịp ngắn cho loa tắt hẳn, kẻo mic thu đuôi câu.
   hudMicOpenTimer = setTimeout(() => {
     hudMicOpenTimer = null;
     if (!hudAwaitingReply) return;
-    if (hudIsSpeaking()) { hudOpenMicWhenQuiet(); return; }
+    if (hudIsSpeaking() || currentState === STATES.PROCESSING || hudAwaitingAnswer) {
+      hudOpenMicWhenQuiet();
+      return;
+    }
     if (!hudReplyDeadline) {
       hudReplyDeadline = Date.now() + HUD_REPLY_WAIT_MS;
       hudReplyTimer = setTimeout(hudOnReplyTimeout, HUD_REPLY_WAIT_MS);
@@ -1372,18 +1376,24 @@ function hudOpenMicWhenQuiet() {
   }, 400);
 }
 
-/** Mic tự tắt (Chrome dừng sau vài giây im lặng) khi còn trong 30s → mở lại. */
+/** Mic tự tắt (Chrome dừng sau vài giây im lặng) khi còn trong thời gian chờ → mở lại. */
 function hudKeepListening() {
   if (!hudAwaitingReply || Date.now() >= hudReplyDeadline) return;
   setHudState('listening', 'Em vẫn đang chờ anh/chị...');
   hudOpenMicWhenQuiet();
 }
 
-/** 30 giây không có phản hồi: máy chủ chào rồi đóng. */
+/** Hết thời gian chờ mà không có phản hồi: máy chủ chào rồi đóng. */
 function hudOnReplyTimeout() {
   hudReplyTimer = null;
   if (!hudAwaitingReply) return;
-  appendSystemLog('Không nghe thấy phản hồi sau 30 giây — chào và đóng lắng nghe.', 'VOICE');
+  // Tuyệt đối không gửi end_conversation nếu AI còn đang nói hoặc đang xử lý tác vụ
+  if (hudIsSpeaking() || currentState === STATES.PROCESSING || hudAwaitingAnswer) {
+    hudReplyDeadline = Date.now() + HUD_REPLY_WAIT_MS;
+    hudReplyTimer = setTimeout(hudOnReplyTimeout, HUD_REPLY_WAIT_MS);
+    return;
+  }
+  appendSystemLog('Không nghe thấy phản hồi sau 60 giây — chào và đóng lắng nghe.', 'VOICE');
   hudResetConversation();
   hudStopListeningForTurn();
   hudSendControl({ action: 'end_conversation', reason: 'timeout' });
@@ -1502,6 +1512,10 @@ function hudOpenMicForFollowup() {
   window.toggleHudMic = toggleHudMic;
 
   async function sendHudVoiceCommand(query) {
+    // Dừng timer chờ phản hồi của lượt trước và dừng lắng nghe
+    hudResetConversation();
+    hudStopListeningForTurn();
+
     // Dừng lời đang nói TRƯỚC khi gửi lệnh mới. Đặt ở đầu hàm để mọi đường
     // đi (WebSocket, REST dự phòng) đều được dừng — không phải nhớ dừng ở
     // từng nhánh. Nếu thiếu, người dùng nói lệnh mới vẫn phải nghe hết lượt

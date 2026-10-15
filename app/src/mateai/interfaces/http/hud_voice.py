@@ -130,6 +130,12 @@ async def end_conversation(session_id: str = "hud", reason: str = "user_done") -
     """Kết thúc vòng hội thoại rồi về trạng thái chờ. `timeout`: không nghe phản hồi → "Nếu anh không có yêu cầu
     nào khác thì tạm biệt…"; `user_done`: admin nói "không / không cần, cảm ơn…" → "Dạ vâng, em chào anh…".
     Không gọi LLM — câu cố định, có sẵn trong cache âm thanh nên phát ngay."""
+    # Tuyệt đối không ngắt hay tạm biệt nếu phiên đang bận chạy tác vụ
+    current_t = active_tasks.get(session_id)
+    if current_t and not current_t.done():
+        logger.warning("[HUD] Bỏ qua end_conversation (%s) vì tác vụ '%s' đang thực thi!", reason, session_id)
+        return
+
     from mateai.application.voice.voice_session import voice_sessions
     voice_sessions.get(session_id).clear_expecting_reply()
     await say(FAREWELL if reason == "timeout" else GOODBYE)

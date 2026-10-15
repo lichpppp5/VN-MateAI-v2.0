@@ -339,9 +339,12 @@ async def websocket_hud_endpoint(websocket: WebSocket) -> None:
                 wake_state["busy"] = True
                 _spawn(_hud_wake(websocket, pcm, wake_state))
             elif action == "end_conversation":
-                # HUD báo: chờ 30s không nghe phản hồi ("timeout") hoặc admin nói
-                # không còn yêu cầu ("user_done"). Chỉ phiên đã đăng nhập.
+                # HUD báo: hết thời gian chờ ("timeout") hoặc admin nói không còn yêu cầu ("user_done"). Chỉ phiên đã đăng nhập.
                 if ws_user is not None:
+                    running_t = hud_voice.active_tasks.get("hud")
+                    if running_t and not running_t.done():
+                        logger.info("[HUD WS] Bỏ qua end_conversation vì đang có tác vụ xử lý lệnh thoại")
+                        continue
                     reason = "timeout" if data.get("reason") == "timeout" else "user_done"
                     _spawn(hud_voice.end_conversation("hud", reason))
             elif action == "confirm_action":
